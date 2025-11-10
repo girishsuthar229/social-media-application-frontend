@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="320" height="220" viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg" role="img"
+  aria-label="Connected nodes logo">
+  <title>Connected nodes logo</title>
+  <defs>
+    <linearGradient id="g1" x1="0" x2="1">
+      <stop offset="0" stop-color="#f36527" stop-opacity="1" />
+      <stop offset="1" stop-color="rgb(10,80,180)" stop-opacity="1" />
+    </linearGradient>
+    <filter id="f1" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="b" />
+      <feBlend in="SourceGraphic" in2="b" />
+    </filter>
+  </defs>
+
+  <!-- faint background glow -->
+  <circle cx="160" cy="110" r="72" fill="url(#g1)" opacity="0.12" filter="f1" />
+
+  <!-- connecting curved lines -->
+  <path d="M60 140 C110 95, 210 95, 260 60" stroke="url(#g1)" stroke-width="8" fill="none" stroke-linecap="round"
+    opacity="0.95" />
+  <path d="M60 80 C120 55, 200 55, 260 110" stroke="rgb(10,80,180)" stroke-width="5" fill="none" stroke-linecap="round"
+    opacity="0.9" />
+
+  <!-- nodes -->
+  <circle cx="60" cy="140" r="14" fill="#f36527" stroke="#ffffff" stroke-width="3" />
+  <circle cx="160" cy="110" r="18" fill="#ffffff" stroke="#f36527" stroke-width="4" />
+  <circle cx="260" cy="60" r="12" fill="#f36527" stroke="#ffffff" stroke-width="2" />
+
+  <!-- small accent dots -->
+  <circle cx="220" cy="86" r="5" fill="#f36527" />
+  <circle cx="110" cy="72" r="4" fill="rgb(10,80,180)" />
+</svg>

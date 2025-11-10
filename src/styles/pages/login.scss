@@ -1,0 +1,379 @@
+@import "../colors";
+
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 450px;
+  padding: 50px 40px;
+  border-radius: 24px;
+  background-color: $white;
+  text-align: center;
+  box-shadow: $shadow-lg;
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(10px);
+  animation: slideInUp 0.6s ease-out;
+
+  @media (max-width: 640px) {
+    max-width: 100%;
+    padding: 35px 25px;
+    border-radius: 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 30px 20px;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logo-with-text {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+
+  img {
+    width: auto;
+    height: auto;
+    max-width: 80px;
+
+    @media (max-width: 640px) {
+      max-width: 70px;
+    }
+  }
+}
+
+.login-back-btn-div {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0;
+}
+
+// Auth Toggle Styles
+.auth-toggle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  padding: 8px;
+  width: fit-content;
+  margin: 0 auto 35px;
+  border-radius: 14px;
+  background-color: $bg-light;
+  position: relative;
+  border: 1px solid $border-color;
+  transition: all 0.3s ease;
+
+  @media (max-width: 640px) {
+    gap: 1.5rem;
+    margin-bottom: 25px;
+  }
+
+  &:hover {
+    box-shadow: $shadow-sm;
+  }
+}
+
+.auth-link {
+  font-weight: 600;
+  font-size: 16px;
+  text-decoration: none;
+  color: $text-gray;
+  position: relative;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 2;
+
+  @media (max-width: 640px) {
+    font-size: 15px;
+    padding: 8px 16px;
+  }
+
+  &:hover {
+    color: $primary-color;
+    transform: translateY(-2px);
+  }
+
+  &.active {
+    color: $white;
+  }
+}
+
+.auth-indicator {
+  position: absolute;
+  bottom: auto;
+  top: 8px;
+  height: 40px;
+  background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
+  border-radius: 10px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+  box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+
+  @media (max-width: 640px) {
+    height: 36px;
+    top: 6px;
+  }
+}
+
+// Typography Styles
+.app-title {
+  font-weight: 700;
+  font-size: 20px !important;
+  color: $primary-color !important;
+  line-height: 1.4 !important;
+
+  @media (max-width: 640px) {
+    font-size: 18px !important;
+  }
+}
+
+.typography-caption {
+  text-align: center !important;
+  margin: 0 !important;
+  margin-block: 12px !important;
+  color: $text-dark !important;
+  font-weight: 600 !important;
+  font-size: 18px !important;
+  letter-spacing: 0.3px !important;
+  line-height: 1.5 !important;
+
+  @media (max-width: 640px) {
+    font-size: 16px !important;
+    margin-top: 20px !important;
+  }
+}
+
+.typography-caption-primary {
+  color: $text-gray !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  margin-bottom: 15px !important;
+  line-height: 1.6 !important;
+
+  @media (max-width: 640px) {
+    font-size: 13px !important;
+    margin-bottom: 25px !important;
+  }
+}
+
+// Login Form Styles
+.login-form {
+  display: flex;
+  flex-direction: column;
+
+  .login-form-nested-box {
+    padding-block: 1rem !important;
+    justify-content: center;
+    gap: 2;
+    width: 100%;
+  }
+
+  .login-btn {
+    background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
+    color: $white;
+    font-weight: 600;
+    padding: 14px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 14px rgba($primary-color, 0.3);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba($white, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s ease, height 0.6s ease;
+    }
+
+    &:hover {
+      background: linear-gradient(135deg, $primary-hover 0%, #e05420 100%);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba($primary-color, 0.4);
+
+      &::before {
+        width: 300px;
+        height: 300px;
+      }
+    }
+
+    &:active {
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+
+      &:hover {
+        transform: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      padding: 12px 16px;
+      font-size: 15px;
+    }
+  }
+
+  .forgot-link-div {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.as-link-styling {
+  color: $primary-color;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: $primary-color;
+    transition: width 0.3s ease;
+  }
+
+  &:hover {
+    color: $primary-hover;
+    text-decoration: none;
+
+    &::after {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 640px) {
+    font-size: 13px;
+  }
+}
+
+// Form Field Wrapper Styles
+.text-field-input {
+  margin-bottom: 12px !important;
+
+  .MuiOutlinedInput-root {
+    border-radius: 12px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+
+    fieldset {
+      border-color: $border-color;
+      transition: all 0.3s ease;
+    }
+
+    &:hover fieldset {
+      border-color: $primary-color;
+    }
+
+    &.Mui-focused fieldset {
+      border-color: $primary-color;
+      border-width: 2px;
+      box-shadow: 0 0 0 4px rgba($primary-color, 0.1);
+    }
+
+    input {
+      color: $text-dark;
+      font-weight: 500;
+      padding: 14px 16px;
+
+      &::placeholder {
+        color: $text-light;
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .MuiFormLabel-root {
+    color: $text-gray;
+    font-weight: 500;
+    font-size: 14px;
+
+    &.Mui-focused {
+      color: $primary-color;
+    }
+
+    &.Mui-error {
+      color: #d32f2f;
+    }
+  }
+
+  .MuiFormHelperText-root {
+    color: #d32f2f;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+}
+
+// Additional Responsive Adjustments
+@media (max-width: 768px) {
+  .login-page {
+    padding: 15px;
+  }
+
+  .login-card {
+    max-width: 90vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-toggle {
+    gap: 1rem;
+    margin-bottom: 20px;
+  }
+
+  .auth-link {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+
+  .typography-caption {
+    font-size: 16px !important;
+  }
+}
+

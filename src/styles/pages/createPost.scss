@@ -1,0 +1,434 @@
+@import '../colors';
+
+/* ==========================================  MAIN CONTAINER  =========================================== */
+
+.create-post-container {
+    width: 100%;
+    max-width: 900px;
+    height: 100vh; 
+    height: calc(100vh - 100px);
+    margin: 0 auto;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    background-color:none;
+    animation: slideUp 0.5s ease-out;
+    overflow-y: auto; 
+    scrollbar-width: thin; 
+    scrollbar-color: $border-color transparent;
+    @media (max-width: 768px) {
+      height: calc(100vh - 60px);
+      padding: 10px 0;
+    }
+}
+
+/* ========================================== HEADER =========================================== */
+.create-post-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  z-index: 100;
+}
+
+/*==========================================  POST FORM  =========================================== */
+.create-post-form {
+  border-radius: 12px;
+  padding: 20px;
+  margin: 0 20px;
+  box-shadow: $shadow-md;
+}
+
+@media (max-width: 768px) {
+  .create-post-form {
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+@media (max-width: 768px) {
+  .create-post-form {
+    padding: 16px;
+  }
+}
+
+/* ==========================================  USER INFO SECTION  =========================================== */
+
+.post-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid $border-color;
+}
+
+.post-user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid $white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post-user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.post-user-name {
+  font-weight: 700;
+  font-size: 15px;
+  color: $text-dark;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.post-user-username {
+  font-size: 13px;
+  color: $text-gray;
+  margin: 0;
+}
+
+/* ========================================== ACTIONs SECTION =========================================== */      
+.post-actions-section {
+  margin-bottom: 10px;
+  padding: 15px;
+  background-color: $bg-light;
+  border-radius: 12px;
+  border: 1px solid $border-color;
+}
+
+.post-action-buttons {
+  width: 100%;
+  display: flex;
+  gap: 12px;
+}
+
+.photo-action-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+}
+
+.action-icon-button-photo {
+  display: flex;
+  flex-direction: column ;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  cursor: pointer;
+  border: 2px dashed $border-color;
+  border-radius: 12px;
+  padding: 16px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.image-preview-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid $border-color;
+  background-color: $bg-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-preview {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  max-height: 100%;
+}
+
+.remove-image-button {
+  position: absolute !important;
+  top: 8px;
+  right: 8px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.remove-image-button:hover {
+  transform: scale(1.1);
+}
+.left-actions-grid{
+  height: 264px;
+}
+.right-actions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  @media (max-width:599px) {
+      flex-direction: row;
+  }
+}
+
+.action-icon-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 12px;
+  width: 100%;
+  background-color: transparent;
+  border: 2px solid $border-color;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: $text-gray;
+}
+
+.action-icon-button:hover {
+  background-color: $bg-orange-light;
+  border-color: $primary-light;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px $border-color;
+}
+
+.action-icon {
+  font-size: 28px;
+  transition: all 0.3s ease;
+  color: $text-gray;
+}
+
+.action-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: $text-gray;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .action-icon {
+    font-size: 24px;
+  }
+  .action-label {
+    font-size: 11px;
+  }
+}
+    
+    
+/* ========================================== COMMENT SECTION =========================================== */
+.post-content-section {
+  margin-bottom: 10px;
+}
+ .post-comment-section {
+  margin-bottom: 10px;
+}
+
+.section-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: $text-dark;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.post-comment-textarea {
+  width: 100%;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: $text-dark;
+  border: 2px solid $border-color;
+  border-radius: 12px;
+  min-height: 80px;
+  resize: vertical;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: inherit;
+  box-sizing: border-box;
+}
+
+.post-comment-textarea::placeholder {
+  color: $text-light;
+}
+
+.post-comment-textarea:hover {
+  border-color: $primary-light;
+  background-color: $bg-light;
+}
+
+.post-comment-textarea:focus {
+  outline: none;
+  border-color: $primary-color;
+  box-shadow: 0 0 0 3px rgba(243, 101, 39, 0.1);
+  background-color: $white;
+}
+
+@media (max-width: 768px) {
+  .post-comment-textarea {
+    font-size: 13px;
+    padding: 10px;
+  }
+}
+
+
+ /* ==========================================
+   SUBMIT SECTION
+   =========================================== */
+
+.post-submit-section {
+  padding-top: 10px;
+  border-top: 1px solid $border-color;
+}
+
+.post-submit-button {
+  width: 100%;
+  background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
+  color: $white;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(243, 101, 39, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.post-submit-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, $primary-hover 0%, #e05420 100%);
+  box-shadow: 0 6px 16px rgba(243, 101, 39, 0.4);
+  transform: translateY(-2px);
+}
+
+.post-submit-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.post-submit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  background: linear-gradient(135deg, #ffa366 0%, #ffb380 100%);
+}
+
+.post-submit-button:disabled:hover {
+  transform: none;
+  box-shadow: 0 4px 12px rgba(243, 101, 39, 0.3);
+}
+
+@media (max-width: 768px) {
+  .post-submit-button {
+    padding: 14px;
+    font-size: 15px;
+  }
+}
+
+/* ==========================================
+   LOADING SPINNER
+   =========================================== */
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: $white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================
+   ANIMATIONS
+   =========================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================
+   RESPONSIVE ADJUSTMENTS
+   =========================================== */
+
+@media (max-width: 768px) {
+  .create-post-form {
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .post-user-info {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+  }
+
+  .post-content-section,
+  .post-comment-section,
+  .post-actions-section {
+    margin-bottom: 16px;
+  }
+
+}
+
+@media (max-width: 480px) {
+  .create-post-form {
+    padding: 12px;
+  }
+
+  .post-user-avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .post-user-name {
+    font-size: 14px;
+  }
+
+  .post-user-username {
+    font-size: 12px;
+  }
+
+  .common-content-textarea {
+    padding: 12px;
+    min-height: 100px;
+  }
+
+  .post-actions-section {
+    padding: 12px;
+  }
+}

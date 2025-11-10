@@ -1,0 +1,286 @@
+@import "./../_colors";
+  /* ========================================== HEADER MAIN CONTAINER =========================================== */
+   
+   .header {
+     background: linear-gradient(135deg, $white 0%, $bg-light 100%) !important;
+     border-bottom: 2px solid $border-color !important;
+     box-shadow: $shadow-sm !important;
+     position: sticky;
+     top: 0;
+     z-index: 1000;
+     transition: all 0.3s ease;
+   
+     @media (max-width: 960px) {
+       border-bottom: 1px solid $border-color !important;
+     }
+   }
+   
+   /* ==========================================
+      TOOLBAR LAYOUT
+      =========================================== */
+   
+   .toolbar {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     padding: 8px 24px !important;
+     min-height: 65px !important;
+     gap: 20px;
+     position: relative;
+   
+     @media (max-width: 1200px) {
+       padding: 8px 20px !important;
+     }
+   
+     @media (max-width: 960px) {
+       padding: 8px 16px !important;
+       min-height: 60px !important;
+     }
+   
+     @media (max-width: 600px) {
+       padding: 8px 12px !important;
+       min-height: 56px !important;
+       gap: 12px;
+     }
+   }
+   
+   /* ==========================================
+      NAVIGATION CONTAINER (CENTERED)
+      =========================================== */
+   
+   .toolbar > .link-items {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     gap: 20px;
+     position: absolute;
+     left: 50%;
+     transform: translateX(-50%);
+   }
+   
+
+   
+   /* ==========================================
+      HEADER ICON BUTTON
+      =========================================== */
+   
+   .header-icon {
+     color: $text-gray !important;
+     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+     border-radius: 12px !important;
+     padding: 10px !important;
+     position: relative;
+   
+     &::before {
+       content: '';
+       position: absolute;
+       bottom: 0;
+       left: 50%;
+       transform: translateX(-50%);
+       width: 0;
+       height: 3px;
+       background: linear-gradient(90deg, $primary-color 0%, $primary-light 100%);
+       border-radius: 2px;
+       transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+     }
+   
+     &:hover {
+       background-color: rgba($primary-color, 0.08) !important;
+       color: $primary-color !important;
+       transform: translateY(-2px);
+   
+       &::before {
+         width: 60%;
+       }
+     }
+   
+     &:active {
+       transform: translateY(0);
+     }
+   
+     &.active {
+       color: $primary-color !important;
+       background-color: rgba($primary-color, 0.12) !important;
+   
+       &::before {
+         width: 80%;
+       }
+   
+       svg {
+         animation: iconBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+       }
+     }
+   
+     &.inactive {
+       color: $text-gray !important;
+     }
+   
+     svg {
+       font-size: 26px;
+       transition: all 0.3s ease;
+   
+       @media (max-width: 960px) {
+         font-size: 24px;
+       }
+     }
+   
+
+   
+     @media (max-width: 600px) {
+       padding: 6px !important;
+       border-radius: 10px !important;
+     }
+   }
+   
+   /* ==========================================  PROFILE AVATAR (RIGHT SIDE)  =========================================== */
+   .profile-avatar {
+    margin-left: auto;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    &.active {
+      border-color: $primary-color;
+      box-shadow: 0 4px 16px rgba($primary-color, 0.3);
+    }
+    &:hover, &:active {
+      border-color: $primary-color;
+      box-shadow: 0 4px 16px rgba($primary-color, 0.3);
+      transform: scale(1.05);
+    }
+    transition: all 0.3s ease-in-out;
+  }
+  
+   /* ==========================================  PROFILE MENU  =========================================== */
+   .profile-menu{
+     .MuiMenu-paper {
+       border-radius: 12px !important;
+       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+       border: 1px solid $border-color !important;
+       min-width: 200px !important;
+       margin-top: 8px !important;
+       overflow: hidden !important;
+      }
+    }
+   
+   .header-menu-item {
+     padding: 12px 20px !important;
+     font-weight: 500 !important;
+     font-size: 15px !important;
+     color: $text-dark !important;
+     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+     display: flex !important;
+     align-items: center !important;
+     gap: 12px !important;
+   
+     &:hover {
+       background-color: rgba($primary-color, 0.08) !important;
+       color: $primary-color !important;
+       padding-left: 24px !important;
+       svg {
+         transform: scale(1.1) rotate(5deg);
+         color: $primary-color !important;
+       }
+     }
+     svg {
+       font-size: 20px !important;
+       color: $primary-color !important;
+       transition: all 0.3s ease !important;
+     }
+   }
+   
+   /* ==========================================  ANIMATIONS  =========================================== */
+   
+   @keyframes iconBounce {
+     0% {
+       transform: scale(1);
+     }
+     25% {
+       transform: scale(1.2);
+     }
+     50% {
+       transform: scale(1.1);
+     }
+     100% {
+       transform: scale(1);
+     }
+   }
+   
+   @keyframes slideDown {
+     from {
+       opacity: 0;
+       transform: translateY(-10px);
+     }
+     to {
+       opacity: 1;
+       transform: translateY(0);
+     }
+   }
+   
+   .header {
+     animation: slideDown 0.4s ease-out;
+   }
+   
+   /* ==========================================  RESPONSIVE LAYOUT ADJUSTMENTS  =========================================== */
+   
+   // Large Desktop (1400px and above)
+   @media (min-width: 1400px) {
+     .toolbar > div {
+       gap: 12px;
+     }
+     .header-icon {
+       padding: 12px !important;
+       svg {
+         font-size: 28px;
+       }
+     }
+   }
+   
+   // Desktop (960px - 1400px)
+   @media (min-width: 960px) and (max-width: 1399px) {
+     .toolbar > div {
+       gap: 8px;
+     }
+     .header-icon {
+       padding: 10px !important;
+       svg {
+         font-size: 26px;
+       }
+     }
+   }
+   
+   // Tablet (600px - 960px)
+   @media (min-width: 600px) and (max-width: 959px) {
+     .header-icon {
+       padding: 8px !important;
+       svg {
+         font-size: 24px;
+       }
+     }
+   }
+   
+   // Mobile (600px and below)
+   @media (max-width: 600px) {
+     .toolbar > div {
+       position: static;
+       transform: none;
+       justify-content: flex-start;
+       flex: 1;
+       gap: 10px !important;
+       overflow-x: auto;
+      }
+   }
+   
+   // Extra Small (480px and below)
+   @media (max-width: 480px) {
+     .toolbar {
+       padding: 6px 8px !important;
+       min-height: 52px !important;
+     }
+     .header-icon {
+       padding: 4px !important;
+       min-width: 40px;
+       min-height: 40px;
+     }
+  }

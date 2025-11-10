@@ -1,0 +1,60 @@
+export interface UserUploadPostReponse {
+  id: number;
+  post_img_url: string;
+}
+
+export interface IUserResponseData {
+  id: number;
+  user_name: string;
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
+  bio: string | null;
+  mobile_number: string | null;
+  photo_url: string | null;
+  birth_date: string | null;
+  role_id: number;
+  address?: string | null;
+  is_private?: boolean;
+  followers: number | null;
+  following: number | null;
+  posts_count: number | null;
+}
+
+export interface IUpdateUserProfile {
+  user_name: string;
+  first_name?: string;
+  last_name?: string;
+  bio?: string | null;
+  birth_date?: string;
+  mobile_number?: string;
+  user_image?: File | string | null;
+  is_private?: boolean;
+  role_id?: number;
+  address?: string;
+}
+export interface UserAllListPaylod {
+  sortBy?: string;
+  sortOrder?: string;
+}
+
+export interface UserAllListModel {
+  id: number;
+  user_name: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  bio?: string | null;
+  mobile_number?: string;
+  photo_url?: string | null;
+  birth_date?: Date | null;
+  address?: string | null;
+  is_private: boolean;
+  role_id: number;
+  created_date: Date;
+  modified_date: Date | null;
+}
+export interface IUserAllListResponse {
+  count: number;
+  rows: UserAllListModel[];
+}
