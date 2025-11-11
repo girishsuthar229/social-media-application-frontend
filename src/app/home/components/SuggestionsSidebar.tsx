@@ -39,6 +39,7 @@ interface User {
 
 interface SugSidebarProps {
   suggestedUsers: UserAllListModel[];
+  allUsersTotalCount: number;
   currentUser: IUserResponseData | null;
   onLoadMoreUsers?: () => void;
   loading: boolean;
@@ -46,6 +47,7 @@ interface SugSidebarProps {
 
 const SuggestionsSidebar = ({
   suggestedUsers,
+  allUsersTotalCount,
   currentUser,
   onLoadMoreUsers,
   loading,
@@ -107,14 +109,16 @@ const SuggestionsSidebar = ({
               </div>
             </ListItem>
           ))}
-          <div className="load-more-div">
-            <BackButton
-              onClick={!loading ? onLoadMoreUsers : undefined} // Only trigger if not loading
-              labelText={loading ? "Loading..." : "Load More"}
-              showIcon={false}
-              underlineOnHover={true}
-            />
-          </div>
+          {Number(suggestedUsers.length) < Number(allUsersTotalCount) && (
+            <div className="load-more-div">
+              <BackButton
+                onClick={!loading ? onLoadMoreUsers : undefined} // Only trigger if not loading
+                labelText={loading ? "Loading..." : "Load More"}
+                showIcon={false}
+                underlineOnHover={true}
+              />
+            </div>
+          )}
         </List>
       </Box>
     </Grid>

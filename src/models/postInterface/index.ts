@@ -53,6 +53,7 @@ export interface AllPostListModel {
   user: PostUser;
   created_date: string;
   modified_date: string | null;
+  is_liked: boolean;
 }
 
 export interface IGetAllPostsResponse {

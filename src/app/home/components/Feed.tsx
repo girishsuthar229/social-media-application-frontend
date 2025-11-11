@@ -1,17 +1,19 @@
 "use client";
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { Heart, MessageCircle, Share2, Loader } from "lucide-react";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
-import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
 import PostActionMenu from "./postActionMenu";
 import { IUserResponseData, UserAllListModel } from "@/models/userInterface";
 import { AllPostListModel } from "@/models/postInterface";
-import { commonFilePath } from "@/util/constanst";
-import moment from "moment";
-import { getRelativeTime, regionDateAndTime } from "@/util/helper";
+import { commonFilePath, STATUS_CODES } from "@/util/constanst";
+import { getRelativeTime } from "@/util/helper";
 import { Avatar } from "@mui/material";
 import { toast } from "react-toastify";
+import { IApiError } from "@/models/common.interface";
+import {
+  allLikePostClickServices,
+  likePostClickServices,
+  unLikePostClickServices,
+} from "@/services/likes-unlike-serivce.service";
 
 // Types
 interface User {
@@ -59,7 +61,7 @@ const Feed: React.FC<FeedProps> = ({
   hasMore = false,
   onLoadMore,
 }) => {
-  const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
+  const [likedPosts, setLikedPosts] = useState();
   const [loadingPostId, setLoadingPostId] = useState<number | null>(null);
   const [openMenuPostId, setOpenMenuPostId] = useState<number | null>(null);
   const [expandedContent, setExpandedContent] = useState<Set<number>>(
@@ -72,51 +74,79 @@ const Feed: React.FC<FeedProps> = ({
     setOpenMenuPostId((prev) => (prev === postId ? null : postId));
   };
 
-  const handleLike = useCallback(
-    async (postId: number) => {
-      const isCurrentlyLiked = likedPosts.has(postId);
-      setLoadingPostId(postId);
-
-      // Optimistic update
-      setLikedPosts((prev) => {
-        const newSet = new Set(prev);
-        if (newSet.has(postId)) {
-          newSet.delete(postId);
-        } else {
-          newSet.add(postId);
-        }
-        return newSet;
-      });
-
-      // Call parent handler
-      if (onLikeClick) {
-        try {
-          await onLikeClick(postId, !isCurrentlyLiked);
-        } catch (error) {
-          console.error("Error liking post:", error);
-          // Revert on error
-          setLikedPosts((prev) => {
-            const newSet = new Set(prev);
-            if (isCurrentlyLiked) {
-              newSet.add(postId);
-            } else {
-              newSet.delete(postId);
-            }
-            return newSet;
-          });
-        }
+  const updatePostLikeStatus = (
+    postId: number,
+    isLiked: boolean,
+    likeCountChange: number
+  ) => {
+    posts.forEach((post) => {
+      if (post.post_id === postId) {
+        post.is_liked = isLiked;
+        post.like_count += likeCountChange;
       }
+    });
+  };
 
+  const handleLikePost = useCallback(
+    async (postId: number) => {
+      setLoadingPostId(postId);
+      try {
+        const response = await likePostClickServices(postId);
+        if (response.statusCode === STATUS_CODES.success) {
+          toast.success(response.message);
+          updatePostLikeStatus(postId, true, 1);
+        }
+      } catch (error) {
+        const err = error as IApiError;
+        toast.error(err?.message);
+      }
       setLoadingPostId(null);
     },
-    [likedPosts, onLikeClick]
+    [posts]
+  );
+
+  const handleUnLikePost = useCallback(
+    async (postId: number) => {
+      setLoadingPostId(postId);
+      try {
+        const response = await unLikePostClickServices(postId);
+        if (response.statusCode === STATUS_CODES.success) {
+          toast.success(response.message);
+          updatePostLikeStatus(postId, false, -1);
+        }
+      } catch (error) {
+        const err = error as IApiError;
+        toast.error(err?.message);
+      }
+      setLoadingPostId(null);
+    },
+    [posts]
+  );
+
+  const handleLikeAllUserData = useCallback(
+    async (postId: number) => {
+      console.log("handleLikeAllUser click postId", postId);
+      setLoadingPostId(postId);
+      try {
+        const response = await allLikePostClickServices(postId);
+        if (response.statusCode === STATUS_CODES.success) {
+          toast.success(response.message);
+          console.log("handleLikeAllUser response:::", response);
+        }
+      } catch (error) {
+        const err = error as IApiError;
+        toast.error(err?.message);
+      }
+      setLoadingPostId(null);
+    },
+    [posts]
   );
 
   const handleCommentClick = useCallback(
     (postId: number) => {
       setSelectedPostId(postId);
       setCommentsModalOpen(true);
-      toast.info("comming soon!!");
+
       if (onCommentClick) {
         onCommentClick(postId);
       }
@@ -177,6 +207,7 @@ const Feed: React.FC<FeedProps> = ({
     <div className="feed">
       {/* Posts */}
       {animatedPosts.map((post, index) => {
+        const isLiked = post.is_liked;
         const isExpanded = expandedContent.has(post.post_id);
         const shouldShowMore = isContentLong(post.content);
         const displayedComments = post.comments?.slice(0, 3) || [];
@@ -226,32 +257,36 @@ const Feed: React.FC<FeedProps> = ({
             <footer className={"card-actions"}>
               {/* Like Button */}
               <button
-                className={`action-button ${
-                  likedPosts.has(post?.post_id) ? "liked" : ""
-                }`}
-                onClick={() => handleLike(post?.post_id)}
+                className={`action-button ${isLiked ? "liked" : ""}`}
                 disabled={loadingPostId === post?.post_id}
-                aria-label={
-                  likedPosts.has(post?.post_id) ? "Unlike post" : "Like post"
-                }
-                title={likedPosts.has(post?.post_id) ? "Unlike" : "Like"}
+                aria-label={isLiked ? "Unlike post" : "Like post"}
+                title={isLiked ? "Unlike" : "Like"}
               >
                 {loadingPostId === post?.post_id ? (
-                  <Loader size={20} className={"loading-spinner"} />
+                  <Loader size={20} className="loading-spinner" />
                 ) : (
                   <Heart
                     size={20}
-                    className={`${
-                      likedPosts.has(post?.post_id) ? "likeIcon" : ""
-                    }`}
-                    fill={
-                      likedPosts.has(post?.post_id) ? "currentColor" : "none"
-                    }
+                    className={`${isLiked ? "likeIcon" : ""}`}
+                    fill={isLiked ? "currentColor" : "none"}
+                    onClick={async (event) => {
+                      event.preventDefault();
+                      if (isLiked) {
+                        await handleUnLikePost(post?.post_id);
+                      } else {
+                        await handleLikePost(post?.post_id);
+                      }
+                    }}
                   />
                 )}
-                <span className={"action-text"}>
-                  {post?.like_count + (likedPosts.has(post?.post_id) ? 1 : 0)}{" "}
-                  Likes
+                <span
+                  className="action-text"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    handleLikeAllUserData(post?.post_id);
+                  }}
+                >
+                  {post?.like_count} Likes
                 </span>
               </button>
 

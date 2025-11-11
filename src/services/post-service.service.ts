@@ -125,25 +125,6 @@ export const deletePost = async (
   }
 };
 
-export const likePost = async (
-  postId: number
-): Promise<IApiResponse<IPostData>> => {
-  try {
-    const response = await trackPromise(
-      BaseService.post(`/posts/${postId}/like`)
-    );
-    const res = response.data;
-    return Promise.resolve(res);
-  } catch (error: any) {
-    return Promise.reject({
-      statusCode: error.response?.status || 500,
-      message: error.response?.data?.message || error.message,
-      error: error.response?.data?.error || error.response?.data || error,
-      data: null as any,
-    });
-  }
-};
-
 export const sharePost = async (
   postId: number
 ): Promise<IApiResponse<IPostData>> => {

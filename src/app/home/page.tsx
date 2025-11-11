@@ -80,6 +80,7 @@ export const suggestesdAllUsers = [
 const Home = () => {
   const { currentUser } = UseUserContext();
   const [allUsers, setAllUsers] = useState<UserAllListModel[]>([]);
+  const [allUsersTotalCount, setAllUsersTotalCount] = useState<number>();
   const [userOffset, setUserOffset] = useState(0);
   const [userLoading, setUserLoading] = useState(false);
   const [userHasMore, setUserHasMore] = useState(true);
@@ -106,6 +107,7 @@ const Home = () => {
       }
 
       setAllUsers((prev) => [...prev, ...newUsers]);
+      setAllUsersTotalCount(response.data?.count);
       setUserOffset((prevOffset) => prevOffset + 10);
     } catch (error) {
       const err = error as IApiError;
@@ -134,7 +136,8 @@ const Home = () => {
       setAllUsersPosts((prev) => [...prev, ...newPosts]);
       setPostOffset((prevOffset) => prevOffset + 10);
     } catch (error) {
-      console.error("Failed to load posts:", error);
+      const err = error as IApiError;
+      toast.error(err?.message);
     } finally {
       setPostLoading(false);
     }
@@ -156,6 +159,7 @@ const Home = () => {
               currentUser={currentUser}
               onLoadMoreUsers={loadMoreUsers}
               suggestedUsers={allUsers}
+              allUsersTotalCount={allUsersTotalCount ? allUsersTotalCount : 0}
               loading={userLoading}
             />
           </Box>
