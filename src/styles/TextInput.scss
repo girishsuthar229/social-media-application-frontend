@@ -349,13 +349,14 @@
     min-width: 0;
     padding: 4px 0;
     &:active {
-      opacity: 0.7;
+      .user-avatar, .user-username, .user-display-name{
+        opacity: 0.7;
+      }
     }
 
     .user-avatar {
       width: 40px;
       height: 40px;
-      box-shadow: $shadow-md;
       flex-shrink: 0;
       // background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
       border: 2px solid transparent;

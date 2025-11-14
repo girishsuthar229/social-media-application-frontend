@@ -138,20 +138,13 @@
   }
   
   /* ==========================================  CommentDrawer  =========================================== */  
-  .comment-section {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    position: relative;
-  }
-  
   .comments-list {
     flex: 1;
+    height: 100%;
     overflow-y: auto;
-    margin-bottom: 60px;
   }
   
-  .comment-item {
+  .comment-list-item {
     margin-bottom: 12px;
     p {
       margin: 4px 0 0 0;
@@ -169,7 +162,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    position: fixed;
+    position: sticky;
     bottom: 0;
     left: 0;
     width: 100%;
@@ -185,5 +178,22 @@
   
   .send-btn {
     color: #fff;
+  }
+  /* Add some padding and background color to the comment container */
+
+  
+  /* Style the delete icon */
+  .delete-icon {
+    color: #f44336; /* Red for delete icon */
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+  }
+  
+  
+  /* Optional: Style for "No comments yet" message */
+  .no-comments {
+    text-align: center;
+    font-size: 16px;
+    color: #aaa;
   }
   

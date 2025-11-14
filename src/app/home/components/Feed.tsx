@@ -20,6 +20,7 @@ import CommentDrawer from "@/components/common/SwipeableDrawerCommon/CommentDraw
 import { LikeUserListResponse } from "@/models/likesInterface";
 import { CommentUserListResponse } from "@/models/commentsInterface";
 import { allCommentPostClickServices } from "@/services/comments-service.service";
+import { Box } from "@mui/material";
 
 // Types
 interface User {
@@ -73,8 +74,12 @@ const Feed: React.FC<FeedProps> = ({
     new Set()
   );
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
+  const [selectedPostUserId, setSelectedPostUserId] = useState<number | null>(
+    null
+  );
   const [likeDrawerOpen, setLikeDrawerOpen] = useState(false);
   const [likedUsers, setLikedUsers] = useState<LikeUserListResponse[]>([]);
+  const [loaderComments, setLoaderComments] = useState<boolean>(false);
   const [commentsModalOpen, setCommentsModalOpen] = useState(false);
   const [commentsUsers, setCommentsUsers] = useState<CommentUserListResponse[]>(
     []
@@ -144,12 +149,10 @@ const Feed: React.FC<FeedProps> = ({
 
   const handleLikeAllUserData = useCallback(
     async (postId: number) => {
-      console.log("handleLikeAllUser click postId", postId);
       setSelectedPostId(postId);
       try {
         const response = await allLikePostClickServices(postId);
         if (response.statusCode === STATUS_CODES.success) {
-          console.log("handleLikeAllUser response:::", response);
           toast.success(response.message);
           setLikeDrawerOpen(true);
           setLikedUsers(response?.data || []);
@@ -165,10 +168,15 @@ const Feed: React.FC<FeedProps> = ({
   const handleCommentAllUserData = useCallback(
     async (postId: number) => {
       setSelectedPostId(postId);
+      posts.forEach((post) => {
+        if (post.post_id === postId) {
+          setSelectedPostUserId(post.user.id);
+        }
+      });
+
       try {
         const response = await allCommentPostClickServices(postId);
         if (response.statusCode === STATUS_CODES.success) {
-          console.log("handleCommentAllUser response:::", response);
           toast.success(response.message);
           setCommentsModalOpen(true);
           setCommentsUsers(response?.data || []);
@@ -177,9 +185,30 @@ const Feed: React.FC<FeedProps> = ({
         const err = error as IApiError;
         toast.error(err?.message);
       }
+      setLoaderComments(false);
     },
     [posts]
   );
+
+  const hanldePostComment = (newComment: CommentUserListResponse) => {
+    setCommentsUsers((prev) => [newComment, ...prev]);
+    posts.forEach((post) => {
+      if (post.post_id === selectedPostId) {
+        post.comment_count += 1;
+      }
+    });
+  };
+
+  const handleDeletePostComment = (deletedComment: CommentUserListResponse) => {
+    setCommentsUsers((prevComments) =>
+      prevComments.filter((comment) => comment.id !== deletedComment.id)
+    );
+    posts.forEach((post) => {
+      if (post.post_id === selectedPostId) {
+        post.comment_count -= 1;
+      }
+    });
+  };
 
   const handleShareClick = useCallback(
     (postId: number) => {
@@ -239,8 +268,8 @@ const Feed: React.FC<FeedProps> = ({
         const isExpanded = expandedContent.has(post.post_id);
         const shouldShowMore = isContentLong(post.content);
         const displayedComments = post.comments?.slice(0, 3) || [];
-        const remainingCommentsCount = (post.comments?.length || 0) - 3;
-
+        const remainingCommentsCount: number =
+          Number(post?.comment_count || 0) - Number(3);
         return (
           <article
             key={post.post_id}
@@ -390,12 +419,22 @@ const Feed: React.FC<FeedProps> = ({
 
                 {/* View More Comments Button */}
                 {remainingCommentsCount > 0 && (
-                  <button
-                    className="view-more-comments"
-                    onClick={() => handleCommentAllUserData(post.post_id)}
-                  >
-                    View all {post.comment_count} comments
-                  </button>
+                  <Box className="view-more-comments">
+                    <BackButton
+                      onClick={() => {
+                        !loaderComments &&
+                          (setLoaderComments(true),
+                          handleCommentAllUserData(post.post_id));
+                      }}
+                      labelText={
+                        loaderComments
+                          ? "Loading..."
+                          : ` View all ${post.comment_count} comments`
+                      }
+                      showIcon={false}
+                      underlineOnHover={true}
+                    />
+                  </Box>
                 )}
               </div>
             )}
@@ -458,9 +497,13 @@ const Feed: React.FC<FeedProps> = ({
         <CommentDrawer
           open={commentsModalOpen}
           selectedPostId={selectedPostId}
+          selectedPostUserId={selectedPostUserId}
           onClose={commentCloseDrawer}
           comments={commentsUsers}
-          onSendComment={(text) => console.log("New comment:", text)}
+          onSendComment={(newComment) => hanldePostComment(newComment)}
+          onPostDeleteComment={(deleteComment) =>
+            handleDeletePostComment(deleteComment)
+          }
         />
       )}
     </div>

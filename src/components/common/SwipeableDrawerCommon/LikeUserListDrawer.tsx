@@ -47,7 +47,7 @@ const LikeUserListDrawer: React.FC<LikeUserListDrawerProps> = ({
               <Typography className="no-likes">No likes yet.</Typography>
             ) : (
               users.map((user: LikeUserListResponse, index: number) => (
-                <Box key={user?.id || index}>
+                <Box key={index}>
                   <UserlistWithFollowBtn
                     user={{
                       id: user?.id,
