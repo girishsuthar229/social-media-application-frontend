@@ -1,69 +1,259 @@
 @import "../colors";
-/* ==========================================
-   PROFILE PAGE
-   =========================================== */
 
-   .profile-page {
-    display: flex;
-    align-items: start;
-    min-height: 100%;
-    justify-content: center;
-    padding: 10px;
-    position: relative;
-    overflow: hidden;
+/* ========================================== PROFILE PAGE =========================================== */
+.profile-page {
+  display: flex;
+  align-items: start;
+  justify-content: center;
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+  overflow-y: auto;
+  height: 100%;
+  min-height: calc(100vh - 80px) !important;
+  font-family: 'Arial', sans-serif;
+  max-width: 960px;
+  margin: 0 auto;
+ 
+  .profile-card {
+    overflow-y: auto !important;
+}
+}
+
+/* ==========================================PROFILE CARD=========================================== */
+.profile-card {
+  width: 100%;
+  max-width: 900px;
+  padding: 20px 10px;
+  border-radius: 24px;
+  position: relative;
+  z-index: 1;
+  animation: slideInUp 0.6s ease-out;
+  overflow: hidden; 
+  box-sizing: border-box;
+  max-height: calc(100vh - 80px);
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-card {
     overflow-y: auto;
   }
-  
-  /* ==========================================
-     PROFILE CARD
-     =========================================== */
-  
+}
+@media (max-width: 960px) {
   .profile-card {
-    width: 100%;
-    max-width: 900px;
-    padding: 20px 10px;
-    border-radius: 24px;
-    position: relative;
-    z-index: 1;
-    animation: slideInUp 0.6s ease-out;
-    overflow: hidden; 
-    box-sizing: border-box;
+    max-width: 100%;
+    border-radius: 20px;
+  }
+}
+@media (max-width: 600px) {
+  .profile-card {
+    padding: 24px 16px;
+    border-radius: 16px;
     max-height: calc(100vh - 80px);
   }
-  
-  @keyframes slideInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
+}
+
+/* ==========================================USER PROFILE START=========================================== */
+/* Profile Info Section */
+ .profile-info-section {
+    width: 100%; 
+    /* Avatar */
+    .profile-top {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 15px;
+     
+     .profile-avatar-container {
+        .profile-avatar-large {
+          width: 120px;
+          height: 120px;
+          object-fit: cover;
+          border-radius: 50%;
+          @media (max-width:400px) {
+              width: 80px;
+              height: 80px;
+          }
+        }
+      }
+     .profile-bio-section {
+       .profile-header-username {
+          font-size: 15px;
+          font-weight: bold;
+          text-transform: capitalize;
+          @media (max-width:400px) {
+              font-size: 11px;
+          }
+       }
+       .profile-full-name {
+          font-size: 22px;
+          font-weight: 600;
+          color: #333;
+          margin-block: 0px;
+          @media (max-width:400px) {
+              font-size: 16px;
+          }
+        }
+       .profile-bio {
+          font-size: 14px;
+          color: #555;
+          line-height: 1.5;
+          @media (max-width:400px) {
+              font-size: 10px;
+          }
+        }
+      }
     }
-    to {
-      opacity: 1;
-      transform: translateY(0);
+    /*Status */
+    .profile-status {
+      display: flex;
+      
+      .stat-item {
+        text-align: center;
+        font-size: 18px;
+        padding-inline: 10px;
+        .stat-number {
+          padding-inline-end: 3px;
+          color: $text-color;
+        }
+        .stat-label {
+          color: $text-gray;
+        }
+      }
+      @media (max-width:400px) {
+       flex-wrap: wrap;
+      }
     }
-  }
-  
-  @media (max-width: 768px) {
-    .profile-card {
-      overflow-y: auto;
+    /* Action Buttons */
+    .profile-actions {
+      display: flex;
+      gap: 10px;
+      height: 50px;
+      margin-top: 10px;
+      button {
+        padding: 0px;
+        border: 1px solid #ddd;
+        @media (max-width:400px) {
+            font-size: 10.5px;
+        }
+      }
     }
-  }
-  @media (max-width: 960px) {
-    .profile-card {
-      max-width: 100%;
-      border-radius: 20px;
+}
+
+.horitzonal-line{
+  width: 100%;
+  margin-block: 10px;
+  color: $primary-color !important;
+}
+
+/* Tabs Section */
+.profile-tabs {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+
+    .tab-button {
+      padding: 0px;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      width: 48%;
+      &.active {
+        background-color:$primary-light;
+        button{
+          color: white !important;
+          &:hover{
+            background-color:$primary-light !important;
+          }
+        }
+      }
     }
-  }
-  @media (max-width: 600px) {
-    .profile-card {
-      padding: 24px 16px;
-      border-radius: 16px;
-      max-height: calc(100vh - 80px);
+
+}
+
+/* Posts Grid */
+.posts-grid-container {
+  width: 100%;
+  .posts-grid {
+    .post-thumbnail {
+      position: relative;
+      cursor: pointer;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background-color: #f9f9f9;
+      height: auto;
+      max-height:250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+      .skeleton-image {
+        width: 100%;
+        height: 250px;
+      }
     }
   }
 
-/* ==========================================
-   PROFILE HEADER
-   =========================================== */
+  @media (max-width: 480px) {
+    .posts-grid {
+      .post-thumbnail {
+        max-height: 140px;
+      }
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    margin-top: 50px;
+    color: $lightText;
+
+    .empty-icon {
+      font-size: 48px;
+      color: $text-light;
+    }
+    .empty-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: $text-color;
+      margin-top: 20px;
+    }
+    .empty-text {
+      font-size: 14px;
+      margin-top: 10px;
+    }
+  }
+}
+
+/* ==========================================USER PROFILE END=========================================== */
+
+/* ==========================================USER EDIT PROFILE START=========================================== */
+
+/* ========================================== PROFILE HEADER =========================================== */
 
 .profile-header {
   display: flex;
@@ -75,71 +265,11 @@
 
 @media (max-width: 600px) {
   .profile-header {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 }
 
-.profile-title {
-  font-weight: 800;
-  color: $text-dark;
-  font-size: 32px;
-  margin: 0;
-  background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-@media (max-width: 960px) {
-  .profile-title {
-    font-size: 28px;
-  }
-}
-
-@media (max-width: 600px) {
-  .profile-title {
-    font-size: 24px;
-  }
-}
-
-@media (max-width: 480px) {
-  .profile-title {
-    font-size: 20px;
-  }
-}
-
-.edit-button {
-  background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
-  color: $white;
-  border: none;
-  border-radius: 12px;
-  padding: 12px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(243, 101, 39, 0.3);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-}
-
-.edit-button:hover {
-  box-shadow: 0 6px 20px rgba(243, 101, 39, 0.4);
-  transform: translateY(-2px) scale(1.05);
-}
-
-.edit-button:active {
-  transform: translateY(0) scale(0.95);
-}
-
-.edit-button svg {
-  font-size: 24px;
-}
-
-/* ==========================================
-   AVATAR SECTION
-   =========================================== */
+/* ========================================== AVATAR SECTION =========================================== */
 
 .avatar-section {
   display: flex;
@@ -154,7 +284,7 @@
   display: inline-block;
 }
 
-.avatar {
+.edit-profile-avatar {
   width: 120px !important;
   height: 120px !important;
   border-radius: 50%;
@@ -164,21 +294,10 @@
   transition: transform 0.3s ease;
 }
 
-.avatar:hover {
-  transform: scale(1.05);
-}
-
-@media (max-width: 600px) {
-  .avatar {
-    width: 120px;
-    height: 120px;
-  }
-}
-
 @media (max-width: 480px) {
-  .avatar {
-    width: 100px;
-    height: 100px;
+  .edit-profile-avatar {
+    width: 100px !important;
+    height: 100px !important;
   }
 }
 
@@ -220,9 +339,7 @@
   text-align: center;
 }
 
-/* ==========================================
-   PROFILE FORM
-   =========================================== */
+/* ========================================== PROFILE FORM =========================================== */
 
 .profile-form {
   display: flex;
@@ -260,81 +377,8 @@
   grid-column: 1 / -1;
 }
 
-/* ==========================================
-   TEXT FIELD STYLING
-   =========================================== */
-
-.text-field-input {
-  width: 100%;
-}
-
-.text-field-input input,
-.text-field-input textarea {
-  width: 100%;
-  padding: 14px 16px;
-  font-size: 15px;
-  font-weight: 500;
-  border: 2px solid $border-color;
-  border-radius: 12px;
-  background-color: $white;
-  color: $text-dark;
-  transition: all 0.3s ease;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-}
-
-.text-field-input input:hover,
-.text-field-input textarea:hover {
-  background-color: $bg-light;
-  border-color: $primary-color;
-}
-
-.text-field-input input:focus,
-.text-field-input textarea:focus {
-  outline: none;
-  background-color: $white;
-  border-color: $primary-color;
-  border-width: 2px;
-  box-shadow: 0 0 0 4px rgba(243, 101, 39, 0.1);
-}
-
-.text-field-input input:disabled,
-.text-field-input textarea:disabled {
-  background-color: $bg-light;
-  border-color: $border-color;
-  color: $text-dark;
-  cursor: not-allowed;
-  opacity: 0.8;
-}
-
-.text-field-input textarea {
-  resize: vertical;
-  min-height: 80px;
-  font-family: inherit;
-}
-
-.text-field-input label {
-  display: block;
-  margin-bottom: 8px;
-  color: $text-gray;
-  font-weight: 500;
-  font-size: 14px;
-}
-
-.text-field-input input:focus + label,
-.text-field-input textarea:focus + label {
-  color: $primary-color;
-}
-
-.text-field-input .error-message {
-  color: #d32f2f;
-  font-size: 12px;
-  margin-top: 4px;
-}
-
-/* ==========================================
-   SWITCH STYLING
-   =========================================== */
-   .switch-label span {
+/* ========================================== SWITCH STYLING =========================================== */
+  .switch-label span {
     font-weight: 600;
     color: $text-dark;
     font-size: 15px;
@@ -360,12 +404,7 @@
    cursor: pointer;
  }
 
-
-
-/* ==========================================
-   BUTTON GROUP
-   =========================================== */
-
+/* ========================================== BUTTON GROUP =========================================== */
 .button-group {
   display: flex;
   gap: 16px;
@@ -380,44 +419,4 @@
   }
 }
 
-/* ==========================================
-   RESPONSIVE ADJUSTMENTS
-   =========================================== */
-
-@media (max-width: 600px) {
-
-  .form-grid {
-    gap: 16px;
-  }
-  .profile-header {
-    margin-bottom: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .profile-title {
-    font-size: 18px;
-  }
-
-  .edit-button {
-    width: 40px;
-    height: 40px;
-    padding: 8px;
-  }
-
-  .edit-button svg {
-    font-size: 20px;
-  }
-
-  .text-field-input input,
-  .text-field-input textarea {
-    padding: 12px 14px;
-    font-size: 14px;
-  }
-
-  .cancel-button,
-  .save-button {
-    padding: 12px 20px;
-    font-size: 15px;
-  }
-}
+/* ==========================================USER EDIT PROFILE END=========================================== */

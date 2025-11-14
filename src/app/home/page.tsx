@@ -81,10 +81,12 @@ const Home = () => {
   const { currentUser } = UseUserContext();
   const [allUsers, setAllUsers] = useState<UserAllListModel[]>([]);
   const [allUsersTotalCount, setAllUsersTotalCount] = useState<number>();
-  const [userOffset, setUserOffset] = useState(0);
+  const [userOffset, setUserOffset] = useState<number>(0);
   const [userLoading, setUserLoading] = useState(false);
   const [userHasMore, setUserHasMore] = useState(true);
   const [allUsersPosts, setAllUsersPosts] = useState<AllPostListModel[]>([]);
+  const [allUsersPostTotalCount, setAllUsersPostTotalCount] =
+    useState<number>();
   const [postOffset, setPostOffset] = useState(0);
   const [postLoading, setPostLoading] = useState(false);
   const [postHasMore, setPostHasMore] = useState(true);
@@ -134,6 +136,7 @@ const Home = () => {
         setPostHasMore(false);
       }
       setAllUsersPosts((prev) => [...prev, ...newPosts]);
+      setAllUsersPostTotalCount(response.data?.count);
       setPostOffset((prevOffset) => prevOffset + 10);
     } catch (error) {
       const err = error as IApiError;
@@ -170,6 +173,15 @@ const Home = () => {
               currentUser={currentUser}
               suggestedUsers={allUsers}
               posts={allUsersPosts}
+              onLoadMore={loadMorePosts}
+              isLoading={postLoading}
+              hasMore={
+                allUsersPostTotalCount
+                  ? allUsersPostTotalCount > postOffset
+                    ? true
+                    : false
+                  : false
+              }
             />
           </Box>
         </Box>

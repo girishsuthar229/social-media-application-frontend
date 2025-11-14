@@ -2,6 +2,7 @@ import { IApiResponse } from "@/models/common.interface";
 import { IPostData } from "@/models/postInterface";
 import { trackPromise } from "react-promise-tracker";
 import BaseService from "./base-service.service";
+import { LikeUserListResponse } from "@/models/likesInterface";
 
 export const likePostClickServices = async (
   postId: number
@@ -43,7 +44,7 @@ export const unLikePostClickServices = async (
 
 export const allLikePostClickServices = async (
   postId: number
-): Promise<IApiResponse<IPostData>> => {
+): Promise<IApiResponse<LikeUserListResponse[]>> => {
   try {
     const response = await trackPromise(
       BaseService.get(`/likes/${postId}/all-users-list`)

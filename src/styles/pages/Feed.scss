@@ -6,7 +6,7 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
-    padding-bottom: 2rem;
+    padding-bottom: 1rem;
   }
   
   @media (max-width: 900px) {
@@ -21,14 +21,16 @@
     padding: 0;
     margin: 0;
     max-width: 100% ;
-    height: calc(100vh - 60px);
+    // height: calc(100vh - 60px);
     padding-inline: 15px ;
     gap: 24px;
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;
   }
-  
+  .skeleton-feed-grid{
+    padding-inline:0 ;
+  }
   /* ========================================== POST CARD =========================================== */
   
   .post-card {
@@ -45,13 +47,34 @@
 /* ===================================== Card Header Styling ===================================== */
 
 .card-header {
-  padding: 16px 20px !important;
+  padding: 12px 18px !important;
   border-bottom: 1px solid $border-color;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 5px;
   position: relative; /* Important for dropdown positioning */
   transition: all 0.3s ease;
+  @media (min-width: 601px) {
+    .user-avatar{
+      width: 48px !important;
+      height: 48px !important;
+    }
+  }
+  @media (max-width: 600px) {
+    .user-info-section{
+      gap: 5px;
+      .user-details {
+        gap: 2px;
+        .user-display-name {
+          font-size: 12px;
+        }
+        .user-username {
+          font-size: 13px;
+        }
+      }
+    }
+    
+  }
 }
 
 .card-header:hover {
@@ -61,50 +84,43 @@
 .more-options {
   margin-left: auto;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+
+  svg {
+    color: $lightText;
+    transition: color 0.3s ease;
+    &:hover {
+      color: $primary-hover; 
+    }
+  }
 }
 
 .more-options-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  display: flex;
-  flex-direction: column;
-  width: 130px;
-  padding: 0;
-  background-color: $white;
-  border-radius: 12px !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
-  border: 1px solid $border-color !important;
-  margin-top: -18px !important;
-  overflow: hidden !important;
+  .MuiPaper-root {
+    width: 150px;
+    border-radius: 12px;
+    box-shadow: $shadow-sm;
+    border: 1px solid $border-color;
+    padding: 0;
+    overflow: hidden;
+  }
 }
 
 /* Menu Item Styles */
 .post-menu-item {
-  padding: 10px 15px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  font-size: 14px;
-  color: $text-color; 
-  font-weight: 500;
-  border: none;
-  outline: none;
-  background-color: transparent;
+  gap: 10px ;
   svg {
    transition: all 0.3s ease !important;
   }
   &:hover {
     background-color: rgba($primary-color, 0.08) !important;
-    color: $primary-color !important;
+    color: $primary-color ;
     svg {
       transform: scale(1.1) rotate(5deg);
-      color: $primary-color !important;
+      color: $primary-color;
     }
   } 
-
   &:active {
     background-color: rgba($primary-color, 0.15) !important;
   }
@@ -113,69 +129,24 @@
 
 @media (max-width: 600px) {
   .card-header {
-    padding: 12px 16px !important;
+    padding: 08px 12px !important;
     gap: 10px;
-  }
-  .more-options-menu {
-    width: 120px; 
   }
   .post-menu-item {
     font-size: 13px; 
   }
 }
+.time-stamp{
+  font-size: 13px !important;
+  color: $text-gray;
+}
 
-  
-  /* ========================================== USER AVATAR IN CARD HEADER =========================================== */
-  
-  .header-avatar {
-    width: 48px !important;
-    height: 48px !important;
-   
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    object-fit: cover;
-    transition: transform 0.3s ease;
-    cursor: pointer;
-  }
-  
-  .card-header:hover .header-avatar {
-    transform: scale(1.08);
-  }
-  
-  @media (max-width: 600px) {
-    .header-avatar {
-      width: 40px !important;
-      height: 40px !important;
-    }
-  }
-  
-  /* =========================================  USER NAME IN CARD =========================================== */
-  
-  .user-name {
-    font-weight: 600 !important;
-    color: $text-dark !important;
-    font-size: 15px !important;
-    margin: 0 !important;
-    line-height: 1.4;
-    cursor: pointer;
-    transition: color 0.3s ease;
-  }
-  
-  .user-name:hover {
-    color: $primary-color;
-  }
-  
-  @media (max-width: 600px) {
-    .user-name {
-      font-size: 14px !important;
-    }
-  }
-  
-  /* ================================= P =========================================== */
+/* ================================= P =========================================== */
   
   .post-image {
     width: 100%;
     height: auto;
-    max-height: 600px;
+    max-height: 500px;
     object-fit: cover;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: block;
@@ -184,7 +155,7 @@
   
   @media (max-width: 600px) {
     .post-image {
-      max-height: 400px;
+      max-height: 300px;
       transition: none;
     }
 
@@ -261,7 +232,7 @@
   }
   
   .action-button:hover {
-    background-color: rgba(243, 101, 39, 0.08);
+    background-color:rgba($primary-color, 0.08);
     color: $primary-color;
     transform: translateY(-2px);
   }
@@ -411,6 +382,11 @@
     margin: 0;
   }
   
+  /* ========================================== LOADING MORE WRAPPER =========================================== */
+  .load-more-wrapper{
+    display: flex;
+    justify-content: center;
+  }
   /* ========================================== LOADING STATE =========================================== */
   
   .post-skeleton {
@@ -418,6 +394,7 @@
     border-radius: 16px;
     border: 1px solid $border-color;
     padding: 16px;
+    margin-block-end: 10px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -454,7 +431,7 @@
   
   .skeleton-image {
     width: 100%;
-    height: 300px;
+    height: 270px;
     background: rgba(243, 101, 39, 0.1);
     border-radius: 8px;
     animation: pulse 2s ease-in-out infinite;

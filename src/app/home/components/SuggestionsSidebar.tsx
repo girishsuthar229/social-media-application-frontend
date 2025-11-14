@@ -27,6 +27,7 @@ import BackButton from "@/components/common/BackButton";
 import { IUserResponseData, UserAllListModel } from "@/models/userInterface";
 import { commonFilePath } from "@/util/constanst";
 import { getAllUsers } from "@/services/user-service.service";
+import UserlistWithFollowBtn from "@/components/common/UserlistWithFollow/UserlistWithFollowBtn";
 
 interface User {
   id: number;
@@ -62,7 +63,17 @@ const SuggestionsSidebar = ({
               sx={{ width: 75, height: 75 }}
             />
           }
-          title={<Typography variant="h6">{currentUser?.user_name}</Typography>}
+          title={
+            <>
+              <Typography variant="h6">{currentUser?.user_name}</Typography>
+              <Typography variant="subtitle1">
+                {[currentUser?.first_name, currentUser?.last_name]
+                  .filter(Boolean)
+                  .join(" ")
+                  .trim()}
+              </Typography>
+            </>
+          }
         />
         <CardContent>
           <Typography variant="body2" color="text.secondary">
@@ -86,28 +97,22 @@ const SuggestionsSidebar = ({
         </Typography>
         <List className="scrollbar">
           {suggestedUsers.map((user: UserAllListModel, index: number) => (
-            <ListItem key={index} className="list-item">
-              <div className="avataar-container">
-                <Avatar src={`${commonFilePath}${user?.photo_url}`} />
-                <div className="user-info">
-                  <Typography variant="body1" component="div">
-                    {user.user_name}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {user.bio}
-                  </Typography>
-                </div>
-              </div>
-              <div className="follow-button-container">
-                <Button
-                  variant="outlined"
-                  size="small"
-                  className="follow-button"
-                >
-                  Follow
-                </Button>
-              </div>
-            </ListItem>
+            <Box key={index}>
+              <UserlistWithFollowBtn
+                user={{
+                  id: user?.id,
+                  user_name: user?.user_name,
+                  first_name: user?.first_name,
+                  last_name: user?.last_name,
+                  photo_url: user?.photo_url,
+                  bio: user?.bio || null,
+                  is_following: false,
+                }}
+                showBio={true}
+                showFullName={true}
+                showFollowButton={true}
+              />
+            </Box>
           ))}
           {Number(suggestedUsers.length) < Number(allUsersTotalCount) && (
             <div className="load-more-div">

@@ -130,10 +130,9 @@ const ProfileEditMode = () => {
     }
   };
   return (
-    <Box className="profile-page">
+    <Box className="profile-page scrollbar">
       <Box className="profile-card scrollbar">
         <div className="decorCircleTop" />
-        <div className="decorCircleBottom" />
         {/* Header */}
         <Box className="profile-header">
           <BackButton labelText="Back" onClick={() => router.back()} />
@@ -161,7 +160,7 @@ const ProfileEditMode = () => {
                   <Avatar
                     src={imagePreview}
                     alt={values.user_name}
-                    className="avatar"
+                    className="edit-profile-avatar"
                   />
 
                   <label htmlFor="user_image" className="avatar-overlay">

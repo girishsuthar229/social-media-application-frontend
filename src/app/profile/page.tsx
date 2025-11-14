@@ -75,7 +75,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <Box className="user-profile-page scrollbar">
+    <Box className="profile-page scrollbar">
       <Box className="profile-card scrollbar">
         {/* Profile Info Section */}
         <Box className="profile-info-section">

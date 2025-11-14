@@ -18,9 +18,8 @@
      background: linear-gradient(135deg, white 0%, $bg-light 100%);
      overflow-y: auto;
      position: relative;
-     padding: 12px 0;
      .sidebar-grid{
-      padding: 20px 0px 20px 10px;
+      padding: 0px 0px 0px 10px;
      }
      
    }
@@ -38,15 +37,16 @@
    .homepage-container-box {
      display: grid;
      grid-template-columns: 320px 1fr;
-     gap: 40px;
-     height: calc(100vh - 105px); // Adjust based on your header height
+     gap: 20px;
+     padding: 12px 0;
+     height: calc(100vh - 67px) !important; 
      position: relative;
    
    }
    
    /* ==========================================  SIDEBAR GRID (LEFT SIDE - FIXED)  =========================================== */
    .sidebar-grid {
-    height: calc(100vh - 105px); 
+    height: calc(100vh - 91px); 
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -62,37 +62,55 @@
   }
 
   .suggested-user-div {
-    margin-top: 25px;
+    margin-top: 15px;
     ul {
       overflow: auto;
-      height: 510px !important;
+      height: calc(100vh - 389px);
       display: flex;
       flex-direction: column;
       margin: 0;
       padding: 0;
     }
-    .list-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      padding: 2px 5px;
-      border-bottom: 1px solid #eee;
+    .user-list-item {
+      padding: 5px 6px;
+      border-bottom: 1px solid $border-color;
     }
-    .avataar-container {
-      display: flex;
-      align-items: center;
-    }
-    .user-info {
-      margin-left: 10px;
-      flex-grow: 1;
+    // Mobile Responsive (Small Phones)
+    @media (max-width: 600px) {
+      .user-list-item {
+        padding: 10px 12px;
+        .user-info-section {
+          gap: 10px;
+          .user-details {
+            gap: 2px;
+            .user-display-name {
+              font-size: 12px;
+            }
+            .user-username {
+              font-size: 13px;
+            }
+            .user-bio {
+              -webkit-line-clamp: 1;
+            }
+          }
+        }
+        .follow-button-container {
+          margin-left: 5px;
+          .follow-button {
+            min-width: 80px;
+            height: 30px;
+            font-size: 12px;
+            padding: 0 12px;
+          }
+        }
+      }
     }
   }
   
   .load-more-div {
     display: flex;
     justify-content: flex-end;
-    padding-inline-end: 5px;
+    padding: 5px 6px;
   }
    /* ==========================================  SIDEBAR INTERNAL STRUCTURE  =========================================== */
    // Profile Card (Top Section - Fixed Height)
@@ -161,13 +179,11 @@
      }
    
      .main-content {
-       padding: 10px 0;
        overflow-y: visible;
      }
    
      .homepage-container-box {
-       display: block;
-       height: auto;
+      grid-template-columns: 100% 1fr;
      }
    
      .sidebar-grid {
@@ -182,7 +198,7 @@
    }
    
    // Mobile (600px and below)
-   @media (max-width: 400px) {
+   @media (max-width: 600px) {
      .main-content {
        padding: 0;
      }
@@ -190,7 +206,7 @@
       padding: 0 !important;
      }
      .feed-grid {
-       padding: 5px !important;
+       padding: 2px !important;
      }
    }
    
@@ -241,9 +257,7 @@
      animation: slideInRight 0.6s ease-out;
    }
    
-   /* ==========================================
-      LOADING STATE
-      =========================================== */
+   /* ==========================================  LOADING STATE  =========================================== */
    
    .loading-container {
      display: flex;

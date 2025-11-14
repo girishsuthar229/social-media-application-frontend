@@ -6,14 +6,20 @@ import { IUserResponseData, UserAllListModel } from "@/models/userInterface";
 import { AllPostListModel } from "@/models/postInterface";
 import { commonFilePath, STATUS_CODES } from "@/util/constanst";
 import { getRelativeTime } from "@/util/helper";
-import { Avatar } from "@mui/material";
 import { toast } from "react-toastify";
 import { IApiError } from "@/models/common.interface";
 import {
   allLikePostClickServices,
   likePostClickServices,
   unLikePostClickServices,
-} from "@/services/likes-unlike-serivce.service";
+} from "@/services/likes-unlike-service.service";
+import BackButton from "@/components/common/BackButton";
+import UserlistWithFollowBtn from "@/components/common/UserlistWithFollow/UserlistWithFollowBtn";
+import LikeUserListDrawer from "@/components/common/SwipeableDrawerCommon/LikeUserListDrawer";
+import CommentDrawer from "@/components/common/SwipeableDrawerCommon/CommentDrawer";
+import { LikeUserListResponse } from "@/models/likesInterface";
+import { CommentUserListResponse } from "@/models/commentsInterface";
+import { allCommentPostClickServices } from "@/services/comments-service.service";
 
 // Types
 interface User {
@@ -57,18 +63,31 @@ const Feed: React.FC<FeedProps> = ({
   onLikeClick,
   onCommentClick,
   onShareClick,
-  isLoading = false,
-  hasMore = false,
+  isLoading,
+  hasMore,
   onLoadMore,
 }) => {
-  const [likedPosts, setLikedPosts] = useState();
   const [loadingPostId, setLoadingPostId] = useState<number | null>(null);
   const [openMenuPostId, setOpenMenuPostId] = useState<number | null>(null);
   const [expandedContent, setExpandedContent] = useState<Set<number>>(
     new Set()
   );
-  const [commentsModalOpen, setCommentsModalOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
+  const [likeDrawerOpen, setLikeDrawerOpen] = useState(false);
+  const [likedUsers, setLikedUsers] = useState<LikeUserListResponse[]>([]);
+  const [commentsModalOpen, setCommentsModalOpen] = useState(false);
+  const [commentsUsers, setCommentsUsers] = useState<CommentUserListResponse[]>(
+    []
+  );
+
+  const likeCloseDrawer = () => {
+    setSelectedPostId(null);
+    setLikeDrawerOpen(false);
+  };
+  const commentCloseDrawer = () => {
+    setSelectedPostId(null);
+    setCommentsModalOpen(false);
+  };
 
   const toggleMenu = (postId: number) => {
     setOpenMenuPostId((prev) => (prev === postId ? null : postId));
@@ -126,32 +145,40 @@ const Feed: React.FC<FeedProps> = ({
   const handleLikeAllUserData = useCallback(
     async (postId: number) => {
       console.log("handleLikeAllUser click postId", postId);
-      setLoadingPostId(postId);
+      setSelectedPostId(postId);
       try {
         const response = await allLikePostClickServices(postId);
         if (response.statusCode === STATUS_CODES.success) {
-          toast.success(response.message);
           console.log("handleLikeAllUser response:::", response);
+          toast.success(response.message);
+          setLikeDrawerOpen(true);
+          setLikedUsers(response?.data || []);
         }
       } catch (error) {
         const err = error as IApiError;
         toast.error(err?.message);
       }
-      setLoadingPostId(null);
     },
     [posts]
   );
 
-  const handleCommentClick = useCallback(
-    (postId: number) => {
+  const handleCommentAllUserData = useCallback(
+    async (postId: number) => {
       setSelectedPostId(postId);
-      setCommentsModalOpen(true);
-
-      if (onCommentClick) {
-        onCommentClick(postId);
+      try {
+        const response = await allCommentPostClickServices(postId);
+        if (response.statusCode === STATUS_CODES.success) {
+          console.log("handleCommentAllUser response:::", response);
+          toast.success(response.message);
+          setCommentsModalOpen(true);
+          setCommentsUsers(response?.data || []);
+        }
+      } catch (error) {
+        const err = error as IApiError;
+        toast.error(err?.message);
       }
     },
-    [onCommentClick]
+    [posts]
   );
 
   const handleShareClick = useCallback(
@@ -203,6 +230,7 @@ const Feed: React.FC<FeedProps> = ({
   const isContentLong = (content: string) => {
     return content.length > 100;
   };
+
   return (
     <div className="feed">
       {/* Posts */}
@@ -221,14 +249,19 @@ const Feed: React.FC<FeedProps> = ({
           >
             {/* Card Header */}
             <header className="card-header">
-              <Avatar
-                src={`${commonFilePath}${post.user.profile_pic_url}`}
-                className="header-avatar"
-                onClick={() => onPostClick?.(post.post_id)}
+              <UserlistWithFollowBtn
+                user={{
+                  id: post?.user?.id,
+                  user_name: post?.user?.user_name,
+                  photo_url: post?.user?.profile_pic_url,
+                }}
+                showBio={false}
+                showFullName={false}
+                showFollowButton={false}
               />
-              <h3 className="user-name">{post.user.user_name}</h3>
+
               {post.created_date && (
-                <span className="timestamp">
+                <span className="time-stamp">
                   {getRelativeTime(post.created_date)}
                 </span>
               )}
@@ -293,7 +326,7 @@ const Feed: React.FC<FeedProps> = ({
               {/* Comment Button */}
               <button
                 className={"action-button"}
-                onClick={() => handleCommentClick(post?.post_id)}
+                onClick={() => handleCommentAllUserData(post?.post_id)}
                 aria-label="Comment on post"
                 title="Comment"
               >
@@ -316,6 +349,7 @@ const Feed: React.FC<FeedProps> = ({
             </footer>
 
             {/* Card Content */}
+
             <div className="card-content">
               <p className={`caption ${isExpanded ? "expanded" : "collapsed"}`}>
                 <span className="caption-username">{post.user.user_name}</span>{" "}
@@ -358,7 +392,7 @@ const Feed: React.FC<FeedProps> = ({
                 {remainingCommentsCount > 0 && (
                   <button
                     className="view-more-comments"
-                    onClick={() => handleCommentClick(post.post_id)}
+                    onClick={() => handleCommentAllUserData(post.post_id)}
                   >
                     View all {post.comment_count} comments
                   </button>
@@ -369,10 +403,22 @@ const Feed: React.FC<FeedProps> = ({
         );
       })}
 
+      {/* Load More Button */}
+      {hasMore && !isLoading && (
+        <div className="load-more-wrapper">
+          <BackButton
+            onClick={handleLoadMore}
+            labelText={"More Posts"}
+            showIcon={false}
+            underlineOnHover={true}
+          />
+        </div>
+      )}
+
       {/* Loading Skeleton */}
       {isLoading && (
-        <div className="feed-grid scrollbar">
-          {[1, 2, 3].map((i) => (
+        <div className="feed-grid scrollbar skeleton-feed-grid">
+          {[1, 2].map((i) => (
             <div key={`skeleton-${i}`} className="post-skeleton">
               <div className="skeleton-header">
                 <div className="skeleton-avatar" />
@@ -391,36 +437,31 @@ const Feed: React.FC<FeedProps> = ({
         </div>
       )}
 
-      {/* Load More Button */}
-      {hasMore && !isLoading && (
-        <div className="load-more-wrapper">
-          <button
-            className="load-more-button"
-            onClick={handleLoadMore}
-            aria-label="Load more posts"
-          >
-            Load More Posts
-          </button>
-        </div>
-      )}
-
       {/* End of Feed */}
-      {!hasMore && animatedPosts.length > 0 && (
+      {!hasMore && !isLoading && animatedPosts.length > 0 && (
         <div className="end-of-feed">
           <p className="end-of-feed-text">No more posts to load</p>
         </div>
       )}
 
-      {/* Comments Modal */}
+      {/* Like Drawer */}
+      {likeDrawerOpen && selectedPostId && (
+        <LikeUserListDrawer
+          selectedPostId={selectedPostId}
+          open={likeDrawerOpen}
+          onClose={likeCloseDrawer}
+          users={likedUsers}
+        />
+      )}
+      {/* Comments Drawer */}
       {commentsModalOpen && selectedPostId && (
-        // <CommentsModal
-        //   postId={selectedPostId}
-        //   isOpen={commentsModalOpen}
-        //   onClose={() => setCommentsModalOpen(false)}
-        //   post={animatedPosts.find((p) => p.post_id === selectedPostId)}
-        //   commonFilePath={commonFilePath}
-        // />
-        <></>
+        <CommentDrawer
+          open={commentsModalOpen}
+          selectedPostId={selectedPostId}
+          onClose={commentCloseDrawer}
+          comments={commentsUsers}
+          onSendComment={(text) => console.log("New comment:", text)}
+        />
       )}
     </div>
   );
