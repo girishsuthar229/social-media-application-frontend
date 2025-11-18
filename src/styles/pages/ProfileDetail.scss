@@ -81,9 +81,11 @@
           height: 120px;
           object-fit: cover;
           border-radius: 50%;
+          font-size: xx-large;
           @media (max-width:400px) {
-              width: 80px;
-              height: 80px;
+            font-size: medium;
+            width: 80px;
+            height: 80px;
           }
         }
       }

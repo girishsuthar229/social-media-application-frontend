@@ -5,6 +5,9 @@ import BorderColorOutlined from "@mui/icons-material/BorderColorOutlined";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import { toast } from "react-toastify";
 import { Menu, MenuItem } from "@mui/material";
+import { deletePost } from "@/services/post-service.service";
+import { IApiError } from "@/models/common.interface";
+import { STATUS_CODES } from "@/util/constanst";
 
 interface PostActionMenuProps {
   postObj: {
@@ -14,6 +17,7 @@ interface PostActionMenuProps {
   loggedUserId: number | null;
   isMenuOpen: boolean;
   onToggleMenu: (postId: number) => void;
+  onPostDelete: (postId: number) => void;
 }
 
 const PostActionMenu: React.FC<PostActionMenuProps> = ({
@@ -21,6 +25,7 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
   loggedUserId,
   isMenuOpen,
   onToggleMenu,
+  onPostDelete,
 }) => {
   const isPostByCurrentUser = postObj.userId === loggedUserId;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -34,9 +39,16 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
     toast.info("coming soon!");
   };
 
-  const handleDeletePostClick = (postId: number) => {
-    console.log("Delete post", postId);
-    toast.info("coming soon!");
+  const handleDeletePostClick = async (postId: number) => {
+    try {
+      const response = await deletePost(postId);
+      if (response?.statusCode === STATUS_CODES.success) {
+        onPostDelete(postId);
+      }
+    } catch (err) {
+      const error = err as IApiError;
+      toast.error(error?.message);
+    }
   };
 
   const handleSavePostClick = (postId: number) => {

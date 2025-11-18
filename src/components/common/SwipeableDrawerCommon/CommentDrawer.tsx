@@ -23,15 +23,16 @@ import { toast } from "react-toastify";
 import UserlistWithFollowBtn from "../UserlistWithFollow/UserlistWithFollowBtn";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { UseUserContext } from "@/components/protected-route/protectedRoute";
+import { getRelativeTime } from "@/util/helper";
 
 interface CommentDrawerProps {
   selectedPostId: number;
-  selectedPostUserId: number;
+  selectedPostUserId: number | null;
   open: boolean;
   onClose: () => void;
   comments: CommentUserListResponse[];
   onSendComment: (newComment: CommentUserListResponse) => void;
-  onPostDeleteComment: (deleteComment: CommentUserListResponse) => void;
+  onPostDeleteComment: (commentId: number, select_post_id: number) => void;
 }
 
 const CommentDrawer: React.FC<CommentDrawerProps> = ({
@@ -64,13 +65,13 @@ const CommentDrawer: React.FC<CommentDrawerProps> = ({
   };
 
   const handleOnDeleteComment = async (commentId: number) => {
-    if (selectedPostId) {
+    if (!selectedPostId) {
       return;
     }
     try {
       const response = await deleteCommentPostClickServices(commentId);
-      if (response?.statusCode === STATUS_CODES.success && response.data) {
-        onPostDeleteComment(response.data);
+      if (response?.statusCode === STATUS_CODES.success) {
+        onPostDeleteComment(commentId, selectedPostId);
       }
     } catch (err) {
       const error = err as IApiError;
@@ -109,7 +110,12 @@ const CommentDrawer: React.FC<CommentDrawerProps> = ({
             ) : (
               comments.map(
                 (comment: CommentUserListResponse, index: number) => (
-                  <Box key={index} className="comment-item">
+                  <Box
+                    key={index}
+                    className="comment-drawer"
+                    display={"flex"}
+                    justifyContent={"space-between"}
+                  >
                     <UserlistWithFollowBtn
                       user={{
                         id: comment?.user?.id,
@@ -118,8 +124,12 @@ const CommentDrawer: React.FC<CommentDrawerProps> = ({
                         last_name: comment.user?.last_name,
                         photo_url: comment.user?.photo_url,
                         bio: comment?.comment || null,
-                        is_following: false,
+                        is_following: comment?.user?.is_following || false,
                       }}
+                      showAnotherContent={
+                        comment.created_date &&
+                        getRelativeTime(comment.created_date)
+                      }
                       showBio={true}
                       showFullName={false}
                       showFollowButton={false}

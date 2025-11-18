@@ -9,7 +9,7 @@ export const likePostClickServices = async (
 ): Promise<IApiResponse<IPostData>> => {
   try {
     const response = await trackPromise(
-      BaseService.post(`/likes/${postId}/like`)
+      BaseService.get(`/likes/${postId}/like`)
     );
     const res = response.data;
     return Promise.resolve(res);
@@ -28,7 +28,7 @@ export const unLikePostClickServices = async (
 ): Promise<IApiResponse<IPostData>> => {
   try {
     const response = await trackPromise(
-      BaseService.post(`/likes/${postId}/un-like`)
+      BaseService.get(`/likes/${postId}/un-like`)
     );
     const res = response.data;
     return Promise.resolve(res);

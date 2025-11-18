@@ -11,72 +11,6 @@ import { AllPostListModel } from "@/models/postInterface";
 import { toast } from "react-toastify";
 import { IApiError } from "@/models/common.interface";
 
-export const suggestesdAllUsers = [
-  {
-    id: 1,
-    name: "Alice Wonderland",
-    bio: "Adventurer | Travel Blogger | Nature Lover 🌍",
-    avatar: "https://randomuser.me/api/portraits/women/4.jpg",
-    followers: 5420,
-  },
-  {
-    id: 2,
-    name: "Bob Builder",
-    bio: "Construction Expert | DIY Enthusiast 🛠️",
-    avatar: "https://randomuser.me/api/portraits/men/5.jpg",
-    followers: 3210,
-  },
-  {
-    id: 1,
-    name: "Alice",
-    bio: "Adventurer",
-    avatar: "https://randomuser.me/api/portraits/women/4.jpg",
-    followers: 5420,
-  },
-  {
-    id: 2,
-    name: "Bob Builder",
-    bio: "Construction Expert | DIY Enthusiast 🛠️",
-    avatar: "https://randomuser.me/api/portraits/men/5.jpg",
-    followers: 3210,
-  },
-  {
-    id: 1,
-    name: "Alice Wonderland",
-    bio: "Adventurer | Travel Blogger | Nature Lover 🌍",
-    avatar: "https://randomuser.me/api/portraits/women/4.jpg",
-    followers: 5420,
-  },
-  {
-    id: 2,
-    name: "Bob Builder",
-    bio: "Construction Expert | DIY Enthusiast 🛠️",
-    avatar: "https://randomuser.me/api/portraits/men/5.jpg",
-    followers: 3210,
-  },
-  {
-    id: 3,
-    name: "Sara Green",
-    bio: "Foodie | Chef 🍣 | Passionate about flavors",
-    avatar: "https://randomuser.me/api/portraits/women/6.jpg",
-    followers: 7850,
-  },
-  {
-    id: 4,
-    name: "Mike Johnson",
-    bio: "Tech Enthusiast | AI Developer 🤖",
-    avatar: "https://randomuser.me/api/portraits/men/8.jpg",
-    followers: 4120,
-  },
-  {
-    id: 5,
-    name: "Lisa Wong",
-    bio: "Digital Artist | Designer ✨",
-    avatar: "https://randomuser.me/api/portraits/women/9.jpg",
-    followers: 6340,
-  },
-];
-
 const Home = () => {
   const { currentUser } = UseUserContext();
   const [allUsers, setAllUsers] = useState<UserAllListModel[]>([]);
@@ -151,6 +85,11 @@ const Home = () => {
     loadMorePosts();
   }, []);
 
+  const handleDeletePost = (postId: number) => {
+    setAllUsersPosts((prevPosts) =>
+      prevPosts.filter((post) => post.post_id !== postId)
+    );
+  };
   return (
     <Box className="page-wrapper">
       {/* Main Content */}
@@ -182,6 +121,7 @@ const Home = () => {
                     : false
                   : false
               }
+              onDeletePostClick={handleDeletePost}
             />
           </Box>
         </Box>

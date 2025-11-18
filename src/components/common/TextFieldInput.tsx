@@ -55,17 +55,19 @@ const TextFieldInput: React.FC<FieldInputProps> = ({
           alignItems: "center",
         },
       }}
-      InputProps={{
-        endAdornment: isPasswordType && (
-          <InputAdornment position="end">
-            <IconButton
-              onClick={() => setShowPassword((prev) => !prev)}
-              edge="end"
-            >
-              {showPassword ? <VisibilityOff /> : <Visibility />}
-            </IconButton>
-          </InputAdornment>
-        ),
+      slotProps={{
+        input: {
+          endAdornment: isPasswordType && (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={() => setShowPassword((prev) => !prev)}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        },
       }}
     />
   ) : (

@@ -1,3 +1,5 @@
+import { string } from "yup";
+
 export interface UserUploadPostReponse {
   id: number;
   post_img_url: string;
@@ -16,9 +18,9 @@ export interface IUserResponseData {
   role_id: number;
   address?: string | null;
   is_private?: boolean;
-  followers: number | null;
-  following: number | null;
-  posts_count: number | null;
+  follower_count?: number;
+  following_count?: number;
+  post_count?: number;
 }
 
 export interface IUpdateUserProfile {
@@ -34,6 +36,7 @@ export interface IUpdateUserProfile {
   address?: string;
 }
 export interface UserAllListPaylod {
+  search?: string;
   sortBy?: string;
   sortOrder?: string;
 }
@@ -50,6 +53,9 @@ export interface UserAllListModel {
   birth_date?: Date | null;
   address?: string | null;
   is_private: boolean;
+  is_following: boolean;
+  follower_count: number;
+  following_count: number;
   role_id: number;
   created_date: Date;
   modified_date: Date | null;

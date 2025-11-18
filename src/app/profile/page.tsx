@@ -83,7 +83,7 @@ const ProfilePage = () => {
             <Box className="profile-avatar-container">
               <Avatar
                 src={`${commonFilePath}${currentUser?.photo_url}`}
-                alt={currentUser?.user_name}
+                alt={currentUser?.user_name.toLocaleUpperCase()}
                 className="profile-avatar-large"
               />
             </Box>
@@ -103,7 +103,7 @@ const ProfilePage = () => {
           <Box className="profile-status">
             <Box className="stat-item">
               <Typography component="span" className="stat-number">
-                {formatNumber(currentUser?.posts_count || 0)}
+                {formatNumber(currentUser?.post_count || 0)}
               </Typography>
               <Typography component="span" className="stat-label">
                 Posts
@@ -111,7 +111,7 @@ const ProfilePage = () => {
             </Box>
             <Box className="stat-item">
               <Typography component="span" className="stat-number">
-                {formatNumber(currentUser?.followers || 0)}
+                {formatNumber(currentUser?.follower_count || 0)}
               </Typography>
               <Typography component="span" className="stat-label">
                 Followers
@@ -119,7 +119,7 @@ const ProfilePage = () => {
             </Box>
             <Box className="stat-item">
               <Typography component="span" className="stat-number">
-                {formatNumber(currentUser?.following || 0)}
+                {formatNumber(currentUser?.following_count || 0)}
               </Typography>
               <Typography component="span" className="stat-label">
                 Following

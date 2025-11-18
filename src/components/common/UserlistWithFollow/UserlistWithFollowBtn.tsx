@@ -8,7 +8,12 @@ import {
 } from "@mui/material";
 import { IApiError } from "@/models/common.interface";
 import { toast } from "react-toastify";
-import { commonFilePath } from "@/util/constanst";
+import { commonFilePath, STATUS_CODES } from "@/util/constanst";
+import {
+  followUserService,
+  unfollowUserService,
+} from "@/services/follows-service.service";
+import { UseUserContext } from "@/components/protected-route/protectedRoute";
 
 export interface IUserListItem {
   id: number;
@@ -25,6 +30,7 @@ interface UserListItemProps {
   showFollowButton?: boolean;
   showFullName?: boolean;
   showBio?: boolean;
+  showAnotherContent?: string | null;
   commonFilePath?: string;
 }
 
@@ -33,24 +39,55 @@ const UserlistWithFollowBtn: React.FC<UserListItemProps> = ({
   showFollowButton = true,
   showFullName = true,
   showBio = true,
+  showAnotherContent,
 }) => {
   const [isFollowing, setIsFollowing] = useState(user.is_following || false);
-  const [isFollowLoading, setIsFollowLoading] = useState(
-    user.is_following || false
-  );
+  const [isFollowLoading, setIsFollowLoading] = useState<boolean>(false);
   const [isUserLoading, setIsUserLoading] = useState<boolean>();
+  const { setCurrentUser } = UseUserContext();
   const fullName = [user.first_name, user.last_name]
     .filter(Boolean)
     .join(" ")
     .trim();
 
-  const handleFollowClick = async (user_id: number, isFollowing: boolean) => {
+  const handleFollowClick = async (user_id: number) => {
     if (isFollowLoading) return;
-
     setIsFollowLoading(true);
     try {
-      //   await onFollowClickServices();
-      setIsFollowing(!isFollowing);
+      const response = await followUserService(user_id);
+      if (response.statusCode === STATUS_CODES.success) {
+        setIsFollowing(!isFollowing);
+        setCurrentUser((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            following_count: (prev.following_count ?? 0) + 1,
+          };
+        });
+      }
+    } catch (error) {
+      const err = error as IApiError;
+      toast.error(err?.message);
+    } finally {
+      setIsFollowLoading(false);
+    }
+  };
+
+  const handleUnFollowClick = async (user_id: number) => {
+    if (isFollowLoading) return;
+    setIsFollowLoading(true);
+    try {
+      const response = await unfollowUserService(user_id);
+      if (response.statusCode === STATUS_CODES.success) {
+        setIsFollowing(!isFollowing);
+        setCurrentUser((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            following_count: (prev.following_count ?? 0) - 1,
+          };
+        });
+      }
     } catch (error) {
       const err = error as IApiError;
       toast.error(err?.message);
@@ -84,9 +121,16 @@ const UserlistWithFollowBtn: React.FC<UserListItemProps> = ({
         />
 
         <Box className="user-details">
-          <Typography className="user-username" component="h3">
-            {user.user_name}
-          </Typography>
+          <Box display={"flex"} gap={0.5}>
+            <Typography className="user-username" component="h3">
+              {user.user_name}
+            </Typography>
+            {showAnotherContent && (
+              <Typography component="p" className="time-stamp-create-date">
+                {showAnotherContent}
+              </Typography>
+            )}
+          </Box>
           {showFullName && fullName && (
             <Typography className="user-display-name" variant="body2">
               {fullName}
@@ -109,7 +153,11 @@ const UserlistWithFollowBtn: React.FC<UserListItemProps> = ({
             variant={isFollowing ? "outlined" : "contained"}
             size="small"
             className={`follow-button ${isFollowing ? "following" : ""}`}
-            onClick={() => handleFollowClick(user?.id, isFollowing)}
+            onClick={() =>
+              isFollowing
+                ? handleUnFollowClick(user?.id)
+                : handleFollowClick(user?.id)
+            }
             disabled={isFollowLoading}
           >
             {isFollowLoading ? (

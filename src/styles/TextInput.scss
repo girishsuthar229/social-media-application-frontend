@@ -427,7 +427,7 @@
       font-size: 13px;
       font-weight: 600;
       text-transform: none;
-      border-radius: 20px;
+      border-radius: 10px;
       padding: 0 20px;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
@@ -443,10 +443,10 @@
         border: 2px solid transparent;
         box-shadow: $shadow-sm;
         &:hover {
-          box-shadow:$shadow-lg;
+          box-shadow:$shadow-md;
         }
         &:active {
-          box-shadow:$shadow-md;
+          box-shadow:$shadow-lg;
         }
       }
 

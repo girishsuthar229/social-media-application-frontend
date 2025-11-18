@@ -21,6 +21,7 @@ import { LikeUserListResponse } from "@/models/likesInterface";
 import { CommentUserListResponse } from "@/models/commentsInterface";
 import { allCommentPostClickServices } from "@/services/comments-service.service";
 import { Box } from "@mui/material";
+import Link from "next/link";
 
 // Types
 interface User {
@@ -47,9 +48,8 @@ interface FeedProps {
   currentUser: IUserResponseData | null;
   posts: AllPostListModel[];
   onPostClick?: (postId: number) => void;
-  onLikeClick?: (postId: number, liked: boolean) => void;
-  onCommentClick?: (postId: number) => void;
   onShareClick?: (postId: number) => void;
+  onDeletePostClick: (postId: number) => void;
   isLoading?: boolean;
   hasMore?: boolean;
   onLoadMore?: () => void;
@@ -57,13 +57,11 @@ interface FeedProps {
 
 // Feed Component
 const Feed: React.FC<FeedProps> = ({
-  suggestedUsers,
   currentUser,
   posts,
   onPostClick,
-  onLikeClick,
-  onCommentClick,
   onShareClick,
+  onDeletePostClick,
   isLoading,
   hasMore,
   onLoadMore,
@@ -117,7 +115,7 @@ const Feed: React.FC<FeedProps> = ({
       try {
         const response = await likePostClickServices(postId);
         if (response.statusCode === STATUS_CODES.success) {
-          toast.success(response.message);
+          // toast.success(response.message);
           updatePostLikeStatus(postId, true, 1);
         }
       } catch (error) {
@@ -135,7 +133,7 @@ const Feed: React.FC<FeedProps> = ({
       try {
         const response = await unLikePostClickServices(postId);
         if (response.statusCode === STATUS_CODES.success) {
-          toast.success(response.message);
+          // toast.success(response.message);
           updatePostLikeStatus(postId, false, -1);
         }
       } catch (error) {
@@ -177,7 +175,7 @@ const Feed: React.FC<FeedProps> = ({
       try {
         const response = await allCommentPostClickServices(postId);
         if (response.statusCode === STATUS_CODES.success) {
-          toast.success(response.message);
+          // toast.success(response.message);
           setCommentsModalOpen(true);
           setCommentsUsers(response?.data || []);
         }
@@ -199,12 +197,15 @@ const Feed: React.FC<FeedProps> = ({
     });
   };
 
-  const handleDeletePostComment = (deletedComment: CommentUserListResponse) => {
+  const handleDeletePostComment = (
+    commentId: number,
+    select_post_id: number
+  ) => {
     setCommentsUsers((prevComments) =>
-      prevComments.filter((comment) => comment.id !== deletedComment.id)
+      prevComments.filter((comment) => comment.id !== commentId)
     );
     posts.forEach((post) => {
-      if (post.post_id === selectedPostId) {
+      if (post.post_id === select_post_id) {
         post.comment_count -= 1;
       }
     });
@@ -239,6 +240,11 @@ const Feed: React.FC<FeedProps> = ({
           <p className={"empty-feed-text"}>
             Start following people to see their posts here!
           </p>
+          <div className="forgot-link-div" style={{ paddingBlockEnd: 3 }}>
+            <Link href={"/find-friends"} className="as-link-styling">
+              Find Friends?
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -301,6 +307,7 @@ const Feed: React.FC<FeedProps> = ({
                 loggedUserId={currentUser?.id || null}
                 isMenuOpen={openMenuPostId === post.post_id}
                 onToggleMenu={toggleMenu}
+                onPostDelete={onDeletePostClick}
               />
             </header>
 
@@ -501,9 +508,7 @@ const Feed: React.FC<FeedProps> = ({
           onClose={commentCloseDrawer}
           comments={commentsUsers}
           onSendComment={(newComment) => hanldePostComment(newComment)}
-          onPostDeleteComment={(deleteComment) =>
-            handleDeletePostComment(deleteComment)
-          }
+          onPostDeleteComment={handleDeletePostComment}
         />
       )}
     </div>

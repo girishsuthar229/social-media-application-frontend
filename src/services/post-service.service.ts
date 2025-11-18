@@ -110,7 +110,7 @@ export const updatePost = async (
 
 export const deletePost = async (
   postId: number
-): Promise<IApiResponse<any>> => {
+): Promise<IApiResponse<null>> => {
   try {
     const response = await trackPromise(BaseService.delete(`/posts/${postId}`));
     const res = response.data;
@@ -120,7 +120,7 @@ export const deletePost = async (
       statusCode: error.response?.status || 500,
       message: error.response?.data?.message || error.message,
       error: error.response?.data?.error || error.response?.data || error,
-      data: null as any,
+      data: null,
     });
   }
 };

@@ -112,64 +112,7 @@
     justify-content: flex-end;
     padding: 5px 6px;
   }
-   /* ==========================================  SIDEBAR INTERNAL STRUCTURE  =========================================== */
-   // Profile Card (Top Section - Fixed Height)
-   :global {
-     .sidebar-grid {
-       .profile-card {
-         flex-shrink: 0;
-         margin-bottom: 24px;
-       }
-   
-       // Suggestions Container (Bottom Section - Scrollable)
-       .suggestions-container {
-         flex: 1;
-         display: flex;
-         flex-direction: column;
-         min-height: 0; // Important for flex scrolling
-         overflow: hidden;
-   
-         .suggestions-title {
-           flex-shrink: 0;
-           margin-bottom: 16px;
-         }
-   
-         // Suggestions List with Internal Scroll
-         .suggestions-list {
-           flex: 1;
-           overflow-y: auto;
-           overflow-x: hidden;
-           padding-right: 4px;
-           min-height: 0;
-   
-           // Custom Scrollbar for Suggestions List
-           &::-webkit-scrollbar {
-             width: 6px;
-           }
-   
-           &::-webkit-scrollbar-track {
-             background: transparent;
-             border-radius: 3px;
-           }
-   
-           &::-webkit-scrollbar-thumb {
-             background: rgba($primary-color, 0.25);
-             border-radius: 3px;
-             transition: background 0.3s ease;
-   
-             &:hover {
-               background: rgba($primary-color, 0.4);
-             }
-           }
-   
-           // Firefox Scrollbar
-           scrollbar-width: thin;
-           scrollbar-color: rgba($primary-color, 0.25) transparent;
-         }
-       }
-     }
-   }
-   
+
    /* ==========================================  RESPONSIVE BREAKPOINTS  =========================================== */
    
    // Tablet Portrait & Mobile (900px and below)
@@ -210,9 +153,7 @@
      }
    }
    
-   /* ==========================================
-      ANIMATIONS
-      =========================================== */
+   /* ========================================== ANIMATIONS =========================================== */
    
    @keyframes fadeIn {
      from {

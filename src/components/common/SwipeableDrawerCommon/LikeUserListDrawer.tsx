@@ -56,7 +56,7 @@ const LikeUserListDrawer: React.FC<LikeUserListDrawerProps> = ({
                       last_name: user?.last_name,
                       photo_url: user?.photo_url,
                       bio: user?.bio || null,
-                      is_following: false,
+                      is_following: user?.is_following || false,
                     }}
                     showBio={true}
                     showFullName={true}

@@ -1,42 +1,19 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
-  AppBar,
   Avatar,
   Box,
-  Button,
   Card,
-  CardActions,
   CardContent,
   CardHeader,
-  CardMedia,
-  Container,
   Grid,
-  IconButton,
   List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Tab,
-  Tabs,
-  TextField,
-  Toolbar,
   Typography,
 } from "@mui/material";
 import BackButton from "@/components/common/BackButton";
 import { IUserResponseData, UserAllListModel } from "@/models/userInterface";
 import { commonFilePath } from "@/util/constanst";
-import { getAllUsers } from "@/services/user-service.service";
 import UserlistWithFollowBtn from "@/components/common/UserlistWithFollow/UserlistWithFollowBtn";
-
-interface User {
-  id: number;
-  name: string;
-  bio: string;
-  avatar: string;
-  followers?: number;
-  isFollowing?: boolean;
-}
 
 interface SugSidebarProps {
   suggestedUsers: UserAllListModel[];
@@ -106,7 +83,7 @@ const SuggestionsSidebar = ({
                   last_name: user?.last_name,
                   photo_url: user?.photo_url,
                   bio: user?.bio || null,
-                  is_following: false,
+                  is_following: user?.is_following,
                 }}
                 showBio={true}
                 showFullName={true}

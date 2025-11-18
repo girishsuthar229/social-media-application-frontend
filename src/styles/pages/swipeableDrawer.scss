@@ -142,6 +142,9 @@
     flex: 1;
     height: 100%;
     overflow-y: auto;
+    .user-bio{
+      margin-top: 0 !important;
+    }
   }
   
   .comment-list-item {

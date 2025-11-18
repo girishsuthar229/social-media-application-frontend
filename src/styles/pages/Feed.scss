@@ -12,6 +12,7 @@
   @media (max-width: 900px) {
     .feed {
       max-width: 100%;
+      align-items: center !important;
     }
   }
   
@@ -140,6 +141,11 @@
   font-size: 13px !important;
   color: $text-gray;
 }
+.time-stamp-create-date{
+  font-size: 11px !important;
+  color: $text-gray;
+}
+
 
 /* ================================= P =========================================== */
   
@@ -455,7 +461,6 @@
 
 .comment-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 6px;
   font-size: 14px;
