@@ -96,6 +96,14 @@ const Feed: React.FC<FeedProps> = ({
     setOpenMenuPostId((prev) => (prev === postId ? null : postId));
   };
 
+  const updatePostSavedStatus = (postId: number, isSaved: boolean) => {
+    posts.forEach((post) => {
+      if (post.post_id === postId) {
+        post.is_saved = isSaved;
+      }
+    });
+  };
+
   const updatePostLikeStatus = (
     postId: number,
     isLiked: boolean,
@@ -289,25 +297,26 @@ const Feed: React.FC<FeedProps> = ({
                   id: post?.user?.id,
                   user_name: post?.user?.user_name,
                   photo_url: post?.user?.profile_pic_url,
+                  bio: getRelativeTime(post.created_date),
                 }}
-                showBio={false}
+                showBio={true}
                 showFullName={false}
                 showFollowButton={false}
+                currentUser={currentUser}
               />
-
-              {post.created_date && (
-                <span className="time-stamp">
-                  {getRelativeTime(post.created_date)}
-                </span>
-              )}
 
               {/* Dropdown Menu Component */}
               <PostActionMenu
-                postObj={{ postId: post.post_id, userId: post.user.id }}
+                postObj={{
+                  postId: post.post_id,
+                  userId: post.user.id,
+                  is_saved: post.is_saved,
+                }}
                 loggedUserId={currentUser?.id || null}
                 isMenuOpen={openMenuPostId === post.post_id}
                 onToggleMenu={toggleMenu}
                 onPostDelete={onDeletePostClick}
+                onPostSavedUnsaved={updatePostSavedStatus}
               />
             </header>
 
@@ -497,6 +506,7 @@ const Feed: React.FC<FeedProps> = ({
           open={likeDrawerOpen}
           onClose={likeCloseDrawer}
           users={likedUsers}
+          currentUser={currentUser}
         />
       )}
       {/* Comments Drawer */}
@@ -509,6 +519,7 @@ const Feed: React.FC<FeedProps> = ({
           comments={commentsUsers}
           onSendComment={(newComment) => hanldePostComment(newComment)}
           onPostDeleteComment={handleDeletePostComment}
+          currentUser={currentUser}
         />
       )}
     </div>

@@ -12,7 +12,6 @@
   @media (max-width: 900px) {
     .feed {
       max-width: 100%;
-      align-items: center !important;
     }
   }
   
@@ -40,7 +39,7 @@
     box-shadow: $shadow-sm;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
-    background: $white;
+    background: inherit;
     display: flex;
     flex-direction: column;
   }
@@ -208,7 +207,7 @@
     border-top: 1px solid $border-color;
     display: flex;
     gap: 4px;
-    background: $white;
+    background: inherit;
     justify-content: space-around;
   }
   
@@ -396,7 +395,7 @@
   /* ========================================== LOADING STATE =========================================== */
   
   .post-skeleton {
-    background: $white;
+    background: inherit;
     border-radius: 16px;
     border: 1px solid $border-color;
     padding: 16px;

@@ -1,12 +1,16 @@
 import React from "react";
 import { Button } from "@mui/material";
-import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
-import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
+
 import {
   GridOnOutlined as GridOnOutlinedIcon,
   Bookmark,
+  ArrowBackIosNewRounded as ArrowBackIosNewRoundedIcon,
+  SubdirectoryArrowRight as SubdirectoryArrowRightIcon,
+  PersonAddAlt1Outlined as PersonAddAlt1OutlinedIcon,
+  PersonRemoveAlt1Outlined as PersonRemoveAlt1OutlinedIcon,
+  DoubleArrow as DoubleArrowIcon,
 } from "@mui/icons-material";
-import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
+import { CircularProgress } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { Edit, Share } from "@mui/icons-material";
 
@@ -58,6 +62,18 @@ const BackButton: React.FC<BackButtonProps> = ({
         return <GridOnOutlinedIcon />;
       case "book-mark-icon":
         return <Bookmark />;
+      case "add-person-icon":
+        return <PersonAddAlt1OutlinedIcon />;
+      case "remove-person-icon":
+        return <PersonRemoveAlt1OutlinedIcon />;
+      case "circular-progress":
+        return (
+          <CircularProgress
+            size={20}
+            className="circular-progress"
+            thickness={5}
+          />
+        );
       default:
         return <ArrowBackIosNewRoundedIcon />;
     }

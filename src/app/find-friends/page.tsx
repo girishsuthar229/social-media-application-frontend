@@ -3,77 +3,54 @@ import {
   Box,
   TextField,
   Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  CardActions,
-  Avatar,
   Typography,
-  Button,
   InputAdornment,
   Container,
-  CircularProgress,
+  IconButton,
 } from "@mui/material";
-import { Search as SearchIcon } from "@mui/icons-material";
-import { useState, useEffect } from "react";
+import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
+import { useState, useEffect, useMemo } from "react";
 import { getAllUsers } from "@/services/user-service.service";
 import { IApiError } from "@/models/common.interface";
 import { toast } from "react-toastify";
-import { commonFilePath, STATUS_CODES } from "@/util/constanst";
-import {
-  followUserService,
-  unfollowUserService,
-} from "@/services/follows-service.service";
 import { UseUserContext } from "@/components/protected-route/protectedRoute";
-
-interface User {
-  id: number;
-  user_name: string;
-  first_name?: string;
-  last_name?: string;
-  photo_url?: string | null;
-  bio?: string | null;
-  is_following: boolean;
-  follower_count: number;
-  following_count: number;
-}
+import { UserAllListModel } from "@/models/userInterface";
+import UserlistWithFollowBtn from "@/components/common/UserlistWithFollow/UserlistWithFollowBtn";
+import BackButton from "@/components/common/BackButton";
+import UserListSkeleton from "@/components/common/UserlistWithFollow/userListSkeleton";
+import { Search, UserPlus } from "lucide-react";
+import { debounce } from "lodash";
 
 const FindFriendsPage = () => {
-  const [isFollowLoading, setIsFollowLoading] = useState<boolean>(false);
-  const { setCurrentUser } = UseUserContext();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [suggestedUsers, setSuggestedUsers] = useState<User[]>([]);
+  const { currentUser } = UseUserContext();
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [suggestedUsers, setSuggestedUsers] = useState<UserAllListModel[]>([]);
   const [userOffset, setUserOffset] = useState<number>(0);
   const [userLoading, setUserLoading] = useState(false);
   const [userHasMore, setUserHasMore] = useState(true);
-  const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(
-    null
-  );
+  const [isFocused, setIsFocused] = useState(false);
 
-  const loadMoreUsers = async (reset = false) => {
-    if (userLoading || (!userHasMore && !reset)) return;
-
+  const loadMoreUsers = async (searchName?: string) => {
+    if (userLoading || !userHasMore) return;
+    setUserLoading(true);
     const payload = {
       limit: 10,
       offset: userOffset,
-      search: searchQuery,
+      search: searchQuery || searchName,
       sortBy: "created_date",
       sortOrder: "DESC",
     };
-    setUserLoading(true);
     try {
       const response = await getAllUsers(payload);
       const newUsers = response.data?.rows || [];
-      if (reset) {
-        setSuggestedUsers(newUsers);
-        setUserOffset(10);
-      } else {
-        setSuggestedUsers((prev) => [...prev, ...newUsers]);
-        setUserOffset((prevOffset) => prevOffset + 10);
-      }
+      setSuggestedUsers((prev) => [...prev, ...newUsers]);
+      setUserOffset((prevOffset) => prevOffset + 10);
 
       if (newUsers.length < 10) {
         setUserHasMore(false);
+      } else {
+        setUserHasMore(true);
       }
     } catch (error) {
       const err = error as IApiError;
@@ -83,73 +60,57 @@ const FindFriendsPage = () => {
     }
   };
 
-  const handlerSearchKey = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setSearchQuery(value);
-    if (debounceTimer) clearTimeout(debounceTimer);
-    const timer = setTimeout(() => {
-      setSuggestedUsers([]);
-      setUserOffset(0);
-      setUserHasMore(true);
-      loadMoreUsers();
-    }, 300);
-    setDebounceTimer(timer);
-  };
-
-  const updateUserFollowStatus = (
-    userId: number,
-    isFollowing: boolean,
-    followCountChange: number
-  ) => {
-    suggestedUsers.forEach((user) => {
-      if (user.id === userId) {
-        user.is_following = isFollowing;
-        user.follower_count += followCountChange;
-      }
-    });
-    setCurrentUser((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        following_count: (prev.following_count ?? 0) + followCountChange,
-      };
-    });
-  };
-
-  const handleFollowClick = async (user_id: number) => {
-    if (isFollowLoading) return;
-    setIsFollowLoading(true);
-    try {
-      const response = await followUserService(user_id);
-      if (response.statusCode === STATUS_CODES.success) {
-        updateUserFollowStatus(user_id, true, 1);
-      }
-    } catch (error) {
-      const err = error as IApiError;
-      toast.error(err?.message);
-    } finally {
-      setIsFollowLoading(false);
-    }
-  };
-
-  const handleUnFollowClick = async (user_id: number) => {
-    if (isFollowLoading) return;
-    setIsFollowLoading(true);
-    try {
-      const response = await unfollowUserService(user_id);
-      if (response.statusCode === STATUS_CODES.success) {
-        updateUserFollowStatus(user_id, false, -1);
-      }
-    } catch (error) {
-      const err = error as IApiError;
-      toast.error(err?.message);
-    } finally {
-      setIsFollowLoading(false);
-    }
-  };
+  const debouncedSearch = useMemo(
+    () =>
+      debounce(async (value: string) => {
+        setSuggestedUsers([]);
+        setUserHasMore(false);
+        setUserOffset(0);
+        if (value) {
+          await loadMoreUsers(value);
+        } else {
+          setUserLoading(false);
+        }
+      }, 300),
+    []
+  );
 
   useEffect(() => {
-    loadMoreUsers();
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
+
+  const handlerSearchKey = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let value = event.target.value;
+    setSearchQuery(value);
+    if (value) {
+      sessionStorage.setItem("searchQuery", value);
+    }
+    const displayValue = value.trim().replace(/\s+/g, " ");
+    const trimSearchQuery = searchQuery.trim().replace(/\s+/g, " ");
+    if (displayValue !== trimSearchQuery) {
+      setUserLoading(true);
+      debouncedSearch(displayValue.toLocaleLowerCase());
+    }
+  };
+
+  const handlerClearSearchKey = () => {
+    setUserLoading(true);
+    debouncedSearch("");
+    setSearchQuery("");
+    sessionStorage.removeItem("searchQuery");
+  };
+
+  // Load the search query from sessionStorage if it exists
+  useEffect(() => {
+    const storedSearchQuery = sessionStorage.getItem("searchQuery");
+    if (storedSearchQuery) {
+      setSearchQuery(storedSearchQuery);
+    }
+    if (storedSearchQuery) {
+      loadMoreUsers(storedSearchQuery);
+    }
   }, []);
 
   return (
@@ -166,11 +127,30 @@ const FindFriendsPage = () => {
             placeholder="Search by name ..."
             value={searchQuery}
             onChange={handlerSearchKey}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
             slotProps={{
+              inputLabel: { shrink: isFocused || !!searchQuery },
               input: {
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon className="searchIcon" />
+                    {" "}
+                    <SearchIcon fontSize="small" />{" "}
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end" sx={{ alignItems: "center" }}>
+                    {" "}
+                    {searchQuery && (
+                      <IconButton
+                        onClick={handlerClearSearchKey}
+                        size="small"
+                        sx={{ p: 0.5 }}
+                      >
+                        {" "}
+                        <CloseIcon fontSize="small" />{" "}
+                      </IconButton>
+                    )}{" "}
                   </InputAdornment>
                 ),
               },
@@ -181,119 +161,87 @@ const FindFriendsPage = () => {
             }}
           />
         </Box>
-
-        {/* Results Section */}
-        <Grid
-          container
-          spacing={2}
-          className="suggested-user-grid scrollbar"
-          onScroll={(e) => {
-            const bottom =
-              e.currentTarget.scrollHeight -
-                e.currentTarget.scrollTop -
-                e.currentTarget.clientHeight <
-              50;
-            if (bottom && !userLoading && userHasMore) {
-              loadMoreUsers();
-            }
-          }}
-        >
-          {suggestedUsers.length > 0 &&
-            suggestedUsers.map((user) => (
-              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={user.id}>
-                <Card className="suggested-user-card">
-                  <CardHeader
-                    avatar={
-                      <Avatar
-                        src={`${commonFilePath}${user?.photo_url}`}
-                        className="suggested-user-avatar"
-                      />
-                    }
-                    title={
-                      <Typography variant="subtitle1" className="user-username">
-                        @ {user.user_name}
-                      </Typography>
-                    }
-                    className="suggested-user-card-header"
-                  />
-
-                  <CardContent className="card-content">
-                    <Typography variant="h6" className="user-full-name">
-                      {[user.first_name, user.last_name]
-                        .filter(Boolean)
-                        .join(" ")
-                        .trim()}
-                    </Typography>
-                    <Typography variant="body2" className="user-bio">
-                      {user.bio}
-                    </Typography>
-                    <Typography variant="caption" className="followers-count">
-                      {user.follower_count || 0} followers
-                    </Typography>
-                  </CardContent>
-
-                  <CardActions className="user-list-item">
-                    <Box className="follow-button-container">
-                      <Button
-                        variant={user?.is_following ? "outlined" : "contained"}
-                        size="small"
-                        className={`follow-button ${
-                          user?.is_following ? "following" : ""
-                        }`}
-                        onClick={() =>
-                          user?.is_following
-                            ? handleUnFollowClick(user?.id)
-                            : handleFollowClick(user?.id)
-                        }
-                        disabled={isFollowLoading}
-                      >
-                        {isFollowLoading ? (
-                          <CircularProgress size={16} />
-                        ) : user?.is_following ? (
-                          "Following"
-                        ) : (
-                          "Follow"
-                        )}
-                      </Button>
-                    </Box>
-                  </CardActions>
-                </Card>
+        {!userLoading && (
+          <Grid
+            container
+            spacing={2}
+            className="suggested-user-grid scrollbar"
+            onScroll={(e) => {
+              const bottom =
+                e.currentTarget.scrollHeight -
+                  e.currentTarget.scrollTop -
+                  e.currentTarget.clientHeight <
+                50;
+              if (bottom && !userLoading && userHasMore) {
+                loadMoreUsers();
+              }
+            }}
+          >
+            {suggestedUsers.map((user: UserAllListModel, index: number) => (
+              <Grid size={{ xs: 12 }} key={user.id}>
+                <UserlistWithFollowBtn
+                  user={{
+                    id: user?.id,
+                    user_name: user?.user_name,
+                    first_name: user?.first_name,
+                    last_name: user?.last_name,
+                    photo_url: user?.photo_url,
+                    bio: user?.bio || null,
+                    is_following: user?.is_following,
+                    follow_status: user?.follow_status,
+                  }}
+                  showBio={true}
+                  showFullName={true}
+                  showFollowButton={false}
+                  currentUser={currentUser}
+                />
               </Grid>
             ))}
-
-          {userLoading &&
-            [1, 2, 3].map((i) => (
-              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={`skeleton-${i}`}>
-                <Card className="suggested-user-card">
-                  <CardHeader
-                    avatar={
-                      <Typography className="skeleton-image skeleton-circle" />
-                    }
-                    title={
-                      <Typography className="skeleton-image skeleton-line" />
-                    }
-                    sx={{ paddingBlock: 1 }}
-                  />
-                  <CardContent sx={{ paddingBlock: 0 }}>
-                    <Typography className="skeleton-image skeleton-content" />
-                  </CardContent>
-                  <CardActions sx={{ paddingInline: 2 }}>
-                    <Typography className="skeleton-image skeleton-action" />
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-          {!userLoading && suggestedUsers.length === 0 && (
-            <Box className="noResults">
-              <Typography variant="h6" className="noResultsTitle">
-                No users found
+          </Grid>
+        )}
+        {!userLoading && userHasMore && searchQuery && (
+          <div className="load-more-div">
+            <BackButton
+              onClick={!userLoading ? loadMoreUsers : undefined}
+              labelText={userLoading ? "Loading..." : "Load More"}
+              showIcon={false}
+              underlineOnHover={true}
+            />
+          </div>
+        )}
+        {userLoading && (
+          <UserListSkeleton count={3} showBio={true} showFollowButton={false} />
+        )}
+        {/* Empty State when no search query is entered */}
+        {!userLoading && (!searchQuery || searchQuery.trim() === "") && (
+          <Box className="empty-state">
+            <Search size={64} className="empty-icon" />
+            <Box>
+              <Typography variant="h6" className="empty-title">
+                Find People Using the Search Key
               </Typography>
-              <Typography variant="body2" className="noResultsText">
-                Try searching with different keywords
+              <Typography variant="body2" color="textSecondary">
+                Type a name or keyword in the search bar to find people to
+                connect with.
               </Typography>
             </Box>
-          )}
-        </Grid>
+          </Box>
+        )}
+        {/* Empty State when search query has no results */}
+        {!userLoading && searchQuery && suggestedUsers.length === 0 && (
+          <Box className="empty-state">
+            <UserPlus size={64} className="empty-icon" />
+            <Box>
+              <Typography variant="h6" className="empty-title">
+                No Users Found
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                We couldn't find any users matching your search. Try a different
+                query.
+              </Typography>
+            </Box>
+          </Box>
+        )}
       </Container>
     </Box>
   );

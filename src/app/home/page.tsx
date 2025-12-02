@@ -10,6 +10,7 @@ import { getAllPosts } from "@/services/post-service.service";
 import { AllPostListModel } from "@/models/postInterface";
 import { toast } from "react-toastify";
 import { IApiError } from "@/models/common.interface";
+import { STATUS_CODES } from "@/util/constanst";
 
 const Home = () => {
   const { currentUser } = UseUserContext();
@@ -37,14 +38,15 @@ const Home = () => {
 
     try {
       const response = await getAllUsers(payload);
-      const newUsers = response.data?.rows || [];
-      if (newUsers.length < 10) {
-        setUserHasMore(false);
+      if (response?.data && response.statusCode === STATUS_CODES.success) {
+        const newUsers = response.data?.rows || [];
+        if (newUsers.length < 10) {
+          setUserHasMore(false);
+        }
+        setAllUsers((prev) => [...prev, ...newUsers]);
+        setAllUsersTotalCount(response.data?.count);
+        setUserOffset((prevOffset) => prevOffset + 10);
       }
-
-      setAllUsers((prev) => [...prev, ...newUsers]);
-      setAllUsersTotalCount(response.data?.count);
-      setUserOffset((prevOffset) => prevOffset + 10);
     } catch (error) {
       const err = error as IApiError;
       toast.error(err?.message);
@@ -65,13 +67,15 @@ const Home = () => {
 
     try {
       const response = await getAllPosts(payload);
-      const newPosts = response.data?.rows || [];
-      if (newPosts.length < 10) {
-        setPostHasMore(false);
+      if (response?.data && response.statusCode === STATUS_CODES.success) {
+        const newPosts = response.data?.rows || [];
+        if (newPosts.length < 10) {
+          setPostHasMore(false);
+        }
+        setAllUsersPosts((prev) => [...prev, ...newPosts]);
+        setAllUsersPostTotalCount(response.data?.count);
+        setPostOffset((prevOffset) => prevOffset + 10);
       }
-      setAllUsersPosts((prev) => [...prev, ...newPosts]);
-      setAllUsersPostTotalCount(response.data?.count);
-      setPostOffset((prevOffset) => prevOffset + 10);
     } catch (error) {
       const err = error as IApiError;
       toast.error(err?.message);
@@ -107,7 +111,19 @@ const Home = () => {
           </Box>
 
           {/* Center - Feed */}
-          <Box className="feed-grid scrollbar">
+          <Box
+            className="feed-grid scrollbar"
+            onScroll={(e) => {
+              const bottom =
+                e.currentTarget.scrollHeight -
+                  e.currentTarget.scrollTop -
+                  e.currentTarget.clientHeight <
+                10;
+              if (bottom && postHasMore && !postLoading) {
+                loadMorePosts();
+              }
+            }}
+          >
             <Feed
               currentUser={currentUser}
               suggestedUsers={allUsers}

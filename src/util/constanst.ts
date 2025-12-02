@@ -51,6 +51,15 @@ export enum localStorageKeys {
   TOKEN_EXPIRES_AT = "tokenExpiresAt",
 }
 
+export enum FollowingsEnum {
+  PENDING = "pending",
+  ACCEPTED = "accepted",
+}
+
+export enum STATUS_ERROR {
+  UserNotFound = "UserNotFound",
+}
+
 export enum STATUS_CODES {
   success = 200,
   create = 201,
@@ -78,4 +87,5 @@ export const AuthBaseRoute = {
   notification: "/notification",
   profile: "/profile",
   profileEdit: "/profile/edit",
+  anotherProfile: "/profile/user-name",
 };

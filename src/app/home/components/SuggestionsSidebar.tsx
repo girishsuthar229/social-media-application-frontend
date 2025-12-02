@@ -14,6 +14,7 @@ import BackButton from "@/components/common/BackButton";
 import { IUserResponseData, UserAllListModel } from "@/models/userInterface";
 import { commonFilePath } from "@/util/constanst";
 import UserlistWithFollowBtn from "@/components/common/UserlistWithFollow/UserlistWithFollowBtn";
+import UserListSkeleton from "@/components/common/UserlistWithFollow/userListSkeleton";
 
 interface SugSidebarProps {
   suggestedUsers: UserAllListModel[];
@@ -32,7 +33,7 @@ const SuggestionsSidebar = ({
 }: SugSidebarProps) => {
   return (
     <Grid size={{ xs: 12, md: 4 }}>
-      <Card>
+      <Card className="sidebar-user-profile">
         <CardHeader
           avatar={
             <Avatar
@@ -42,8 +43,10 @@ const SuggestionsSidebar = ({
           }
           title={
             <>
-              <Typography variant="h6">{currentUser?.user_name}</Typography>
-              <Typography variant="subtitle1">
+              <Typography variant="h6" className="current-user-username">
+                {currentUser?.user_name}
+              </Typography>
+              <Typography variant="subtitle1" className="current-display-name">
                 {[currentUser?.first_name, currentUser?.last_name]
                   .filter(Boolean)
                   .join(" ")
@@ -52,11 +55,14 @@ const SuggestionsSidebar = ({
             </>
           }
         />
-        <CardContent>
-          <Typography variant="body2" color="text.secondary">
-            {currentUser?.bio}
-          </Typography>
-        </CardContent>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          className="current-bio user-bio"
+          title={`${currentUser?.bio}`}
+        >
+          {currentUser?.bio}
+        </Typography>
         <CardContent sx={{ display: "flex", justifyContent: "center" }}>
           <BackButton
             navigateUrl="/profile"
@@ -84,22 +90,32 @@ const SuggestionsSidebar = ({
                   photo_url: user?.photo_url,
                   bio: user?.bio || null,
                   is_following: user?.is_following,
+                  follow_status: user?.follow_status,
                 }}
                 showBio={true}
                 showFullName={true}
                 showFollowButton={true}
+                currentUser={currentUser}
               />
             </Box>
           ))}
-          {Number(suggestedUsers.length) < Number(allUsersTotalCount) && (
-            <div className="load-more-div">
-              <BackButton
-                onClick={!loading ? onLoadMoreUsers : undefined} // Only trigger if not loading
-                labelText={loading ? "Loading..." : "Load More"}
-                showIcon={false}
-                underlineOnHover={true}
-              />
-            </div>
+          {loading ? (
+            <UserListSkeleton
+              count={3}
+              showBio={true}
+              showFollowButton={true}
+            />
+          ) : (
+            Number(suggestedUsers.length) < Number(allUsersTotalCount) && (
+              <div className="load-more-div">
+                <BackButton
+                  onClick={!loading ? onLoadMoreUsers : undefined}
+                  labelText={loading ? "Loading..." : "Load More"}
+                  showIcon={false}
+                  underlineOnHover={true}
+                />
+              </div>
+            )
           )}
         </List>
       </Box>

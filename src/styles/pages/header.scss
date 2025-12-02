@@ -2,22 +2,16 @@
   /* ========================================== HEADER MAIN CONTAINER =========================================== */
    
    .header {
-     background: linear-gradient(135deg, $white 0%, $bg-light 100%) !important;
+     background: inherit !important;
      border-bottom: 2px solid $border-color !important;
      box-shadow: $shadow-sm !important;
      position: sticky;
      top: 0;
      z-index: 1000;
      transition: all 0.3s ease;
-   
-     @media (max-width: 960px) {
-       border-bottom: 1px solid $border-color !important;
-     }
    }
    
-   /* ==========================================
-      TOOLBAR LAYOUT
-      =========================================== */
+   /* ==========================================  TOOLBAR LAYOUT  =========================================== */
    
    .toolbar {
      display: flex;
@@ -44,9 +38,7 @@
      }
    }
    
-   /* ==========================================
-      NAVIGATION CONTAINER (CENTERED)
-      =========================================== */
+   /* ==========================================  NAVIGATION CONTAINER (CENTERED)  =========================================== */
    
    .toolbar > .link-items {
      display: flex;
@@ -60,15 +52,13 @@
    
 
    
-   /* ==========================================
-      HEADER ICON BUTTON
-      =========================================== */
+   /* ==========================================  HEADER ICON BUTTON  =========================================== */
    
    .header-icon {
      color: $text-gray !important;
      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
      border-radius: 12px !important;
-     padding: 10px !important;
+     padding: 0 !important;
      position: relative;
    
      &::before {
@@ -88,10 +78,6 @@
        background-color: rgba($primary-color, 0.08) !important;
        color: $primary-color !important;
        transform: translateY(-2px);
-   
-       &::before {
-         width: 60%;
-       }
      }
    
      &:active {
@@ -230,7 +216,7 @@
        gap: 12px;
      }
      .header-icon {
-       padding: 12px !important;
+       padding: 8px !important;
        svg {
          font-size: 28px;
        }
@@ -243,7 +229,7 @@
        gap: 8px;
      }
      .header-icon {
-       padding: 10px !important;
+       padding: 8px !important;
        svg {
          font-size: 26px;
        }
@@ -253,7 +239,7 @@
    // Tablet (600px - 960px)
    @media (min-width: 600px) and (max-width: 959px) {
      .header-icon {
-       padding: 8px !important;
+       padding: 6px !important;
        svg {
          font-size: 24px;
        }

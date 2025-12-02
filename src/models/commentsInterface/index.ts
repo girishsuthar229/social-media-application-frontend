@@ -10,5 +10,6 @@ export interface CommentUserListResponse {
     photo_url?: string;
     bio?: string;
     is_following?: boolean;
+    follow_status?: string;
   };
 }

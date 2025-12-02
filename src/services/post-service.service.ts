@@ -4,6 +4,7 @@ import {
   IPostData,
   IGetAllPostsResponse,
   IUserWiseAllPostsResponse,
+  UserWiseAllPoststPaylod,
 } from "@/models/postInterface";
 import BaseService from "@/services/base-service.service";
 import { trackPromise } from "react-promise-tracker";
@@ -32,7 +33,7 @@ export const createPost = async (
 };
 
 export const getUserUploadPost = async (
-  values: SearchPayload<AllPostListPaylod>
+  values: SearchPayload<UserWiseAllPoststPaylod>
 ): Promise<IApiResponse<IUserWiseAllPostsResponse>> => {
   try {
     const response = await trackPromise(

@@ -22,7 +22,10 @@
   //Base
   .MuiOutlinedInput-root {
     border-radius: 12px;
-    
+    color: $text-gray;
+    .MuiOutlinedInput-notchedOutline {
+      border-color: $text-light;
+    }
     // hover (no error, no disabled)
     &:hover:not(.Mui-disabled):not(.Mui-error)
       .MuiOutlinedInput-notchedOutline {
@@ -129,7 +132,7 @@
 
 // BackButton CSS Start.......................................
 .back-btn {
-  color: $primary-color  !important;
+  color: $text-gray  !important;
   text-transform: none !important;
   font-weight: 500 !important;
   padding: 0.5rem 0.8rem !important;
@@ -142,11 +145,15 @@
   }
 
   &.as-btn:hover {
-    background-color: lighten($primary-color, 40%) !important;
+    color: $primary-hover !important;
+    background-color:inherit !important;
   }
 
   &.as-link-styling{
     padding: 0 !important;
+    &:hover{
+      color: $primary-hover !important;
+    }
   }
 }
 
@@ -406,6 +413,7 @@
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
+        line-clamp: 2;
         overflow: hidden;
         text-overflow: ellipsis;
         word-break: break-word;
@@ -440,7 +448,6 @@
       &:not(.following) {
         background: linear-gradient(135deg, $primary-light 0%, $primary-color 100%);
         color: white;
-        border: 2px solid transparent;
         box-shadow: $shadow-sm;
         &:hover {
           box-shadow:$shadow-md;
@@ -448,12 +455,15 @@
         &:active {
           box-shadow:$shadow-lg;
         }
+        .MuiButton-icon{
+          margin-inline-end: 3px;
+        }
       }
 
       &.following {
         border: 2px solid $primary-light;
         color: $primary-light;
-        background: white;
+        background: inherit;
         box-shadow:$shadow-sm;
         &:hover {
           border-color: $primary-color;
@@ -461,6 +471,16 @@
             opacity: 0;
           }
         }
+        &:active {
+          box-shadow:$shadow-md;
+        }
+      }
+
+      &.requested {
+        border: 1px solid $border-color;
+        color:$text-light;
+        background: inherit;
+        box-shadow:$shadow-sm;
         &:active {
           box-shadow:$shadow-md;
         }

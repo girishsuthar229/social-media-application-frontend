@@ -8,12 +8,15 @@ import {
 } from "@mui/material";
 import { IApiError } from "@/models/common.interface";
 import { toast } from "react-toastify";
-import { commonFilePath, STATUS_CODES } from "@/util/constanst";
+import { commonFilePath, FollowingsEnum, STATUS_CODES } from "@/util/constanst";
 import {
   followUserService,
   unfollowUserService,
 } from "@/services/follows-service.service";
 import { UseUserContext } from "@/components/protected-route/protectedRoute";
+import { IUserResponseData } from "@/models/userInterface";
+import { UserPlus } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export interface IUserListItem {
   id: number;
@@ -23,6 +26,7 @@ export interface IUserListItem {
   photo_url?: string | null;
   bio?: string | null;
   is_following?: boolean;
+  follow_status?: string | null;
 }
 
 interface UserListItemProps {
@@ -31,7 +35,7 @@ interface UserListItemProps {
   showFullName?: boolean;
   showBio?: boolean;
   showAnotherContent?: string | null;
-  commonFilePath?: string;
+  currentUser: IUserResponseData | null;
 }
 
 const UserlistWithFollowBtn: React.FC<UserListItemProps> = ({
@@ -40,10 +44,12 @@ const UserlistWithFollowBtn: React.FC<UserListItemProps> = ({
   showFullName = true,
   showBio = true,
   showAnotherContent,
+  currentUser,
 }) => {
+  const router = useRouter();
   const [isFollowing, setIsFollowing] = useState(user.is_following || false);
+  const [followStatus, setFollowStatus] = useState(user.follow_status || null);
   const [isFollowLoading, setIsFollowLoading] = useState<boolean>(false);
-  const [isUserLoading, setIsUserLoading] = useState<boolean>();
   const { setCurrentUser } = UseUserContext();
   const fullName = [user.first_name, user.last_name]
     .filter(Boolean)
@@ -55,13 +61,22 @@ const UserlistWithFollowBtn: React.FC<UserListItemProps> = ({
     setIsFollowLoading(true);
     try {
       const response = await followUserService(user_id);
-      if (response.statusCode === STATUS_CODES.success) {
-        setIsFollowing(!isFollowing);
+      if (
+        response.statusCode === STATUS_CODES.success &&
+        response?.data?.follow_status
+      ) {
+        const followStatus = response?.data?.follow_status;
+        setIsFollowing(true);
+        setFollowStatus(followStatus);
         setCurrentUser((prev) => {
           if (!prev) return prev;
+          const followingCount = Number(
+            Number(prev.following_count ?? 0) +
+              (followStatus === FollowingsEnum.ACCEPTED ? 1 : 0)
+          );
           return {
             ...prev,
-            following_count: (prev.following_count ?? 0) + 1,
+            following_count: followingCount,
           };
         });
       }
@@ -79,14 +94,18 @@ const UserlistWithFollowBtn: React.FC<UserListItemProps> = ({
     try {
       const response = await unfollowUserService(user_id);
       if (response.statusCode === STATUS_CODES.success) {
-        setIsFollowing(!isFollowing);
         setCurrentUser((prev) => {
           if (!prev) return prev;
+          const followingCount =
+            Number(prev.following_count ?? 0) -
+            (followStatus === FollowingsEnum.ACCEPTED ? 1 : 0);
           return {
             ...prev,
-            following_count: (prev.following_count ?? 0) - 1,
+            following_count: followingCount,
           };
         });
+        setIsFollowing(false);
+        setFollowStatus(null);
       }
     } catch (error) {
       const err = error as IApiError;
@@ -96,28 +115,21 @@ const UserlistWithFollowBtn: React.FC<UserListItemProps> = ({
     }
   };
 
-  const handleUserClick = async (user_id: number) => {
-    if (isUserLoading) return;
-    setIsUserLoading(true);
-    try {
-      //   await onUserClickServices(user.id);
-    } catch (error) {
-      const err = error as IApiError;
-      toast.error(err?.message);
-    } finally {
-      setIsUserLoading(false);
-    }
+  const handleUserClick = (username: string) => {
+    router.push(`/profile/user-name?username=${username}`);
   };
 
   return (
     <Box className="user-list-item">
-      <Box className="user-info-section">
+      <Box
+        className="user-info-section"
+        onClick={() => handleUserClick(user.user_name)}
+      >
         <Avatar
           src={
             user.photo_url ? `${commonFilePath}${user.photo_url}` : undefined
           }
           className="user-avatar"
-          onClick={() => handleUserClick(user.id)}
         />
 
         <Box className="user-details">
@@ -147,22 +159,33 @@ const UserlistWithFollowBtn: React.FC<UserListItemProps> = ({
           )}
         </Box>
       </Box>
-      {showFollowButton && (
+      {showFollowButton && currentUser?.id !== user?.id && (
         <Box className="follow-button-container">
           <Button
             variant={isFollowing ? "outlined" : "contained"}
             size="small"
-            className={`follow-button ${isFollowing ? "following" : ""}`}
+            className={`follow-button ${
+              isFollowing && followStatus === FollowingsEnum.ACCEPTED
+                ? "following"
+                : isFollowing && followStatus === FollowingsEnum.PENDING
+                ? "requested"
+                : ""
+            }`}
             onClick={() =>
-              isFollowing
-                ? handleUnFollowClick(user?.id)
-                : handleFollowClick(user?.id)
+              !isFollowing
+                ? handleFollowClick(user.id)
+                : handleUnFollowClick(user.id)
             }
             disabled={isFollowLoading}
+            startIcon={
+              !isFollowLoading && !isFollowing && <UserPlus size={16} />
+            }
           >
             {isFollowLoading ? (
               <CircularProgress size={16} />
-            ) : isFollowing ? (
+            ) : isFollowing && followStatus === FollowingsEnum.PENDING ? (
+              "Requested"
+            ) : isFollowing && followStatus === FollowingsEnum.ACCEPTED ? (
               "Following"
             ) : (
               "Follow"

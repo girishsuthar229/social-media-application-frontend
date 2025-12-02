@@ -2,22 +2,29 @@ import React, { useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import BorderColorOutlined from "@mui/icons-material/BorderColorOutlined";
-import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import BookmarkAddOutlinedIcon from "@mui/icons-material/BookmarkAddOutlined";
+import BookmarkRemoveOutlinedIcon from "@mui/icons-material/BookmarkRemoveOutlined";
 import { toast } from "react-toastify";
 import { Menu, MenuItem } from "@mui/material";
 import { deletePost } from "@/services/post-service.service";
 import { IApiError } from "@/models/common.interface";
 import { STATUS_CODES } from "@/util/constanst";
+import {
+  savePostClickServices,
+  unSavePostClickServices,
+} from "@/services/saved-service.service";
 
 interface PostActionMenuProps {
   postObj: {
     postId: number;
     userId: number;
+    is_saved: boolean;
   };
   loggedUserId: number | null;
   isMenuOpen: boolean;
   onToggleMenu: (postId: number) => void;
   onPostDelete: (postId: number) => void;
+  onPostSavedUnsaved: (postId: number, isSaved: boolean) => void;
 }
 
 const PostActionMenu: React.FC<PostActionMenuProps> = ({
@@ -26,6 +33,7 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
   isMenuOpen,
   onToggleMenu,
   onPostDelete,
+  onPostSavedUnsaved,
 }) => {
   const isPostByCurrentUser = postObj.userId === loggedUserId;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -34,10 +42,10 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
     onToggleMenu(0);
   };
 
-  const handleEditPostClick = (postId: number) => {
-    console.log("Edit post", postId);
-    toast.info("coming soon!");
-  };
+  // const handleEditPostClick = (postId: number) => {
+  //   console.log("Edit post", postId);
+  //   toast.info("coming soon!");
+  // };
 
   const handleDeletePostClick = async (postId: number) => {
     try {
@@ -51,9 +59,28 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
     }
   };
 
-  const handleSavePostClick = (postId: number) => {
-    console.log("Delete post", postId);
-    toast.info("coming soon!");
+  const handleSavePostClick = async (postId: number) => {
+    try {
+      const response = await savePostClickServices(postId);
+      if (response?.statusCode === STATUS_CODES.success) {
+        onPostSavedUnsaved(postId, true);
+      }
+    } catch (err) {
+      const error = err as IApiError;
+      toast.error(error?.message);
+    }
+  };
+
+  const handleUnSavePostClick = async (postId: number) => {
+    try {
+      const response = await unSavePostClickServices(postId);
+      if (response?.statusCode === STATUS_CODES.success) {
+        onPostSavedUnsaved(postId, false);
+      }
+    } catch (err) {
+      const error = err as IApiError;
+      toast.error(error?.message);
+    }
   };
 
   return (
@@ -85,7 +112,7 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
             key="edit"
             className="post-menu-item"
             onClick={() => {
-              handleEditPostClick(postObj.postId);
+              // handleEditPostClick(postObj.postId);
               onToggleMenu(postObj.postId);
             }}
           >
@@ -111,12 +138,25 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
           key="save"
           className="post-menu-item"
           onClick={() => {
-            handleSavePostClick(postObj.postId);
+            if (postObj.is_saved) {
+              handleUnSavePostClick(postObj.postId);
+            } else {
+              handleSavePostClick(postObj.postId);
+            }
             onToggleMenu(postObj.postId);
           }}
         >
-          <BookmarkBorderIcon fontSize="small" />
-          Save
+          {postObj.is_saved ? (
+            <>
+              <BookmarkRemoveOutlinedIcon fontSize="small" />
+              Unsave
+            </>
+          ) : (
+            <>
+              <BookmarkAddOutlinedIcon fontSize="small" />
+              Save
+            </>
+          )}
         </MenuItem>
       </Menu>
     </div>

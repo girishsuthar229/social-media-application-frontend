@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form } from "formik";
 import { Box, Avatar, Typography, IconButton, Grid } from "@mui/material";
 import {
   Image as ImageIcon,
@@ -109,7 +109,7 @@ const CreatePost = () => {
               <Avatar
                 src={`${commonFilePath}${currentUser?.photo_url}`}
                 alt={currentUser?.user_name}
-                className="post-user-avatar"
+                className="user-avatar"
               />
               <Box className="post-user-details">
                 <Typography className="post-user-name">

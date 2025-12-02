@@ -19,12 +19,16 @@
   @media (max-width: 600px) {
     padding: 0 12px;
   }
+  .empty-state{
+    padding: 20px 10px;
+  }
 }
 
 /* ==========================================  Search Section =========================================== */
 
 .search-section {
-  margin-block: 32px;
+  margin-top: 25px;
+  margin-bottom: 10px;
   max-width: 100%;
   @media (max-width: 600px) {
     margin-bottom: 24px;
@@ -126,6 +130,7 @@
   text-align: start;
   display: -webkit-box !important;
   -webkit-line-clamp: 3 !important;
+  line-clamp: 3;
   -webkit-box-orient: vertical !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;

@@ -4,28 +4,30 @@ import { Box, IconButton, SwipeableDrawer, Typography } from "@mui/material";
 import UserlistWithFollowBtn from "../UserlistWithFollow/UserlistWithFollowBtn";
 import { LikeUserListResponse } from "@/models/likesInterface";
 import { X } from "lucide-react";
-import { FollowingsEnum } from "@/util/constanst";
 import { IUserResponseData } from "@/models/userInterface";
+import { FollowingsEnum } from "@/util/constanst";
 
-interface LikeUserListDrawerProps {
-  selectedPostId: number;
+interface FollowUserListDrawerProps {
   open: boolean;
   onClose: () => void;
-  currentUser: IUserResponseData | null;
+  selectedUserId: number;
+  headingContent: string;
   users: LikeUserListResponse[];
+  currentUser: IUserResponseData | null;
 }
 
-const LikeUserListDrawer: React.FC<LikeUserListDrawerProps> = ({
-  selectedPostId,
+const FollowUserListDrawer: React.FC<FollowUserListDrawerProps> = ({
   open,
   onClose,
-  currentUser,
+  selectedUserId,
+  headingContent,
   users,
+  currentUser,
 }) => {
   return (
     <SwipeableDrawer
       anchor="bottom"
-      open={!!selectedPostId && open}
+      open={!!selectedUserId && open}
       onClose={onClose}
       onOpen={() => {}}
       slotProps={{
@@ -40,7 +42,7 @@ const LikeUserListDrawer: React.FC<LikeUserListDrawerProps> = ({
       <Box className="drawer-wrapper">
         <Box className="drawer-header">
           <Typography variant="h6" className="drawer-title">
-            Liked by
+            {headingContent}
           </Typography>
           <IconButton className="drawer-close-btn" onClick={onClose}>
             <X size={20} />
@@ -50,7 +52,7 @@ const LikeUserListDrawer: React.FC<LikeUserListDrawerProps> = ({
         <Box className="drawer-content scrollbar">
           <div className="like-user-list">
             {users.length === 0 ? (
-              <Typography className="no-likes">No likes yet.</Typography>
+              <Typography className="no-likes">Not found.</Typography>
             ) : (
               users.map((user: LikeUserListResponse, index: number) => (
                 <Box key={index}>
@@ -81,4 +83,4 @@ const LikeUserListDrawer: React.FC<LikeUserListDrawerProps> = ({
   );
 };
 
-export default LikeUserListDrawer;
+export default FollowUserListDrawer;

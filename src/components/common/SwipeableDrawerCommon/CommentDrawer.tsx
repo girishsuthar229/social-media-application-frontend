@@ -17,13 +17,14 @@ import {
   deleteCommentPostClickServices,
   userCommentOnPostServices,
 } from "@/services/comments-service.service";
-import { STATUS_CODES } from "@/util/constanst";
+import { FollowingsEnum, STATUS_CODES } from "@/util/constanst";
 import { IApiError } from "@/models/common.interface";
 import { toast } from "react-toastify";
 import UserlistWithFollowBtn from "../UserlistWithFollow/UserlistWithFollowBtn";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { UseUserContext } from "@/components/protected-route/protectedRoute";
 import { getRelativeTime } from "@/util/helper";
+import { IUserResponseData } from "@/models/userInterface";
 
 interface CommentDrawerProps {
   selectedPostId: number;
@@ -33,6 +34,7 @@ interface CommentDrawerProps {
   comments: CommentUserListResponse[];
   onSendComment: (newComment: CommentUserListResponse) => void;
   onPostDeleteComment: (commentId: number, select_post_id: number) => void;
+  currentUser: IUserResponseData | null;
 }
 
 const CommentDrawer: React.FC<CommentDrawerProps> = ({
@@ -43,8 +45,8 @@ const CommentDrawer: React.FC<CommentDrawerProps> = ({
   comments,
   onSendComment,
   onPostDeleteComment,
+  currentUser,
 }) => {
-  const { currentUser } = UseUserContext();
   const handleSubmit = async (
     values: { comment: string },
     { resetForm }: any
@@ -88,8 +90,10 @@ const CommentDrawer: React.FC<CommentDrawerProps> = ({
       ModalProps={{
         keepMounted: false,
       }}
-      PaperProps={{
-        className: "drawer-paper-centered",
+      slotProps={{
+        paper: {
+          className: "drawer-paper-centered",
+        },
       }}
     >
       <Box className="drawer-wrapper">
@@ -125,6 +129,9 @@ const CommentDrawer: React.FC<CommentDrawerProps> = ({
                         photo_url: comment.user?.photo_url,
                         bio: comment?.comment || null,
                         is_following: comment?.user?.is_following || false,
+                        follow_status:
+                          comment?.user?.follow_status ||
+                          FollowingsEnum.PENDING,
                       }}
                       showAnotherContent={
                         comment.created_date &&
@@ -133,6 +140,7 @@ const CommentDrawer: React.FC<CommentDrawerProps> = ({
                       showBio={true}
                       showFullName={false}
                       showFollowButton={false}
+                      currentUser={currentUser}
                     />
                     {(currentUser?.id === comment?.user.id ||
                       currentUser?.id === selectedPostUserId) && (

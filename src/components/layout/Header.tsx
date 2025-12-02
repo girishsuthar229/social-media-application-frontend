@@ -67,7 +67,13 @@ const Header = () => {
               {isActive("/home") ? <HomeIcon /> : <HomeOutlinedIcon />}
             </IconButton>
           </Link>
-          <Link href="/find-friends" passHref>
+          <Link
+            href="/find-friends"
+            onClick={() => {
+              sessionStorage.removeItem("searchQuery");
+            }}
+            passHref
+          >
             <IconButton
               className={`header-icon ${
                 isActive("/find-friends") ? "active" : "inactive"

@@ -54,6 +54,7 @@ export interface AllPostListModel {
   created_date: string;
   modified_date: string | null;
   is_liked: boolean;
+  is_saved: boolean;
 }
 
 export interface IGetAllPostsResponse {
@@ -62,9 +63,9 @@ export interface IGetAllPostsResponse {
 }
 
 export interface UserWiseAllPoststPaylod {
+  userId: number;
   sortBy?: string;
   sortOrder?: string;
-  userId: number;
 }
 export interface UserWiseAllPostsData {
   post_id: number;
@@ -72,8 +73,6 @@ export interface UserWiseAllPostsData {
   like_count: number;
   share_count: number;
   comment_count: number;
-  self_comment: string | null;
-  is_following: boolean;
 }
 export interface IUserWiseAllPostsResponse {
   count: number;

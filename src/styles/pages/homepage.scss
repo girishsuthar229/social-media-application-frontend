@@ -6,7 +6,7 @@
      min-height: 100vh;
      display: flex;
      flex-direction: column;
-     background: white;
+     background: inherit;
      overflow: hidden;
    }
    
@@ -15,7 +15,7 @@
    .main-content {
      flex: 1;
      width: 100%;
-     background: linear-gradient(135deg, white 0%, $bg-light 100%);
+     background: inherit;
      overflow-y: auto;
      position: relative;
      .sidebar-grid{
@@ -45,6 +45,28 @@
    }
    
    /* ==========================================  SIDEBAR GRID (LEFT SIDE - FIXED)  =========================================== */
+   .sidebar-user-profile{
+    background-color: transparent !important;
+    box-shadow:  $text-color  !important;
+   }
+   .current-user-username{
+    font-size: 19px  !important;
+    font-weight: 600  !important;
+    color: $text-color  !important;
+    line-height: 1  !important;
+    transition: color 0.2s ease  !important;
+   }
+   .current-display-name{
+    font-size: 15px !important;
+    font-weight: 400 !important;
+    color: $lightText !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+   }
+   .current-bio{
+    padding-inline: 16px;
+   }
    .sidebar-grid {
     height: calc(100vh - 91px); 
     overflow: hidden;
@@ -91,6 +113,7 @@
             }
             .user-bio {
               -webkit-line-clamp: 1;
+              line-clamp: 1;
             }
           }
         }

@@ -6,4 +6,5 @@ export interface LikeUserListResponse {
   photo_url?: string;
   bio?: string;
   is_following?: boolean;
+  follow_status?: string | null;
 }

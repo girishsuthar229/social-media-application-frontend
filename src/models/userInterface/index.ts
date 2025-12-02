@@ -53,6 +53,7 @@ export interface UserAllListModel {
   birth_date?: Date | null;
   address?: string | null;
   is_private: boolean;
+  follow_status: string;
   is_following: boolean;
   follower_count: number;
   following_count: number;
@@ -63,4 +64,18 @@ export interface UserAllListModel {
 export interface IUserAllListResponse {
   count: number;
   rows: UserAllListModel[];
+}
+
+export interface IAnotherUserResponse {
+  id: number;
+  user_name: string;
+  first_name: string | null;
+  last_name: string | null;
+  bio: string | null;
+  photo_url: string | null;
+  is_private?: boolean;
+  is_following?: boolean;
+  follower_count?: number;
+  following_count?: number;
+  post_count?: number;
 }

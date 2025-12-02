@@ -169,13 +169,14 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: $lightGrey;
+    background-color: inherit;
     padding: 8px 16px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
   
   .comment-input .MuiOutlinedInput-root {
-    background-color: $lightGrey;
+    background-color: inherit;
+    border-color: $border-color !important;
     color: $text-color;
   }
   

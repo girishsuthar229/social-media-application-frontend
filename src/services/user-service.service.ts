@@ -6,6 +6,7 @@ import {
   IUserResponseData,
   IUserAllListResponse,
   UserAllListPaylod,
+  IAnotherUserResponse,
 } from "@/models/userInterface";
 
 export const userDetail = async (): Promise<
@@ -55,6 +56,25 @@ export const getAllUsers = async (
       BaseService.post("/users/get-all-users", values)
     );
     return Promise.resolve(response.data);
+  } catch (error: any) {
+    return Promise.reject({
+      statusCode: error.response?.status || 500,
+      message: error.response?.data?.message || error.message,
+      error: error.response?.data?.error || error.response?.data || error,
+      data: null as any,
+    });
+  }
+};
+
+export const getAnotherUserProfile = async (
+  username: string
+): Promise<IApiResponse<IAnotherUserResponse>> => {
+  try {
+    const response = await trackPromise(
+      BaseService.get(`/users/profile/${username}`)
+    );
+    const res = response.data;
+    return Promise.resolve(res);
   } catch (error: any) {
     return Promise.reject({
       statusCode: error.response?.status || 500,
