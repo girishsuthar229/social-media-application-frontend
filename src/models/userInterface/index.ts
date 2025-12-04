@@ -75,6 +75,7 @@ export interface IAnotherUserResponse {
   photo_url: string | null;
   is_private?: boolean;
   is_following?: boolean;
+  follow_status?: string;
   follower_count?: number;
   following_count?: number;
   post_count?: number;

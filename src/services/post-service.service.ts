@@ -5,6 +5,7 @@ import {
   IGetAllPostsResponse,
   IUserWiseAllPostsResponse,
   UserWiseAllPoststPaylod,
+  IGetPostByIdReponse,
 } from "@/models/postInterface";
 import BaseService from "@/services/base-service.service";
 import { trackPromise } from "react-promise-tracker";
@@ -70,9 +71,11 @@ export const getAllPosts = async (
 
 export const getPostById = async (
   postId: number
-): Promise<IApiResponse<IPostData>> => {
+): Promise<IApiResponse<IGetPostByIdReponse>> => {
   try {
-    const response = await trackPromise(BaseService.get(`/posts/${postId}`));
+    const response = await trackPromise(
+      BaseService.get(`/posts/post/${postId}`)
+    );
     const res = response.data;
     return Promise.resolve(res);
   } catch (error: any) {
@@ -122,46 +125,6 @@ export const deletePost = async (
       message: error.response?.data?.message || error.message,
       error: error.response?.data?.error || error.response?.data || error,
       data: null,
-    });
-  }
-};
-
-export const sharePost = async (
-  postId: number
-): Promise<IApiResponse<IPostData>> => {
-  try {
-    const response = await trackPromise(
-      BaseService.post(`/posts/${postId}/share`)
-    );
-    const res = response.data;
-    return Promise.resolve(res);
-  } catch (error: any) {
-    return Promise.reject({
-      statusCode: error.response?.status || 500,
-      message: error.response?.data?.message || error.message,
-      error: error.response?.data?.error || error.response?.data || error,
-      data: null as any,
-    });
-  }
-};
-
-export const getUserPosts = async (
-  userId: string,
-  page: number = 1,
-  limit: number = 10
-): Promise<IApiResponse<IPostData[]>> => {
-  try {
-    const response = await trackPromise(
-      BaseService.get(`/posts/user/${userId}?page=${page}&limit=${limit}`)
-    );
-    const res = response.data;
-    return Promise.resolve(res);
-  } catch (error: any) {
-    return Promise.reject({
-      statusCode: error.response?.status || 500,
-      message: error.response?.data?.message || error.message,
-      error: error.response?.data?.error || error.response?.data || error,
-      data: null as any,
     });
   }
 };

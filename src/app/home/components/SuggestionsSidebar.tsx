@@ -14,7 +14,7 @@ import BackButton from "@/components/common/BackButton";
 import { IUserResponseData, UserAllListModel } from "@/models/userInterface";
 import { commonFilePath } from "@/util/constanst";
 import UserlistWithFollowBtn from "@/components/common/UserlistWithFollow/UserlistWithFollowBtn";
-import UserListSkeleton from "@/components/common/UserlistWithFollow/userListSkeleton";
+import UserListSkeleton from "@/components/common/Skeleton/userListSkeleton";
 
 interface SugSidebarProps {
   suggestedUsers: UserAllListModel[];

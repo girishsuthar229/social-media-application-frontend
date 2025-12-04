@@ -18,7 +18,7 @@ import { UseUserContext } from "@/components/protected-route/protectedRoute";
 import { UserAllListModel } from "@/models/userInterface";
 import UserlistWithFollowBtn from "@/components/common/UserlistWithFollow/UserlistWithFollowBtn";
 import BackButton from "@/components/common/BackButton";
-import UserListSkeleton from "@/components/common/UserlistWithFollow/userListSkeleton";
+import UserListSkeleton from "@/components/common/Skeleton/userListSkeleton";
 import { Search, UserPlus } from "lucide-react";
 import { debounce } from "lodash";
 

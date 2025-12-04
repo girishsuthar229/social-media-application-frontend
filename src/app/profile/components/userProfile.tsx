@@ -11,7 +11,12 @@ import {
   Lock as LockIcon,
 } from "@mui/icons-material";
 import { formatNumber } from "@/util/helper";
-import { AuthBaseRoute, commonFilePath, STATUS_CODES } from "@/util/constanst";
+import {
+  AuthBaseRoute,
+  commonFilePath,
+  FollowingsEnum,
+  STATUS_CODES,
+} from "@/util/constanst";
 import { getUserUploadPost } from "@/services/post-service.service";
 import { UserWiseAllPostsData } from "@/models/postInterface";
 import { AllSavedPostList } from "@/models/savedinterface";
@@ -29,6 +34,8 @@ import {
 import ConfirmationDialog from "@/components/common/ConfirmationModal/confirmationModal";
 import { FollowUserListResponse } from "@/models/followsInterface";
 import FollowUserListDrawer from "@/components/common/SwipeableDrawerCommon/FollowUserListDrawer";
+import UserPostModal from "./userPostModal";
+import SquareCardSkeleton from "@/components/common/Skeleton/squareCardSkeleton";
 
 interface ProfileComponentProps {
   profileUser: IAnotherUserResponse | null;
@@ -54,8 +61,9 @@ const ProfileComponent = ({
   const [isSavedPostsLoaded, setIsSavedPostsLoaded] = useState(false);
   const [canViewPosts, setCanViewPosts] = useState<boolean | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [followStatus, setFollowStatus] = useState<string | null>(null);
   const [isFollowLoading, setIsFollowLoading] = useState(false);
-  const [unFollowConfirmModel, setUnFollowConfimrModel] = useState(false);
+  const [unFollowConfirmModel, setUnFollowConfirmModel] = useState(false);
   const [isFollowListLoading, setIsFollowListLoading] = useState(false);
   const [followUserListModel, setFollowUserListModel] = useState(false);
   const [followheadingContent, setFollowheadingContent] = useState<
@@ -63,6 +71,7 @@ const ProfileComponent = ({
   >(null);
   const [userOffset, setUsersOffset] = useState(0);
   const [followUsers, setFollowUsers] = useState<FollowUserListResponse[]>([]);
+  const [userPostModalId, setUserPostModalId] = useState<number | null>(null);
 
   const loadUserPosts = async (userId: number) => {
     setIsLoading(true);
@@ -86,7 +95,11 @@ const ProfileComponent = ({
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
+    setUsersOffset(0);
+    setUserPostModalId(null);
+    setFollowUserListModel(false);
     if (profileUser) {
       const canShowPosts =
         isOwnProfile || !profileUser?.is_private || profileUser?.is_following;
@@ -94,6 +107,7 @@ const ProfileComponent = ({
       if (canShowPosts) {
         loadUserPosts(profileUser?.id);
         setIsFollowing(!!profileUser?.is_following);
+        setFollowStatus(profileUser?.follow_status || null);
       }
     }
   }, [profileUser]);
@@ -104,9 +118,13 @@ const ProfileComponent = ({
     try {
       const response = await followUserService(userId);
       if (response.statusCode === STATUS_CODES.success) {
-        setIsFollowing(true);
-        setCanViewPosts(true);
-        if (profileUser?.is_private) {
+        setIsFollowing(response.data?.is_following || false);
+        setFollowStatus(response.data?.follow_status || null);
+        if (
+          response.data?.is_following &&
+          response.data?.follow_status === FollowingsEnum.ACCEPTED
+        ) {
+          setCanViewPosts(true);
           loadUserPosts(userId);
         }
       }
@@ -117,6 +135,14 @@ const ProfileComponent = ({
       setIsFollowLoading(false);
     }
   };
+
+  const handlerUnfollowModel = (userId: number | null, isPrivate?: boolean) => {
+    if (isPrivate && followStatus === FollowingsEnum.ACCEPTED) {
+      setUnFollowConfirmModel(true);
+    } else {
+      handleUnFollowClick(userId);
+    }
+  };
   const handleUnFollowClick = async (userId: number | null) => {
     if (isFollowLoading || !userId) return;
     setIsFollowLoading(true);
@@ -124,7 +150,7 @@ const ProfileComponent = ({
       const response = await unfollowUserService(userId);
       if (response.statusCode === STATUS_CODES.success) {
         setIsFollowing(false);
-        setCanViewPosts(false);
+        setFollowStatus(null);
       }
     } catch (error) {
       const err = error as IApiError;
@@ -193,7 +219,7 @@ const ProfileComponent = ({
   };
 
   const handlePostClick = (postId: number) => {
-    console.log("Post clicked:", postId);
+    setUserPostModalId(postId);
   };
 
   const handleFollowersList = async (userId: number | null) => {
@@ -242,6 +268,7 @@ const ProfileComponent = ({
       ) {
         setFollowUserListModel(true);
         setFollowUsers(response?.data?.rows);
+        setUsersOffset((prevOffset) => prevOffset + 10);
       }
     } catch (error) {
       const err = error as IApiError;
@@ -249,6 +276,12 @@ const ProfileComponent = ({
     } finally {
       setIsFollowListLoading(false);
     }
+  };
+
+  const handleDeletePost = (postId: number) => {
+    setPostValues((prevPosts) =>
+      prevPosts.filter((post) => post.post_id !== postId)
+    );
   };
 
   return (
@@ -301,6 +334,7 @@ const ProfileComponent = ({
             <Box
               className="stat-item"
               onClick={() => {
+                setUsersOffset(0);
                 handleFollowersList(profileUser?.id || null);
               }}
             >
@@ -313,7 +347,10 @@ const ProfileComponent = ({
             </Box>
             <Box
               className="stat-item"
-              onClick={() => handleFollowingsList(profileUser?.id || null)}
+              onClick={() => {
+                setUsersOffset(0);
+                handleFollowingsList(profileUser?.id || null);
+              }}
             >
               <Typography component="span" className="stat-number">
                 {formatNumber(profileUser?.following_count || 0)}
@@ -337,12 +374,21 @@ const ProfileComponent = ({
                 <BackButton
                   onClick={() =>
                     isFollowing
-                      ? setUnFollowConfimrModel(true)
+                      ? handlerUnfollowModel(
+                          profileUser?.id ? profileUser?.id : null,
+                          profileUser?.is_private
+                        )
                       : handleFollowClick(
                           profileUser?.id ? profileUser?.id : null
                         )
                   }
-                  labelText={isFollowing ? "UnFollow" : "Follow"}
+                  labelText={
+                    isFollowing && followStatus === FollowingsEnum.PENDING
+                      ? "Requested"
+                      : isFollowing && followStatus === FollowingsEnum.ACCEPTED
+                      ? "UnFollow"
+                      : "Follow"
+                  }
                   iconPosition="start"
                   iconName={
                     isFollowLoading
@@ -418,19 +464,7 @@ const ProfileComponent = ({
           }}
         >
           {isLoading ? (
-            <Grid container spacing={1} className="posts-grid">
-              {[1, 2, 3].map((i) => (
-                <Grid
-                  size={{ xs: 6, sm: 6, md: 4 }}
-                  key={`skeleton-${i}`}
-                  className="post-skeleton"
-                >
-                  <Box className="post-thumbnail">
-                    <div className="skeleton-image" />
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
+            <SquareCardSkeleton count={3} />
           ) : canViewPosts === false && canViewPosts !== null ? (
             <Box className="empty-state">
               <LockIcon className="empty-icon" />
@@ -501,7 +535,10 @@ const ProfileComponent = ({
       {unFollowConfirmModel && (
         <ConfirmationDialog
           open={unFollowConfirmModel}
-          onClose={() => setUnFollowConfimrModel(false)}
+          onClose={() => {
+            setUnFollowConfirmModel(false);
+            setUsersOffset(0);
+          }}
           content={
             <Typography>
               Are you sure you want to unfollow this user?
@@ -511,13 +548,14 @@ const ProfileComponent = ({
             buttonText: "Unfollow",
             onClick: () => {
               handleUnFollowClick(profileUser?.id ? profileUser?.id : null);
-              setUnFollowConfimrModel(false);
+              setCanViewPosts(false);
+              setUnFollowConfirmModel(false);
             },
           }}
           denyButton={{
             buttonText: "Cancel",
             onClick: () => {
-              setUnFollowConfimrModel(false);
+              setUnFollowConfirmModel(false);
             },
           }}
         />
@@ -531,8 +569,20 @@ const ProfileComponent = ({
           }}
           selectedUserId={Number(profileUser?.id)}
           headingContent={followheadingContent || ""}
-          users={followUsers}
+          followUsers={followUsers}
           currentUser={currentUser}
+        />
+      )}
+      {userPostModalId && (
+        <UserPostModal
+          open={!!userPostModalId}
+          onClose={() => {
+            setUserPostModalId(null);
+          }}
+          postId={Number(userPostModalId)}
+          currentUser={currentUser}
+          profileUser={profileUser}
+          onDeletePostClick={handleDeletePost}
         />
       )}
     </Box>

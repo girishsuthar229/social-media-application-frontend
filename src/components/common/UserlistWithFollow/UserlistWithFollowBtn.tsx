@@ -34,7 +34,8 @@ interface UserListItemProps {
   showFollowButton?: boolean;
   showFullName?: boolean;
   showBio?: boolean;
-  showAnotherContent?: string | null;
+  showTimeStamp?: string | null;
+  showComment?: string | null;
   currentUser: IUserResponseData | null;
 }
 
@@ -43,7 +44,8 @@ const UserlistWithFollowBtn: React.FC<UserListItemProps> = ({
   showFollowButton = true,
   showFullName = true,
   showBio = true,
-  showAnotherContent,
+  showTimeStamp,
+  showComment,
   currentUser,
 }) => {
   const router = useRouter();
@@ -121,40 +123,44 @@ const UserlistWithFollowBtn: React.FC<UserListItemProps> = ({
 
   return (
     <Box className="user-list-item">
-      <Box
-        className="user-info-section"
-        onClick={() => handleUserClick(user.user_name)}
-      >
-        <Avatar
-          src={
-            user.photo_url ? `${commonFilePath}${user.photo_url}` : undefined
-          }
-          className="user-avatar"
-        />
-
-        <Box className="user-details">
-          <Box display={"flex"} gap={0.5}>
-            <Typography className="user-username" component="h3">
-              {user.user_name}
-            </Typography>
-            {showAnotherContent && (
-              <Typography component="p" className="time-stamp-create-date">
-                {showAnotherContent}
+      <Box className="user-all-section">
+        <Box
+          className="user-info-section"
+          onClick={() => handleUserClick(user.user_name)}
+        >
+          <Avatar
+            src={
+              user.photo_url ? `${commonFilePath}${user.photo_url}` : undefined
+            }
+            className="user-avatar"
+          />
+          <Box className="user-details">
+            <Box display={"flex"} flexDirection={"column"} gap={0.5}>
+              <Typography className="user-username" component="h3">
+                {user.user_name}
               </Typography>
-            )}
+              {showFullName && fullName && (
+                <Typography className="user-display-name" variant="body2">
+                  {fullName}
+                </Typography>
+              )}
+              {showTimeStamp && (
+                <Typography component="p" className="time-stamp-create-date">
+                  {showTimeStamp}
+                </Typography>
+              )}
+            </Box>
           </Box>
-          {showFullName && fullName && (
-            <Typography className="user-display-name" variant="body2">
-              {fullName}
+        </Box>
+        <Box className="user-another-content-section">
+          {showBio && user?.bio && (
+            <Typography className="user-bio" variant="body2">
+              {user.bio}
             </Typography>
           )}
-          {showBio && user?.bio && (
-            <Typography
-              className="user-bio"
-              variant="body2"
-              color="textSecondary"
-            >
-              {user.bio}
+          {showComment && (
+            <Typography className="user-comment" variant="body2">
+              {showComment}
             </Typography>
           )}
         </Box>

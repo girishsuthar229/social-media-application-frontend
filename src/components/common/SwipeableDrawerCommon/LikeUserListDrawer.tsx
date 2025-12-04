@@ -6,13 +6,14 @@ import { LikeUserListResponse } from "@/models/likesInterface";
 import { X } from "lucide-react";
 import { FollowingsEnum } from "@/util/constanst";
 import { IUserResponseData } from "@/models/userInterface";
+import LikeUserList from "../LikeUserList/likeUserList";
 
 interface LikeUserListDrawerProps {
   selectedPostId: number;
   open: boolean;
   onClose: () => void;
   currentUser: IUserResponseData | null;
-  users: LikeUserListResponse[];
+  likedUsers: LikeUserListResponse[];
 }
 
 const LikeUserListDrawer: React.FC<LikeUserListDrawerProps> = ({
@@ -20,7 +21,7 @@ const LikeUserListDrawer: React.FC<LikeUserListDrawerProps> = ({
   open,
   onClose,
   currentUser,
-  users,
+  likedUsers,
 }) => {
   return (
     <SwipeableDrawer
@@ -47,35 +48,7 @@ const LikeUserListDrawer: React.FC<LikeUserListDrawerProps> = ({
           </IconButton>
         </Box>
 
-        <Box className="drawer-content scrollbar">
-          <div className="like-user-list">
-            {users.length === 0 ? (
-              <Typography className="no-likes">No likes yet.</Typography>
-            ) : (
-              users.map((user: LikeUserListResponse, index: number) => (
-                <Box key={index}>
-                  <UserlistWithFollowBtn
-                    user={{
-                      id: user?.id,
-                      user_name: user?.user_name,
-                      first_name: user?.first_name,
-                      last_name: user?.last_name,
-                      photo_url: user?.photo_url,
-                      bio: user?.bio || null,
-                      is_following: user?.is_following || false,
-                      follow_status:
-                        user?.follow_status || FollowingsEnum.PENDING,
-                    }}
-                    showBio={true}
-                    showFullName={true}
-                    showFollowButton={true}
-                    currentUser={currentUser}
-                  />
-                </Box>
-              ))
-            )}
-          </div>
-        </Box>
+        <LikeUserList likedUsers={likedUsers} currentUser={currentUser} />
       </Box>
     </SwipeableDrawer>
   );

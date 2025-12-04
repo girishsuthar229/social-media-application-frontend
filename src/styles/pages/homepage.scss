@@ -96,6 +96,9 @@
     .user-list-item {
       padding: 5px 6px;
       border-bottom: 1px solid $border-color;
+      .user-info-section{
+        padding: 4px 0;
+      }
     }
     // Mobile Responsive (Small Phones)
     @media (max-width: 600px) {
@@ -111,10 +114,12 @@
             .user-username {
               font-size: 13px;
             }
-            .user-bio {
-              -webkit-line-clamp: 1;
-              line-clamp: 1;
-            }
+          }
+        }
+        .user-another-content-section{
+          .user-bio {
+            -webkit-line-clamp: 1;
+            line-clamp: 1;
           }
         }
         .follow-button-container {

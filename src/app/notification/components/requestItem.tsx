@@ -53,7 +53,6 @@ const RequestItem: React.FC<RequestItemProps> = React.memo(
         );
 
         if (response.statusCode === STATUS_CODES.success) {
-          toast.success(response?.message);
           setIsFollowRequestAccepted(true);
         }
       } catch (error) {
@@ -73,7 +72,6 @@ const RequestItem: React.FC<RequestItemProps> = React.memo(
         );
 
         if (response.statusCode === STATUS_CODES.success) {
-          toast.success(response.message);
           onReject(followRedId);
         }
       } catch (error) {
@@ -111,7 +109,6 @@ const RequestItem: React.FC<RequestItemProps> = React.memo(
       try {
         const response = await unfollowUserService(user_id);
         if (response.statusCode === STATUS_CODES.success) {
-          toast.success(response?.message);
           setIsFollowing(false);
           setFollowStatus(null);
         }
@@ -181,7 +178,7 @@ const RequestItem: React.FC<RequestItemProps> = React.memo(
               ) : isFollowing && followStatus === FollowingsEnum.ACCEPTED ? (
                 "Following"
               ) : (
-                "Follow"
+                "Follow Back"
               )}
             </Button>
           </Box>

@@ -13,6 +13,7 @@ import {
   savePostClickServices,
   unSavePostClickServices,
 } from "@/services/saved-service.service";
+import { Share2 } from "lucide-react";
 
 interface PostActionMenuProps {
   postObj: {
@@ -80,6 +81,12 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
     } catch (err) {
       const error = err as IApiError;
       toast.error(error?.message);
+    }
+  };
+
+  const handleShareClick = async (postId: number) => {
+    if (postId) {
+      console.log("handleShareClick");
     }
   };
 
@@ -157,6 +164,14 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
               Save
             </>
           )}
+        </MenuItem>
+        <MenuItem
+          key="share"
+          className="post-menu-item"
+          onClick={() => handleShareClick(postObj?.postId)}
+        >
+          <Share2 size={18} />
+          <span className={"action-text"}>Share</span>
         </MenuItem>
       </Menu>
     </div>

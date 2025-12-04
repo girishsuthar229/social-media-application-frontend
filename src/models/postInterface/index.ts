@@ -78,3 +78,22 @@ export interface IUserWiseAllPostsResponse {
   count: number;
   rows: UserWiseAllPostsData[];
 }
+
+export interface IGetPostByIdReponse {
+  id: number;
+  content: string;
+  image_url: string;
+  like_count: number;
+  share_count: number;
+  self_comment: string | null;
+  comment_count: number;
+  created_date: string;
+  modified_date: string | null;
+  is_liked: boolean;
+  is_saved: boolean;
+  user: {
+    id: number;
+    user_name: string;
+    profile_pic_url: string;
+  };
+}

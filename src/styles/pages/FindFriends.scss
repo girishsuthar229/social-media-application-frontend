@@ -124,9 +124,9 @@
 }
 
 .user-bio {
-  color: $text-gray !important;
-  font-size: 14px !important;
-  line-height: 1.5 !important;
+  color: $text-light !important;
+  font-size: 12px !important;
+  line-height: 1.2 !important;
   text-align: start;
   display: -webkit-box !important;
   -webkit-line-clamp: 3 !important;
@@ -172,8 +172,13 @@
 
 .skeleton-content {
   width: 100% !important;
-  height: 100px !important;
+  height: 30px !important;
   border-radius: 8px !important;
+  .skeleton-line {
+    width: 80%  !important;
+    height: 100%  !important;
+    border-radius: 4px !important;
+  }
 }
 
 .skeleton-action {

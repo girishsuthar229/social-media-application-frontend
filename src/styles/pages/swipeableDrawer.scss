@@ -1,4 +1,4 @@
-@import "./../_colors";
+@import '../colors';
 /* ========================================== swipeableDrawer =========================================== */
   .drawer-paper-centered {
     border-top-left-radius: 16px !important;
@@ -142,11 +142,14 @@
     flex: 1;
     height: 100%;
     overflow-y: auto;
-    .user-bio{
+    .user-bio , .user-comment{
       margin-top: 0 !important;
     }
   }
-  
+  .comment-drawer{
+    display: flex;
+    justify-content: space-between;
+  }
   .comment-list-item {
     margin-bottom: 12px;
     p {

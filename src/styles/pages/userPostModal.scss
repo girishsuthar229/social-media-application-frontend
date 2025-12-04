@@ -1,0 +1,203 @@
+@import '../colors';
+
+.post-dialog-action {
+    padding: 0px !important;
+    .drawer-header {
+        padding: 10px 12px;
+    }
+    @media (max-width: 600px){
+        .drawer-header {
+            padding: 6px 6px 6px 11px;
+            button{
+                padding: 5px;
+            }
+        }
+    }
+}
+.post-modal-container {
+    padding: 0px !important;
+    position: relative;
+    overflow: hidden !important;
+    min-height: auto;
+}
+
+.drawer-close-btn {
+  color: inherit;
+  padding: 8px ;
+  transition: all 0.2s ease;
+  &:hover {
+    background-color: rgba($primary-color, 0.15) !important;
+    transform: rotate(90deg) !important;
+  }
+  &:active {
+    background-color: rgba($primary-color, 0.08) !important;
+  }
+}
+.post-modal-content {
+  display: flex;
+  gap: 0;
+  height: 100%;
+  @media (max-width: 960px) {
+    flex-direction: column;
+  }
+}
+
+  // Left Side - Post Card Section
+.post-card-section {
+  padding: 10px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+  border-right: 1px solid $border-color;
+  min-height: 400px;
+  @media (max-width: 960px) {
+    border-right: none;
+    min-height: auto;
+    gap: 5px;
+  }
+
+  .post-header {
+    display: flex;
+    align-items: center;
+    .more-options {
+      padding-block-end: 8px;
+    }
+    .user-list-item {
+        .user-info-section {
+            .user-avatar{
+              width: 48px ;
+              height: 48px ;
+            }
+            @media (max-width: 600px){
+              .user-username{
+                  font-size: 13px;
+              }
+              .user-avatar{
+                  width: 44px;
+                  height: 44px;
+              }
+            }
+        }
+        .user-another-content-section{
+            .user-bio{
+                margin: 0px;
+                font-size: 13px !important;
+            }
+            @media (max-width: 600px){
+                .user-bio{
+                    font-size: 11px !important;
+                }
+            }
+        }
+    }
+  }
+  .post-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    .post-image-container {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: #f5f5f5;
+  
+      .post-image {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
+        max-height: 600px;
+      }
+    }
+  }
+  .card-actions{
+    padding: 0 !important;
+    border-top:none;
+  }
+  .card-content{
+    padding-inline: 5px !important;
+  }
+}
+  
+  // Right Side - User List Section
+.user-list-section {
+    flex: 1;
+    padding: 0px 10px;
+    overflow: hidden;
+
+    @media (max-width: 960px) {
+      min-height: 400px;
+    }
+  
+    .user-list-tabs {
+      background-color: #fff;
+      border-bottom: 1px solid #e0e0e0;
+      .tab-button {
+        text-transform: none;
+        color: $text-gray;
+        @media (max-width: 400px){
+            padding: 0px 0px !important;
+        }
+        &.Mui-selected {
+          color: $primary-color;
+        }
+        .tab-label {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+    
+      }
+      .tab-button.liked {
+        color: $like-red !important;
+       }
+      .MuiTabs-indicator {
+        background-color: $primary-color;
+      }
+      @media (max-width: 600px){
+        .tab-label {
+          font-size: 12px !important;
+          svg{
+            width: 14 !important;
+            height: 14 !important;
+          }
+        }
+       }
+    }
+  
+    .user-list-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      padding: 0px;
+      .drawer-content{
+        padding: 8px 10px !important;
+        max-height: calc(85vh - 100px);
+        .comments-list{
+            .comment-drawer {
+                button{
+                    background-color: no !important;
+                }
+            }
+        }
+      }
+      .comment-input-container{
+        padding: 8px 10px !important;
+      }
+    }
+}
+  
+  // Dialog Paper Styling
+  .MuiDialog-paper {
+    border-radius: 16px !important;
+    max-width: 1200px !important;
+    
+    @media (max-width: 960px) {
+      margin: 16px;
+      max-height: calc(100vh - 32px);
+    }
+  }
+  

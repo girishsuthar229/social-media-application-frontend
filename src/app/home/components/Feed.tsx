@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { Heart, MessageCircle, Share2, Loader } from "lucide-react";
+import { Heart, MessageCircle, Loader } from "lucide-react";
 import PostActionMenu from "./postActionMenu";
 import { IUserResponseData, UserAllListModel } from "@/models/userInterface";
 import { AllPostListModel } from "@/models/postInterface";
@@ -22,6 +22,7 @@ import { CommentUserListResponse } from "@/models/commentsInterface";
 import { allCommentPostClickServices } from "@/services/comments-service.service";
 import { Box } from "@mui/material";
 import Link from "next/link";
+import PostCardSkeleton from "@/components/common/Skeleton/postCardSkeleton";
 
 // Types
 interface User {
@@ -123,7 +124,6 @@ const Feed: React.FC<FeedProps> = ({
       try {
         const response = await likePostClickServices(postId);
         if (response.statusCode === STATUS_CODES.success) {
-          // toast.success(response.message);
           updatePostLikeStatus(postId, true, 1);
         }
       } catch (error) {
@@ -141,7 +141,6 @@ const Feed: React.FC<FeedProps> = ({
       try {
         const response = await unLikePostClickServices(postId);
         if (response.statusCode === STATUS_CODES.success) {
-          // toast.success(response.message);
           updatePostLikeStatus(postId, false, -1);
         }
       } catch (error) {
@@ -159,7 +158,6 @@ const Feed: React.FC<FeedProps> = ({
       try {
         const response = await allLikePostClickServices(postId);
         if (response.statusCode === STATUS_CODES.success) {
-          toast.success(response.message);
           setLikeDrawerOpen(true);
           setLikedUsers(response?.data || []);
         }
@@ -183,7 +181,6 @@ const Feed: React.FC<FeedProps> = ({
       try {
         const response = await allCommentPostClickServices(postId);
         if (response.statusCode === STATUS_CODES.success) {
-          // toast.success(response.message);
           setCommentsModalOpen(true);
           setCommentsUsers(response?.data || []);
         }
@@ -218,15 +215,6 @@ const Feed: React.FC<FeedProps> = ({
       }
     });
   };
-
-  const handleShareClick = useCallback(
-    (postId: number) => {
-      if (onShareClick) {
-        onShareClick(postId);
-      }
-    },
-    [onShareClick]
-  );
 
   // Handle Load More
   const handleLoadMore = useCallback(() => {
@@ -297,10 +285,11 @@ const Feed: React.FC<FeedProps> = ({
                   id: post?.user?.id,
                   user_name: post?.user?.user_name,
                   photo_url: post?.user?.profile_pic_url,
-                  bio: getRelativeTime(post.created_date),
+                  bio: null,
                 }}
-                showBio={true}
-                showFullName={false}
+                showBio={false}
+                showTimeStamp={getRelativeTime(post.created_date)}
+                showFullName={true}
                 showFollowButton={false}
                 currentUser={currentUser}
               />
@@ -379,17 +368,6 @@ const Feed: React.FC<FeedProps> = ({
                 <span className={"action-text"}>
                   {post?.comment_count} Comments
                 </span>
-              </button>
-
-              {/* Share Button */}
-              <button
-                className={"action-button"}
-                onClick={() => handleShareClick(post?.post_id)}
-                aria-label="Share post"
-                title="Share"
-              >
-                <Share2 size={20} />
-                <span className={"action-text"}>Share</span>
               </button>
             </footer>
 
@@ -471,26 +449,7 @@ const Feed: React.FC<FeedProps> = ({
       )}
 
       {/* Loading Skeleton */}
-      {isLoading && (
-        <div className="feed-grid scrollbar skeleton-feed-grid">
-          {[1, 2].map((i) => (
-            <div key={`skeleton-${i}`} className="post-skeleton">
-              <div className="skeleton-header">
-                <div className="skeleton-avatar" />
-                <div className="skeleton-text">
-                  <div className="skeleton-line" />
-                  <div className="skeleton-line" />
-                </div>
-              </div>
-              <div className="skeleton-image" />
-              <div className="skeleton-content">
-                <div className="skeleton-line" />
-                <div className="skeleton-line" />
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      {isLoading && <PostCardSkeleton showHeader showImage showContent />}
 
       {/* End of Feed */}
       {!hasMore && !isLoading && animatedPosts.length > 0 && (
@@ -505,7 +464,7 @@ const Feed: React.FC<FeedProps> = ({
           selectedPostId={selectedPostId}
           open={likeDrawerOpen}
           onClose={likeCloseDrawer}
-          users={likedUsers}
+          likedUsers={likedUsers}
           currentUser={currentUser}
         />
       )}

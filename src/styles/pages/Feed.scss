@@ -515,11 +515,11 @@
   word-break: break-word;
 
   &.collapsed {
-    overflow: hidden;
+    overflow: hidden !important;
   }
 
   &.expanded {
-    display: block;
+    display: block !important;
   }
 }
 

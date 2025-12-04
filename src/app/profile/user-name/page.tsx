@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import ProfileComponent from "../components/userProfile";
 import { IAnotherUserResponse } from "@/models/userInterface";
 import { UseUserContext } from "@/components/protected-route/protectedRoute";
@@ -15,7 +15,6 @@ const AnotherProfile = () => {
     null
   );
   const [isUserNotFound, setIsUserNotFound] = useState<boolean>(false);
-  const router = useRouter();
   const searchParams = useSearchParams();
   const username = searchParams.get("username") || null;
 
@@ -23,7 +22,6 @@ const AnotherProfile = () => {
     try {
       const res = await getAnotherUserProfile(username);
       if (res?.data && res.statusCode === STATUS_CODES.success) {
-        console.log("res.data", res.data);
         setProfileUser(res.data || []);
       }
     } catch (error) {

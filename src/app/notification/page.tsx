@@ -8,7 +8,7 @@ import { STATUS_CODES } from "@/util/constanst";
 import { UseUserContext } from "@/components/protected-route/protectedRoute";
 import { pendingAccptedFollowListService } from "@/services/follows-service.service";
 import { PendingFollowResponse } from "@/models/followsInterface";
-import UserListSkeleton from "@/components/common/UserlistWithFollow/userListSkeleton";
+import UserListSkeleton from "@/components/common/Skeleton/userListSkeleton";
 import RequestItem from "./components/requestItem";
 
 const Notification = () => {

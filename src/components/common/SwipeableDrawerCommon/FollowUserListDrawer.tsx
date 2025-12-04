@@ -2,17 +2,17 @@
 import React from "react";
 import { Box, IconButton, SwipeableDrawer, Typography } from "@mui/material";
 import UserlistWithFollowBtn from "../UserlistWithFollow/UserlistWithFollowBtn";
-import { LikeUserListResponse } from "@/models/likesInterface";
 import { X } from "lucide-react";
 import { IUserResponseData } from "@/models/userInterface";
 import { FollowingsEnum } from "@/util/constanst";
+import { FollowUserListResponse } from "@/models/followsInterface";
 
 interface FollowUserListDrawerProps {
   open: boolean;
   onClose: () => void;
   selectedUserId: number;
   headingContent: string;
-  users: LikeUserListResponse[];
+  followUsers: FollowUserListResponse[];
   currentUser: IUserResponseData | null;
 }
 
@@ -21,7 +21,7 @@ const FollowUserListDrawer: React.FC<FollowUserListDrawerProps> = ({
   onClose,
   selectedUserId,
   headingContent,
-  users,
+  followUsers,
   currentUser,
 }) => {
   return (
@@ -51,30 +51,33 @@ const FollowUserListDrawer: React.FC<FollowUserListDrawerProps> = ({
 
         <Box className="drawer-content scrollbar">
           <div className="like-user-list">
-            {users.length === 0 ? (
+            {followUsers.length === 0 ? (
               <Typography className="no-likes">Not found.</Typography>
             ) : (
-              users.map((user: LikeUserListResponse, index: number) => (
-                <Box key={index}>
-                  <UserlistWithFollowBtn
-                    user={{
-                      id: user?.id,
-                      user_name: user?.user_name,
-                      first_name: user?.first_name,
-                      last_name: user?.last_name,
-                      photo_url: user?.photo_url,
-                      bio: user?.bio || null,
-                      is_following: user?.is_following || false,
-                      follow_status:
-                        user?.follow_status || FollowingsEnum.PENDING,
-                    }}
-                    showBio={true}
-                    showFullName={true}
-                    showFollowButton={true}
-                    currentUser={currentUser}
-                  />
-                </Box>
-              ))
+              followUsers.map(
+                (followUser: FollowUserListResponse, index: number) => (
+                  <Box key={index}>
+                    <UserlistWithFollowBtn
+                      user={{
+                        id: followUser?.user?.id,
+                        user_name: followUser?.user?.user_name,
+                        first_name: followUser?.user?.first_name,
+                        last_name: followUser?.user?.last_name,
+                        photo_url: followUser?.user?.photo_url,
+                        bio: followUser?.user?.bio || null,
+                        is_following: followUser?.user?.is_following || false,
+                        follow_status:
+                          followUser?.user?.follow_status ||
+                          FollowingsEnum.PENDING,
+                      }}
+                      showBio={true}
+                      showFullName={true}
+                      showFollowButton={true}
+                      currentUser={currentUser}
+                    />
+                  </Box>
+                )
+              )
             )}
           </div>
         </Box>
