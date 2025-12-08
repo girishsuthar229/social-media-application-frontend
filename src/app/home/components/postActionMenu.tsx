@@ -6,7 +6,7 @@ import BookmarkAddOutlinedIcon from "@mui/icons-material/BookmarkAddOutlined";
 import BookmarkRemoveOutlinedIcon from "@mui/icons-material/BookmarkRemoveOutlined";
 import { toast } from "react-toastify";
 import { Menu, MenuItem } from "@mui/material";
-import { deletePost } from "@/services/post-service.service";
+import { deletePost, updatePost } from "@/services/post-service.service";
 import { IApiError } from "@/models/common.interface";
 import { STATUS_CODES } from "@/util/constanst";
 import {
@@ -14,6 +14,10 @@ import {
   unSavePostClickServices,
 } from "@/services/saved-service.service";
 import { Share2 } from "lucide-react";
+import CommonDialogModal from "@/components/common/commonDialog/commonDialog";
+import AddEditPost, {
+  AddEditPostData,
+} from "@/app/create-post/components/addEditPost";
 
 interface PostActionMenuProps {
   postObj: {
@@ -38,20 +42,23 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
 }) => {
   const isPostByCurrentUser = postObj.userId === loggedUserId;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [userPostModalId, setUserPostModalId] = useState<number | null>(null);
+  const [postLoading, setPostLoading] = useState(false);
+
   const handlePostClose = () => {
     setAnchorEl(null);
     onToggleMenu(0);
   };
 
-  // const handleEditPostClick = (postId: number) => {
-  //   console.log("Edit post", postId);
-  //   toast.info("coming soon!");
-  // };
+  const handleEditPostClick = (postId: number) => {
+    setUserPostModalId(postId);
+  };
 
   const handleDeletePostClick = async (postId: number) => {
     try {
       const response = await deletePost(postId);
       if (response?.statusCode === STATUS_CODES.success) {
+        toast.success(response?.message);
         onPostDelete(postId);
       }
     } catch (err) {
@@ -90,6 +97,37 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
     }
   };
 
+  const handleEditPostSubmit = async (
+    postId: number,
+    values: AddEditPostData
+  ) => {
+    setPostLoading(true);
+    const formData = new FormData();
+    Object.keys(values).forEach((key) => {
+      const value = values[key as keyof AddEditPostData];
+      if (value !== null && value !== undefined) {
+        if (key === "post_image") {
+          if (value instanceof File) {
+            formData.append(key, value);
+          }
+          return;
+        } else {
+          formData.append(key, String(value));
+        }
+      }
+    });
+    try {
+      const response = await updatePost(postId, formData);
+      if (response?.statusCode === STATUS_CODES.success) {
+        toast.success(response?.message);
+      }
+    } catch (error) {
+      const err = error as IApiError;
+      toast.error(err?.message);
+    } finally {
+      setPostLoading(false);
+    }
+  };
   return (
     <div className="more-options">
       <MoreVertIcon
@@ -119,7 +157,7 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
             key="edit"
             className="post-menu-item"
             onClick={() => {
-              // handleEditPostClick(postObj.postId);
+              handleEditPostClick(postObj.postId);
               onToggleMenu(postObj.postId);
             }}
           >
@@ -174,6 +212,18 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
           <span className={"action-text"}>Share</span>
         </MenuItem>
       </Menu>
+      {userPostModalId && (
+        <CommonDialogModal
+          open={!!userPostModalId}
+          onClose={() => setUserPostModalId(null)}
+        >
+          <AddEditPost
+            postId={userPostModalId}
+            onEditPostClick={handleEditPostSubmit}
+            postLoading={postLoading}
+          />
+        </CommonDialogModal>
+      )}
     </div>
   );
 };

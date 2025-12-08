@@ -1,527 +1,361 @@
-import PostActionMenu from "@/app/home/components/postActionMenu";
-import UserlistWithFollowBtn from "@/components/common/UserlistWithFollow/UserlistWithFollowBtn";
-import { CommentUserListResponse } from "@/models/commentsInterface";
-import { IApiError } from "@/models/common.interface";
-import { LikeUserListResponse } from "@/models/likesInterface";
-import { IUserResponseData } from "@/models/userInterface";
-import { allCommentPostClickServices } from "@/services/comments-service.service";
+"use client";
+import { useEffect, useState } from "react";
+import { Formik, Form, Field } from "formik";
 import {
-  allLikePostClickServices,
-  likePostClickServices,
-  unLikePostClickServices,
-} from "@/services/likes-unlike-service.service";
-import { getPostById } from "@/services/post-service.service";
-import { commonFilePath, FollowingsEnum, STATUS_CODES } from "@/util/constanst";
-import { getRelativeTime } from "@/util/helper";
-import {
-  Box,
-  Dialog,
-  DialogContent,
-  IconButton,
-  Tab,
-  Tabs,
   Typography,
+  Box,
   Avatar,
-  Divider,
+  Switch,
+  FormControlLabel,
+  Grid,
 } from "@mui/material";
-import { X, Heart, MessageCircle, Loader } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import { Camera } from "@mui/icons-material";
+import { commonFilePath, STATUS_CODES } from "@/util/constanst";
+import { updateProfileData, userDetail } from "@/services/user-service.service";
+import { IApiError } from "@/models/common.interface";
 import { toast } from "react-toastify";
+import TextFieldInput from "@/components/common/TextFieldInput";
+import AppButton from "@/components/common/AppButton";
+import { profileSchema } from "@/util/validations/profileSchema.validation";
+import BackButton from "@/components/common/BackButton";
+import { useRouter } from "next/navigation";
+import { UseUserContext } from "@/components/protected-route/protectedRoute";
+import moment from "moment";
+import { regionDateAndTime } from "@/util/helper";
+import dayjs, { Dayjs } from "dayjs";
+import MuiDatePicker from "@/components/common/DatePicker/page";
+import Textarea from "@/components/common/Textarea";
 
-interface IPost {
-  id: number;
-  content: string;
-  image_url: string;
-  like_count: number;
-  share_count: number;
-  comment_count: number;
-  self_comment: string | null;
-  created_date: string;
-  modified_date: string | null;
-  is_liked: boolean;
-  is_saved: boolean;
-  user: {
-    id: number;
-    user_name: string;
-    profile_pic_url: string;
-  };
+export interface EidtUserProfileData {
+  id: number | null;
+  user_name: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  bio: string;
+  mobile_number: string;
+  user_image: File | string | null;
+  birth_date: string | null;
+  role_id: number | null;
+  address?: string | null;
+  is_private?: boolean;
 }
 
-interface IPostModalProps {
-  open: boolean;
-  onClose: () => void;
-  postId: number | null;
-  currentUser: IUserResponseData | null;
-  onShareClick?: (postId: number) => void;
-  onDeletePostClick: (postId: number) => void;
-}
+const ProfileEditMode = () => {
+  const [editMode, setEditMode] = useState(false);
+  const router = useRouter();
+  const { currentUser, handlerUserDetailApi } = UseUserContext();
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const [initialValues, setInitialValues] = useState<EidtUserProfileData>({
+    id: null,
+    user_name: "",
+    first_name: "",
+    last_name: "",
+    email: "",
+    bio: "",
+    mobile_number: "",
+    user_image: null,
+    birth_date: "",
+    role_id: null,
+    address: null,
+    is_private: false,
+  });
 
-const UserPostModal = ({
-  open,
-  onClose,
-  postId,
-  currentUser,
-  onShareClick,
-  onDeletePostClick,
-}: IPostModalProps) => {
-  const [activeTab, setActiveTab] = useState(0); // 1 for likes, 0 for comments
-  const [isLoading, setIsLoading] = useState(false);
-  const [postData, setPostData] = useState<IPost | null>(null);
-  const [openMenuPostId, setOpenMenuPostId] = useState<number | null>(null);
-  const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
-  const [loaderLike, setLoaderLike] = useState<boolean>(false);
-  const [likedUsers, setLikedUsers] = useState<LikeUserListResponse[]>([]);
-  const [loaderComments, setLoaderComments] = useState<boolean>(false);
-  const [commentUsers, setCommentUsers] = useState<CommentUserListResponse[]>(
-    []
-  );
-  const [expandedContent, setExpandedContent] = useState<boolean>(false);
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setActiveTab(newValue);
-  };
+  useEffect(() => {
+    if (currentUser) {
+      setInitialValues({
+        id: currentUser?.id || null,
+        user_name: currentUser.user_name || "",
+        first_name: currentUser.first_name || "",
+        last_name: currentUser.last_name || "",
+        email: currentUser.email || "",
+        bio: currentUser.bio || "",
+        mobile_number: currentUser.mobile_number || "",
+        user_image: currentUser.photo_url || null,
+        birth_date: currentUser.birth_date
+          ? moment(currentUser.birth_date).format(
+              regionDateAndTime().DATE_FORMAT
+            )
+          : null,
+        role_id: currentUser.role_id || null,
+        address: currentUser?.address || null,
+        is_private: currentUser?.is_private || false,
+      });
+      console.log("check::", {
+        id: currentUser?.id || null,
+        user_name: currentUser.user_name || "",
+        first_name: currentUser.first_name || "",
+        last_name: currentUser.last_name || "",
+        email: currentUser.email || "",
+        bio: currentUser.bio || "",
+        mobile_number: currentUser.mobile_number || "",
+        user_image: currentUser.photo_url || null,
+        birth_date: currentUser.birth_date
+          ? moment(currentUser.birth_date).format(
+              regionDateAndTime().DATE_FORMAT
+            )
+          : null,
+        role_id: currentUser.role_id || null,
+        address: currentUser?.address || null,
+        is_private: currentUser?.is_private || false,
+      });
+      setImagePreview(`${commonFilePath}${currentUser?.photo_url}` || "");
+      setEditMode(true);
+    }
+  }, [currentUser]);
 
-  const loadUserPostById = async (postId: number) => {
-    setIsLoading(true);
+  const handleSubmit = async (values: EidtUserProfileData) => {
+    const formData = new FormData();
+    Object.keys(values).forEach((key) => {
+      const value = values[key as keyof EidtUserProfileData];
+      if (value !== null && value !== undefined) {
+        if (key === "user_image") {
+          if (value instanceof File) {
+            formData.append(key, value);
+          }
+          return;
+        } else {
+          formData.append(key, String(value));
+        }
+      }
+    });
+
     try {
-      const res = await getPostById(postId);
-      if (res?.data && res.statusCode === STATUS_CODES.success) {
-        setPostData(res.data);
+      const response = await updateProfileData(formData);
+      if (response?.statusCode === STATUS_CODES.success) {
+        setEditMode(false);
+        router.push("/profile");
+        handlerUserDetailApi();
+        toast.success("Profile updated successfully!");
       }
     } catch (error) {
       const err = error as IApiError;
-      toast.error(err?.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    if (postId) {
-      loadUserPostById(postId);
-    }
-  }, [postId]);
-
-  const toggleMenu = (postId: number) => {
-    setOpenMenuPostId((prev) => (prev === postId ? null : postId));
-  };
-  const updatePostSavedStatus = (postId: number, isSaved: boolean) => {
-    if (postData?.id === postId) {
-      postData.is_saved = isSaved;
+      toast.error(err?.message || "Failed to update profile");
     }
   };
 
-  const updatePostLikeStatus = (
-    postId: number,
-    isLiked: boolean,
-    likeCountChange: number
+  const handleImageChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    setFieldValue: any
   ) => {
-    if (postData?.id === postId) {
-      postData.is_liked = isLiked;
-      postData.like_count += likeCountChange;
+    const file = event.target.files?.[0];
+    if (file) {
+      setFieldValue("user_image", file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
-  const handleLikePost = useCallback(
-    async (postId: number) => {
-      setSelectedPostId(postId);
-      try {
-        const response = await likePostClickServices(postId);
-        if (response.statusCode === STATUS_CODES.success) {
-          updatePostLikeStatus(postId, true, 1);
-        }
-      } catch (error) {
-        const err = error as IApiError;
-        toast.error(err?.message);
-      }
-      setSelectedPostId(null);
-    },
-    [postData]
-  );
-  const handleUnLikePost = useCallback(
-    async (postId: number) => {
-      setSelectedPostId(postId);
-      try {
-        const response = await unLikePostClickServices(postId);
-        if (response.statusCode === STATUS_CODES.success) {
-          updatePostLikeStatus(postId, false, -1);
-        }
-      } catch (error) {
-        const err = error as IApiError;
-        toast.error(err?.message);
-      }
-      setSelectedPostId(null);
-    },
-    [postData]
-  );
-
-  const handleLikeAllUserData = useCallback(
-    async (postId: number) => {
-      setSelectedPostId(postId);
-      try {
-        const response = await allLikePostClickServices(postId);
-        if (response.statusCode === STATUS_CODES.success) {
-          setLikedUsers(response?.data || []);
-        }
-      } catch (error) {
-        const err = error as IApiError;
-        toast.error(err?.message);
-      }
-    },
-    [postData]
-  );
-
-  const handleCommentAllUserData = useCallback(
-    async (postId: number) => {
-      setSelectedPostId(postId);
-      try {
-        const response = await allCommentPostClickServices(postId);
-        if (response.statusCode === STATUS_CODES.success) {
-          setCommentUsers(response?.data || []);
-          setActiveTab(0);
-        }
-      } catch (error) {
-        const err = error as IApiError;
-        toast.error(err?.message);
-      }
-      setLoaderComments(false);
-    },
-    [postData]
-  );
-
-  const hanldePostComment = (newComment: CommentUserListResponse) => {
-    setCommentUsers((prev) => [newComment, ...prev]);
-    if (postData?.id === postId) {
-      postData.comment_count += 1;
-    }
-  };
-  const handleDeletePostComment = (
-    commentId: number,
-    select_post_id: number
-  ) => {
-    setCommentUsers((prevComments) =>
-      prevComments.filter((comment) => comment.id !== commentId)
-    );
-    if (postData?.id === select_post_id) {
-      postData.comment_count -= 1;
-    }
-  };
-  const handleShareClick = useCallback(
-    (postId: number) => {
-      if (onShareClick) {
-        onShareClick(postId);
-      }
-    },
-    [onShareClick]
-  );
-
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      className="user-post-modal"
-      maxWidth="lg"
-      fullWidth
-    >
-      <DialogContent className="post-modal-container">
-        {/* Close Button */}
-        <IconButton className="post-modal-close-btn" onClick={onClose}>
-          <X size={24} />
-        </IconButton>
+    <Box className="profile-page scrollbar">
+      <Box className="profile-card scrollbar">
+        <div className="decorCircleTop" />
+        {/* Header */}
+        <Box className="profile-header">
+          <BackButton labelText="Back" onClick={() => router.back()} />
+        </Box>
 
-        {!postData && <p>post not found</p>}
-        {postData && (
-          <Box className="post-modal-content">
-            {/* Left Side - Post Card */}
-            <Box className="post-card-section">
-              <article
-                key={postData?.id}
-                className="post-card"
-                style={{ animationDelay: "100ms" }}
-              >
-                {/* Card Header */}
-                <header className="card-header">
-                  <UserlistWithFollowBtn
-                    user={{
-                      id: postData?.user.id,
-                      user_name: postData?.user?.user_name,
-                      photo_url: postData?.user?.profile_pic_url,
-                      bio: getRelativeTime(postData?.created_date),
-                    }}
-                    showBio={true}
-                    showFullName={false}
-                    showFollowButton={false}
-                    currentUser={currentUser}
+        <Formik
+          initialValues={initialValues}
+          validationSchema={profileSchema}
+          onSubmit={handleSubmit}
+          enableReinitialize
+        >
+          {({
+            isSubmitting,
+            setFieldValue,
+            setFieldTouched,
+            handleBlur,
+            errors,
+            touched,
+            values,
+          }) => (
+            <Form className="profile-form">
+              {/* Avatar Section */}
+              <Box className="avatar-section">
+                <Box className="avatar-wrapper">
+                  <Avatar
+                    src={imagePreview}
+                    alt={values.user_name}
+                    className="edit-profile-avatar"
                   />
 
-                  {/* Dropdown Menu Component */}
-                  <PostActionMenu
-                    postObj={{
-                      postId: postData?.id,
-                      userId: postData?.user.id,
-                      is_saved: postData?.is_saved,
-                    }}
-                    loggedUserId={currentUser?.id || null}
-                    isMenuOpen={openMenuPostId === postData?.id}
-                    onToggleMenu={toggleMenu}
-                    onPostDelete={onDeletePostClick}
-                    onPostSavedUnsaved={updatePostSavedStatus}
-                  />
-                </header>
-
-                {/* Post Image */}
-                <div className="image-wrapper">
-                  <img
-                    src={`${commonFilePath}${postData?.image_url}`}
-                    alt="Post"
-                    className="post-image"
-                    loading="lazy"
-                  />
-                </div>
-
-                {/* Card Actions - Moved before content */}
-                <footer className={"card-actions"}>
-                  {/* Like Button */}
-                  <button
-                    className={`action-button ${
-                      postData?.is_liked ? "liked" : ""
-                    }`}
-                    disabled={selectedPostId === postData?.id}
-                    aria-label={
-                      postData?.is_liked ? "Unlike post" : "Like post"
-                    }
-                    title={postData?.is_liked ? "Unlike" : "Like"}
-                  >
-                    {selectedPostId === postData?.id ? (
-                      <Loader size={20} className="loading-spinner" />
-                    ) : (
-                      <Heart
-                        size={20}
-                        className={`${postData?.is_liked ? "likeIcon" : ""}`}
-                        fill={postData?.is_liked ? "currentColor" : "none"}
-                        onClick={async (event) => {
-                          event.preventDefault();
-                          if (postData?.is_liked) {
-                            await handleUnLikePost(postData?.id);
-                          } else {
-                            await handleLikePost(postData?.id);
-                          }
-                        }}
-                      />
-                    )}
-                    <span
-                      className="action-text"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        setActiveTab(1);
-                      }}
-                    >
-                      {postData?.like_count} Likes
-                    </span>
-                  </button>
-                  <button
-                    className={"action-button"}
-                    onClick={() => setActiveTab(0)}
-                    aria-label="Comment on post"
-                    title="Comment"
-                  >
-                    <MessageCircle size={20} />
-                    <span className={"action-text"}>
-                      {postData?.comment_count} Comments
-                    </span>
-                  </button>
-                </footer>
-
-                {/* Card Content */}
-
-                <div className="card-content">
-                  <p
-                    className={`caption ${
-                      expandedContent ? "expanded" : "collapsed"
-                    }`}
-                  >
-                    <span className="caption-username">
-                      {postData?.user.user_name}
-                    </span>{" "}
-                    {!!(postData?.content.length > 100)
-                      ? `${postData?.content.substring(0, 100)}...`
-                      : postData?.content}
-                    {!!(postData?.content.length > 100) && (
-                      <button
-                        className="more-button"
-                        onClick={() => setExpandedContent((prev) => !prev)}
-                      >
-                        {expandedContent ? "less" : "more"}
-                      </button>
-                    )}
-                  </p>
-                </div>
-                {/* Self Comment */}
-                {postData.self_comment && (
-                  <div className="self-comment">
-                    <span className="comment-username">
-                      {postData.user.user_name}
-                    </span>
-                    <span className="comment-content">
-                      {postData?.self_comment}
-                    </span>
-                  </div>
+                  <label htmlFor="user_image" className="avatar-overlay">
+                    <Camera />
+                    <input
+                      id="user_image"
+                      name="user_image"
+                      type="file"
+                      accept="image/png, image/jpeg, image/jpg"
+                      onChange={(e) => handleImageChange(e, setFieldValue)}
+                      style={{ display: "none" }}
+                    />
+                  </label>
+                </Box>
+                {editMode && (
+                  <Typography variant="caption" className="avatar-hint">
+                    Click to change profile picture
+                  </Typography>
                 )}
-              </article>
-
-              <Box className="post-stats">
-                <Box className="stat-item">
-                  <Heart size={18} className="stat-icon" />
-                  <Typography variant="body2">
-                    {postData?.like_count}{" "}
-                    {postData?.like_count === 1 ? "Like" : "Likes"}
+                {Boolean(errors.user_image) && (
+                  <Typography variant="caption" color="error">
+                    {errors.user_image}
                   </Typography>
-                </Box>
-                <Box className="stat-item">
-                  <MessageCircle size={18} className="stat-icon" />
-                  <Typography variant="body2">
-                    {postData?.comment_count}{" "}
-                    {postData?.comment_count === 1 ? "Comment" : "Comments"}
-                  </Typography>
-                </Box>
+                )}
               </Box>
-            </Box>
 
-            {/* Right Side - Tabs and User List */}
-            <Box className="user-list-section">
-              <Tabs
-                value={activeTab}
-                onChange={handleTabChange}
-                className="user-list-tabs"
-                variant="fullWidth"
-              >
-                <Tab
-                  label={
-                    <Box className="tab-label">
-                      <Heart size={18} />
-                      <span>Likes ({likedUsers.length})</span>
-                    </Box>
-                  }
-                />
-                <Tab
-                  label={
-                    <Box className="tab-label">
-                      <MessageCircle size={18} />
-                      <span>Comments ({commentUsers.length})</span>
-                    </Box>
-                  }
-                />
-              </Tabs>
+              {/* Form Fields */}
+              <Grid container spacing={2}>
+                {/* Username */}
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Field
+                    name="user_name"
+                    label="Username"
+                    component={TextFieldInput}
+                    disabled={true}
+                    fullWidth
+                  />
+                </Grid>
 
-              <Divider />
+                {/* First Name */}
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Field
+                    name="first_name"
+                    label="First Name"
+                    component={TextFieldInput}
+                    disabled={!editMode}
+                    fullWidth
+                  />
+                </Grid>
 
-              {/* Likes Tab Content */}
-              {activeTab === 0 && (
-                <Box className="user-list-content">
-                  <Box className="drawer-wrapper">
-                    <Box className="drawer-header">
-                      <Typography variant="h6" className="drawer-title">
-                        Liked by
-                      </Typography>
-                      <IconButton
-                        className="drawer-close-btn"
-                        onClick={onClose}
-                      >
-                        <X size={20} />
-                      </IconButton>
-                    </Box>
+                {/* Last Name */}
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Field
+                    name="last_name"
+                    label="Last Name"
+                    component={TextFieldInput}
+                    disabled={!editMode}
+                    fullWidth
+                  />
+                </Grid>
 
-                    <Box className="drawer-content scrollbar">
-                      <div className="like-user-list">
-                        {likedUsers.length === 0 ? (
-                          <Typography className="no-likes">
-                            No likes yet.
-                          </Typography>
-                        ) : (
-                          likedUsers.map(
-                            (
-                              likedUser: LikeUserListResponse,
-                              index: number
-                            ) => (
-                              <Box key={index}>
-                                <UserlistWithFollowBtn
-                                  user={{
-                                    id: likedUser?.user?.id,
-                                    user_name: likedUser?.user?.user_name,
-                                    first_name: likedUser?.user?.first_name,
-                                    last_name: likedUser?.user?.last_name,
-                                    photo_url: likedUser?.user?.photo_url,
-                                    bio: likedUser?.user?.bio || null,
-                                    is_following:
-                                      likedUser?.user?.is_following || false,
-                                    follow_status:
-                                      likedUser?.user?.follow_status ||
-                                      FollowingsEnum.PENDING,
-                                  }}
-                                  showBio={true}
-                                  showFullName={true}
-                                  showFollowButton={true}
-                                  currentUser={currentUser}
-                                />
-                              </Box>
-                            )
-                          )
-                        )}
-                      </div>
-                    </Box>
+                {/* Email */}
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Field
+                    name="email"
+                    label="Email"
+                    type="email"
+                    component={TextFieldInput}
+                    disabled={!editMode}
+                    fullWidth
+                  />
+                </Grid>
+
+                {/* Mobile Number */}
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Field
+                    name="mobile_number"
+                    label="Mobile Number"
+                    component={TextFieldInput}
+                    disabled={!editMode}
+                    fullWidth
+                  />
+                </Grid>
+
+                {/* Birth Date */}
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Field
+                    name="birth_date"
+                    label="Birth Date"
+                    id="birth_date"
+                    variant="outlined"
+                    value={
+                      values?.birth_date ? dayjs(values?.birth_date) : null
+                    }
+                    onChange={(value: Dayjs | null) => {
+                      setFieldValue("birth_date", value ? value : null);
+                    }}
+                    onBlur={() => setFieldTouched("birth_date", true)}
+                    dateFormat={regionDateAndTime()?.DATE_FORMAT}
+                    component={MuiDatePicker}
+                    disableFuture
+                    error={touched.birth_date && Boolean(errors.birth_date)}
+                    helperText={touched.birth_date && errors.birth_date}
+                    required
+                  />
+                </Grid>
+
+                {/* Bio */}
+                <Grid size={{ xs: 12 }}>
+                  <Field
+                    name="bio"
+                    label="Bio"
+                    component={TextFieldInput}
+                    disabled={!editMode}
+                    fullWidth
+                    multiline
+                    rows={3}
+                  />
+                </Grid>
+
+                {/* Address */}
+                <Grid size={{ xs: 12 }}>
+                  <Textarea
+                    placeholder="Address"
+                    name="address"
+                    id="address"
+                    value={values?.address ? values?.address : undefined}
+                    disabled={!editMode}
+                    onChange={(e) => setFieldValue("address", e.target.value)}
+                    onBlur={handleBlur}
+                    maxLength={300}
+                    rows={3}
+                  />
+                </Grid>
+
+                {/* Private Account Toggle */}
+                <Grid size={{ xs: 12 }}>
+                  <Box className="switch-button-div">
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={values?.is_private}
+                          onChange={(e) =>
+                            setFieldValue("is_private", e.target.checked)
+                          }
+                          disabled={!editMode}
+                          className="switch-button"
+                        />
+                      }
+                      label="Private Account"
+                      className="switch-label"
+                    />
+                  </Box>
+                </Grid>
+              </Grid>
+
+              {editMode && (
+                <Box className="button-group">
+                  <Box>
+                    <AppButton
+                      type="submit"
+                      label={isSubmitting ? "Saving..." : "Save Changes"}
+                      variant="contained"
+                      disabled={isSubmitting}
+                      showSpinner={isSubmitting}
+                      textTransformNone
+                    />
                   </Box>
                 </Box>
               )}
-
-              {/* Comments Tab Content */}
-              {activeTab === 1 && (
-                <Box className="user-list-content">
-                  {commentUsers.length > 0 ? (
-                    commentUsers.map((comment) => (
-                      <Box key={comment?.user.id} className="comment-item">
-                        <Avatar
-                          src={comment?.user.photo_url}
-                          alt={comment?.user.user_name}
-                        />
-                        <Box className="comment-content">
-                          <Typography
-                            variant="body2"
-                            className="comment-user-name"
-                          >
-                            {comment?.user.user_name}
-                          </Typography>
-                          {comment?.user.user_name}
-                          {comment?.comment && (
-                            <Typography
-                              variant="body2"
-                              className="comment-text"
-                            >
-                              {comment?.comment}
-                            </Typography>
-                          )}
-                          {comment?.created_date && (
-                            <Typography
-                              variant="caption"
-                              className="comment-timestamp"
-                            >
-                              {getRelativeTime(comment?.created_date)}
-                            </Typography>
-                          )}
-                        </Box>
-                      </Box>
-                    ))
-                  ) : (
-                    <Box className="empty-state">
-                      <Typography variant="body2" color="textSecondary">
-                        No comments yet
-                      </Typography>
-                    </Box>
-                  )}
-                </Box>
-              )}
-            </Box>
-          </Box>
-        )}
-      </DialogContent>
-    </Dialog>
+            </Form>
+          )}
+        </Formik>
+      </Box>
+    </Box>
   );
 };
 
-export default UserPostModal;
+export default ProfileEditMode;

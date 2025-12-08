@@ -18,19 +18,19 @@ const ProfilePage = () => {
       last_name: currentUser?.last_name ?? "",
       bio: currentUser?.bio ?? "",
       photo_url: currentUser?.photo_url ?? "",
-      is_private: currentUser?.is_private,
-      is_following: true,
+      is_private: currentUser?.is_private ?? true,
+      is_following: currentUser ? true : false,
       follower_count: currentUser?.follower_count,
       following_count: currentUser?.following_count,
       post_count: currentUser?.post_count,
     };
-    setProfileUser(profilData);
+    setProfileUser(profilData?.id ? profilData : null);
   }, [currentUser]);
 
   return (
     <ProfileComponent
-      profileUser={profileUser ? profileUser : null}
-      currentUser={currentUser ? currentUser : null}
+      profileUser={profileUser}
+      currentUser={currentUser}
       isOwnProfile={true}
     />
   );

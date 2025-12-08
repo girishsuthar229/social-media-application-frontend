@@ -4,9 +4,7 @@
 
 .create-post-container {
     width: 100%;
-    max-width: 900px;
-    height: 100vh; 
-    height: calc(100vh - 100px);
+    height: 100%; 
     margin: 0 auto;
     padding: 20px 0;
     display: flex;

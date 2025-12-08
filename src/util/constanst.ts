@@ -58,6 +58,7 @@ export enum FollowingsEnum {
 
 export enum STATUS_ERROR {
   UserNotFound = "UserNotFound",
+  UserAcountPrivate = "UserAcountPrivate",
 }
 
 export enum STATUS_CODES {

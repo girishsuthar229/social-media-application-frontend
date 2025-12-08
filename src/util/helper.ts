@@ -3,9 +3,9 @@ import moment from "moment";
 
 export const regionDateAndTime = () => {
   return {
-    DATE_FORMAT: "DD/MM/YYYY",
+    DATE_FORMAT: "YYYY-MM-DD",
     TIME_FORMAT: "HH:mm:ss",
-    DATE_TIME_FORMAT: "DD/MM/YYYY HH:mm:ss",
+    DATE_TIME_FORMAT: "YYYY-MM-DD HH:mm:ss",
   };
 };
 
@@ -57,5 +57,22 @@ export const isTokenExpired = (token: string): boolean => {
     return decoded.exp < currentTime;
   } catch (e) {
     return true;
+  }
+};
+
+export const handleShareData = (props: ShareData) => {
+  if (navigator.share) {
+    const shareData: ShareData = {
+      title: props.title,
+      text: props.text,
+      url: props.url,
+    };
+    navigator
+      .share(shareData)
+      .then(() => console.log("Profile shared successfully"))
+      .catch((error) => console.log("Error sharing:", error));
+  } else {
+    const url = props.url ?? "";
+    navigator.clipboard.writeText(url);
   }
 };

@@ -103,8 +103,8 @@ const CommentUsersList: React.FC<CommentProps> = ({
                     getRelativeTime(comment.created_date)
                   }
                   showComment={comment?.comment || null}
-                  showBio={true}
-                  showFullName={true}
+                  showBio={false}
+                  showFullName={false}
                   showFollowButton={false}
                   currentUser={currentUser}
                 />

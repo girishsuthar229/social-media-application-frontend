@@ -47,8 +47,9 @@ const LikeUserListDrawer: React.FC<LikeUserListDrawerProps> = ({
             <X size={20} />
           </IconButton>
         </Box>
-
-        <LikeUserList likedUsers={likedUsers} currentUser={currentUser} />
+        <Box className="user-list-likes-drawwer scrollbar">
+          <LikeUserList likedUsers={likedUsers} currentUser={currentUser} />
+        </Box>
       </Box>
     </SwipeableDrawer>
   );

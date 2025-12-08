@@ -192,11 +192,12 @@
 
 .common-content-textarea {
   width: 100%;
+  color: $text-gray;
   padding: 10px;
   font-size: 16px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background: none;
-  border: 1px solid #0000003b;
+  border-color: $text-light;
   border-radius: 12px;
   resize: vertical;
   min-height: 150px;
@@ -230,6 +231,10 @@
   }
   .MuiPickersOutlinedInput-root {
     border-radius: 12px;
+    color: $text-gray;
+    .MuiPickersOutlinedInput-notchedOutline {
+      border-color: $text-light ;
+    }
     &:hover fieldset {
       border-color:$primary-color !important;
     }
@@ -367,6 +372,7 @@
   justify-content: space-between;
   transition: all 0.2s ease;
   background: transparent;
+  padding-block: 2px;
   
   &:last-child {
     border-bottom: none;
@@ -419,6 +425,7 @@
         color: $lightText;
         margin: 0;
         line-height: 1;
+        padding-top: 4px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

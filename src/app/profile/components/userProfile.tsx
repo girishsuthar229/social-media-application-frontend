@@ -10,12 +10,13 @@ import {
   Bookmark,
   Lock as LockIcon,
 } from "@mui/icons-material";
-import { formatNumber } from "@/util/helper";
+import { formatNumber, handleShareData } from "@/util/helper";
 import {
   AuthBaseRoute,
   commonFilePath,
   FollowingsEnum,
   STATUS_CODES,
+  STATUS_ERROR,
 } from "@/util/constanst";
 import { getUserUploadPost } from "@/services/post-service.service";
 import { UserWiseAllPostsData } from "@/models/postInterface";
@@ -90,7 +91,13 @@ const ProfileComponent = ({
       }
     } catch (error) {
       const err = error as IApiError;
-      toast.error(err?.message || "Failed to load posts");
+      toast.error(err?.message);
+      if (
+        err.statusCode === STATUS_CODES.Conflict &&
+        err.error === STATUS_ERROR.UserAcountPrivate
+      ) {
+        setCanViewPosts(false);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -102,12 +109,15 @@ const ProfileComponent = ({
     setFollowUserListModel(false);
     if (profileUser) {
       const canShowPosts =
-        isOwnProfile || !profileUser?.is_private || profileUser?.is_following;
+        isOwnProfile ||
+        !profileUser?.is_private ||
+        (profileUser?.is_following &&
+          profileUser?.follow_status == FollowingsEnum.ACCEPTED);
       setCanViewPosts(!!canShowPosts);
+      setIsFollowing(!!profileUser?.is_following);
+      setFollowStatus(profileUser?.follow_status || null);
       if (canShowPosts) {
         loadUserPosts(profileUser?.id);
-        setIsFollowing(!!profileUser?.is_following);
-        setFollowStatus(profileUser?.follow_status || null);
       }
     }
   }, [profileUser]);
@@ -120,13 +130,7 @@ const ProfileComponent = ({
       if (response.statusCode === STATUS_CODES.success) {
         setIsFollowing(response.data?.is_following || false);
         setFollowStatus(response.data?.follow_status || null);
-        if (
-          response.data?.is_following &&
-          response.data?.follow_status === FollowingsEnum.ACCEPTED
-        ) {
-          setCanViewPosts(true);
-          loadUserPosts(userId);
-        }
+        toast.success(response.message);
       }
     } catch (error) {
       const err = error as IApiError;
@@ -201,21 +205,12 @@ const ProfileComponent = ({
   };
 
   const handleShareProfile = () => {
-    if (navigator.share) {
-      const data = {
-        title: `${profileUser?.first_name} ${profileUser?.last_name}`,
-        text: `Check out @${profileUser?.user_name}'s profile!`,
-        url: `${window.location.origin}/profile/${profileUser?.user_name}`,
-      };
-      navigator
-        .share(data)
-        .then(() => console.log("Profile shared successfully"))
-        .catch((error) => console.log("Error sharing:", error));
-    } else {
-      const url = `${window.location.origin}/profile/${profileUser?.user_name}`;
-      navigator.clipboard.writeText(url);
-      toast.success("Profile link copied to clipboard!");
-    }
+    const data: ShareData = {
+      title: `${profileUser?.first_name} ${profileUser?.last_name}`,
+      text: `Check out @${profileUser?.user_name}'s profile!`,
+      url: `${window.location.origin}/profile/user-name?username=${profileUser?.user_name}`,
+    };
+    handleShareData(data);
   };
 
   const handlePostClick = (postId: number) => {
@@ -282,8 +277,24 @@ const ProfileComponent = ({
     setPostValues((prevPosts) =>
       prevPosts.filter((post) => post.post_id !== postId)
     );
+    setSavedPosts((prevPosts) =>
+      prevPosts.filter((post) => post.post_id !== postId)
+    );
+    setUserPostModalId(null);
   };
 
+  const handleSavedUnSavedPost = (
+    isSaved: boolean,
+    savePostData: AllSavedPostList
+  ) => {
+    if (isSaved) {
+      setSavedPosts((prev) => [...prev, { ...savePostData }]);
+    } else {
+      setSavedPosts((prevPosts) =>
+        prevPosts.filter((post) => post.post_id !== savePostData?.post_id)
+      );
+    }
+  };
   return (
     <Box className="profile-page scrollbar">
       <Box className="profile-card scrollbar">
@@ -582,6 +593,7 @@ const ProfileComponent = ({
           postId={Number(userPostModalId)}
           currentUser={currentUser}
           profileUser={profileUser}
+          updatePostSaveUnSaved={handleSavedUnSavedPost}
           onDeletePostClick={handleDeletePost}
         />
       )}

@@ -1,5 +1,6 @@
 import PostActionMenu from "@/app/home/components/postActionMenu";
 import CommentUsersList from "@/components/common/CommentUserList/commentUsersList";
+import CommonDialogModal from "@/components/common/commonDialog/commonDialog";
 import LikeUserList from "@/components/common/LikeUserList/likeUserList";
 import PostCardSkeleton from "@/components/common/Skeleton/postCardSkeleton";
 import UserListSkeleton from "@/components/common/Skeleton/userListSkeleton";
@@ -7,6 +8,7 @@ import UserlistWithFollowBtn from "@/components/common/UserlistWithFollow/Userli
 import { CommentUserListResponse } from "@/models/commentsInterface";
 import { IApiError } from "@/models/common.interface";
 import { LikeUserListResponse } from "@/models/likesInterface";
+import { AllSavedPostList } from "@/models/savedinterface";
 import {
   IAnotherUserResponse,
   IUserResponseData,
@@ -58,7 +60,7 @@ interface IPostModalProps {
   postId: number | null;
   currentUser: IUserResponseData | null;
   profileUser: IAnotherUserResponse | null;
-  onShareClick?: (postId: number) => void;
+  updatePostSaveUnSaved: (isSaved: boolean, data: AllSavedPostList) => void;
   onDeletePostClick: (postId: number) => void;
 }
 
@@ -68,7 +70,7 @@ const UserPostModal = ({
   postId,
   currentUser,
   profileUser,
-  onShareClick,
+  updatePostSaveUnSaved,
   onDeletePostClick,
 }: IPostModalProps) => {
   const [activeTab, setActiveTab] = useState(0); // 1 for likes, 0 for comments
@@ -223,17 +225,16 @@ const UserPostModal = ({
   const updatePostSavedStatus = (postId: number, isSaved: boolean) => {
     if (postData?.id === postId) {
       postData.is_saved = isSaved;
+      const savePostData: AllSavedPostList = {
+        post_id: postData?.id,
+        image_url: postData?.image_url,
+        like_count: postData?.like_count,
+        comment_count: postData?.comment_count,
+        share_count: postData?.share_count,
+      };
+      updatePostSaveUnSaved(isSaved, savePostData);
     }
   };
-
-  const handleShareClick = useCallback(
-    (postId: number) => {
-      if (onShareClick) {
-        onShareClick(postId);
-      }
-    },
-    [onShareClick]
-  );
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     if (newValue === 0) {
@@ -252,230 +253,207 @@ const UserPostModal = ({
     }
   }, [postId]);
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      className="user-post-modal"
-      maxWidth="lg"
-      fullWidth
-    >
-      <DialogActions className="post-dialog-action">
-        <Box className="drawer-header">
-          <Typography variant="h6" className="drawer-title">
-            {"User Post"}
-          </Typography>
-          <IconButton className="drawer-close-btn" onClick={onClose}>
-            <X size={20} />
-          </IconButton>
-        </Box>
-      </DialogActions>
-      <DialogContent className="post-modal-container">
-        <Box className="post-modal-content">
-          {/* Left Side - Tabs and User List */}
-          <Box className="post-card-section">
-            {!isLoading && postData && (
-              <>
-                <Box className="post-header">
-                  <UserlistWithFollowBtn
-                    user={{
-                      id: postData?.user.id,
-                      user_name: postData?.user?.user_name,
-                      photo_url: postData?.user?.profile_pic_url,
-                      bio: null,
-                    }}
-                    showTimeStamp={getRelativeTime(postData?.created_date)}
-                    showBio={true}
-                    showFullName={false}
-                    showFollowButton={false}
-                    currentUser={currentUser}
-                  />
-                  <PostActionMenu
-                    postObj={{
-                      postId: postData?.id,
-                      userId: postData?.user.id,
-                      is_saved: postData?.is_saved,
-                    }}
-                    loggedUserId={currentUser?.id || null}
-                    isMenuOpen={openMenuPostId === postData?.id}
-                    onToggleMenu={toggleMenu}
-                    onPostDelete={onDeletePostClick}
-                    onPostSavedUnsaved={updatePostSavedStatus}
-                  />
-                </Box>
-                <Box className="post-body">
-                  {postData?.image_url && (
-                    <Box className="post-image-container">
-                      <img
-                        src={`${commonFilePath}${postData?.image_url}`}
-                        alt="Post"
-                        className="post-image"
-                      />
-                    </Box>
-                  )}
-                </Box>
-                <Box className={"card-actions"}>
-                  <button
-                    className={`action-button ${
-                      postData?.is_liked ? "liked" : ""
-                    }`}
-                    aria-label={
-                      postData?.is_liked ? "Unlike post" : "Like post"
-                    }
-                    title={postData?.is_liked ? "Unlike" : "Like"}
-                  >
-                    {selectedPostId === postData?.id ? (
-                      <Loader size={20} className="loading-spinner" />
-                    ) : (
-                      <Heart
-                        size={18}
-                        className={`${postData?.is_liked ? "likeIcon" : ""}`}
-                        fill={postData?.is_liked ? "currentColor" : "none"}
-                        onClick={async (event) => {
-                          event.preventDefault();
-                          if (postData?.is_liked) {
-                            await handleUnLikePost(postData?.id);
-                          } else {
-                            await handleLikePost(postData?.id);
-                          }
-                        }}
-                      />
-                    )}
-
-                    <span
-                      className="action-text"
-                      onClick={(event) => {
+    <CommonDialogModal open={open} onClose={onClose}>
+      <Box className="post-modal-content">
+        {/* Left Side - Tabs and User List */}
+        <Box className="post-card-section">
+          {!isLoading && postData && (
+            <>
+              <Box className="post-header">
+                <UserlistWithFollowBtn
+                  user={{
+                    id: postData?.user.id,
+                    user_name: postData?.user?.user_name,
+                    photo_url: postData?.user?.profile_pic_url,
+                    bio: null,
+                  }}
+                  showTimeStamp={getRelativeTime(postData?.created_date)}
+                  showBio={true}
+                  showFullName={false}
+                  showFollowButton={false}
+                  currentUser={currentUser}
+                />
+                <PostActionMenu
+                  postObj={{
+                    postId: postData?.id,
+                    userId: postData?.user.id,
+                    is_saved: postData?.is_saved,
+                  }}
+                  loggedUserId={currentUser?.id || null}
+                  isMenuOpen={openMenuPostId === postData?.id}
+                  onToggleMenu={toggleMenu}
+                  onPostDelete={onDeletePostClick}
+                  onPostSavedUnsaved={updatePostSavedStatus}
+                />
+              </Box>
+              <Box className="post-body">
+                {postData?.image_url && (
+                  <Box className="post-image-container">
+                    <img
+                      src={`${commonFilePath}${postData?.image_url}`}
+                      alt="Post"
+                      className="post-image"
+                    />
+                  </Box>
+                )}
+              </Box>
+              <Box className={"card-actions"}>
+                <button
+                  className={`action-button ${
+                    postData?.is_liked ? "liked" : ""
+                  }`}
+                  aria-label={postData?.is_liked ? "Unlike post" : "Like post"}
+                  title={postData?.is_liked ? "Unlike" : "Like"}
+                >
+                  {selectedPostId === postData?.id ? (
+                    <Loader size={20} className="loading-spinner" />
+                  ) : (
+                    <Heart
+                      size={18}
+                      className={`${postData?.is_liked ? "likeIcon" : ""}`}
+                      fill={postData?.is_liked ? "currentColor" : "none"}
+                      onClick={async (event) => {
                         event.preventDefault();
-                        setActiveTab(0);
+                        if (postData?.is_liked) {
+                          await handleUnLikePost(postData?.id);
+                        } else {
+                          await handleLikePost(postData?.id);
+                        }
                       }}
-                    >
-                      {postData?.like_count}{" "}
-                      {postData?.like_count === 1 ? "Like" : "Likes"}
-                    </span>
-                  </button>
-
-                  <button
-                    className={"action-button"}
-                    onClick={() => {
-                      setActiveTab(1);
-                      handleCommentAllUserData(postData?.id);
+                    />
+                  )}
+                  <span
+                    className="action-text"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setActiveTab(0);
                     }}
-                    aria-label="Comment on post"
-                    title="Comment"
                   >
-                    <MessageCircle size={18} />
-                    <span className={"action-text"}>
-                      {postData?.comment_count}{" "}
-                      {postData?.comment_count === 1 ? "Comment" : "Comments"}
-                    </span>
-                  </button>
-                </Box>
-                <Box className="card-content">
-                  <p
-                    className={`caption ${
-                      expandedContent ? "expanded" : "collapsed"
-                    }`}
-                  >
-                    <span className="caption-username">
-                      {postData?.user.user_name}
-                    </span>
-                    {expandedContent || !!!(postData?.content.length > 100)
-                      ? postData?.content
-                      : `${postData?.content.substring(0, 100)}...`}
-                    {!!(postData?.content.length > 100) && (
-                      <button
-                        className="more-button"
-                        onClick={() => setExpandedContent((prev) => !prev)}
-                      >
-                        {expandedContent ? "less" : "more"}
-                      </button>
-                    )}
-                  </p>
-                </Box>
-              </>
-            )}
-            {/* Loading Skeleton  And Not Found*/}
-            {!isLoading && !postData && <Typography>post not found</Typography>}
-            {isLoading && (
-              <PostCardSkeleton showHeader showImage showContent count={1} />
-            )}
-          </Box>
-
-          {/* Right Side - Tabs and User List */}
-          <Box className="user-list-section">
-            <Tabs
-              value={activeTab}
-              onChange={handleTabChange}
-              className="user-list-tabs"
-              variant="fullWidth"
-            >
-              <Tab
-                className={`tab-button`}
-                value={0}
-                label={
-                  <Box className="tab-label">
-                    <Heart size={18} />
-                    <span>Likes ({postData?.like_count})</span>
-                  </Box>
-                }
-              />
-              <Tab
-                className={`tab-button`}
-                value={1}
-                label={
-                  <Box className="tab-label">
-                    <MessageCircle size={18} />
-                    <span>Comments ({postData?.comment_count})</span>
-                  </Box>
-                }
-              />
-            </Tabs>
-
-            {/* Likes Tab Content */}
-            {activeTab === 0 && (
-              <Box className="user-list-content">
-                {!loaderLike && (
-                  <LikeUserList
-                    likedUsers={likedUsers}
-                    currentUser={currentUser}
-                  />
-                )}
-                {loaderLike && (
-                  <UserListSkeleton
-                    count={3}
-                    showFullName={true}
-                    showBio={true}
-                    showFollowButton={true}
-                  />
-                )}
+                    {postData?.like_count}{" "}
+                    {postData?.like_count === 1 ? "Like" : "Likes"}
+                  </span>
+                </button>
+                <button
+                  className={"action-button"}
+                  onClick={() => {
+                    setActiveTab(1);
+                    handleCommentAllUserData(postData?.id);
+                  }}
+                  aria-label="Comment on post"
+                  title="Comment"
+                >
+                  <MessageCircle size={18} />
+                  <span className={"action-text"}>
+                    {postData?.comment_count}{" "}
+                    {postData?.comment_count === 1 ? "Comment" : "Comments"}
+                  </span>
+                </button>
               </Box>
-            )}
-            {/* Comments Tab Content */}
-            {activeTab === 1 && (
-              <Box className="user-list-content">
-                {!loaderComments && (
-                  <CommentUsersList
-                    selectedPostId={postId || 0}
-                    selectedPostUserId={Number(profileUser?.id) || 0}
-                    comments={commentUsers}
-                    onSendComment={hanldePostComment}
-                    onPostDeleteComment={handleDeletePostComment}
-                    currentUser={currentUser}
-                  />
-                )}
-                {loaderComments && (
-                  <UserListSkeleton
-                    count={3}
-                    showFullName={true}
-                    showBio={true}
-                    showFollowButton={true}
-                  />
-                )}
+              <Box className="card-content">
+                <p
+                  className={`caption ${
+                    expandedContent ? "expanded" : "collapsed"
+                  }`}
+                >
+                  <span className="caption-username">
+                    {postData?.user.user_name}
+                  </span>
+                  {expandedContent || !!!(postData?.content.length > 100)
+                    ? postData?.content
+                    : `${postData?.content.substring(0, 100)}...`}
+                  {!!(postData?.content.length > 100) && (
+                    <button
+                      className="more-button"
+                      onClick={() => setExpandedContent((prev) => !prev)}
+                    >
+                      {expandedContent ? "less" : "more"}
+                    </button>
+                  )}
+                </p>
               </Box>
-            )}
-          </Box>
+            </>
+          )}
+          {/* Loading Skeleton  And Not Found*/}
+          {!isLoading && !postData && <Typography>post not found</Typography>}
+          {isLoading && (
+            <PostCardSkeleton showHeader showImage showContent count={1} />
+          )}
         </Box>
-      </DialogContent>
-    </Dialog>
+
+        {/* Right Side - Tabs and User List */}
+        <Box className="user-list-section">
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            className="user-list-tabs"
+            variant="fullWidth"
+          >
+            <Tab
+              className={`tab-button`}
+              value={0}
+              label={
+                <Box className="tab-label">
+                  <Heart size={18} />
+                  <span>Likes ({postData?.like_count})</span>
+                </Box>
+              }
+            />
+            <Tab
+              className={`tab-button`}
+              value={1}
+              label={
+                <Box className="tab-label">
+                  <MessageCircle size={18} />
+                  <span>Comments ({postData?.comment_count})</span>
+                </Box>
+              }
+            />
+          </Tabs>
+          {/* Likes Tab Content */}
+          {activeTab === 0 && (
+            <Box className="user-list-content">
+              {!loaderLike && (
+                <LikeUserList
+                  likedUsers={likedUsers}
+                  currentUser={currentUser}
+                />
+              )}
+              {loaderLike && (
+                <UserListSkeleton
+                  count={3}
+                  showFullName={true}
+                  showBio={true}
+                  showFollowButton={true}
+                />
+              )}
+            </Box>
+          )}
+          {/* Comments Tab Content */}
+          {activeTab === 1 && (
+            <Box className="user-list-content">
+              {!loaderComments && (
+                <CommentUsersList
+                  selectedPostId={postId || 0}
+                  selectedPostUserId={Number(profileUser?.id) || 0}
+                  comments={commentUsers}
+                  onSendComment={hanldePostComment}
+                  onPostDeleteComment={handleDeletePostComment}
+                  currentUser={currentUser}
+                />
+              )}
+              {loaderComments && (
+                <UserListSkeleton
+                  count={3}
+                  showFullName={true}
+                  showBio={true}
+                  showFollowButton={true}
+                />
+              )}
+            </Box>
+          )}
+        </Box>
+      </Box>
+    </CommonDialogModal>
   );
 };
 

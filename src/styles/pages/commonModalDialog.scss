@@ -17,7 +17,7 @@
 .post-modal-container {
     padding: 0px !important;
     position: relative;
-    overflow: hidden !important;
+    overflow: auto !important;
     min-height: auto;
 }
 
@@ -27,7 +27,7 @@
   transition: all 0.2s ease;
   &:hover {
     background-color: rgba($primary-color, 0.15) !important;
-    transform: rotate(90deg) !important;
+
   }
   &:active {
     background-color: rgba($primary-color, 0.08) !important;
@@ -48,10 +48,9 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 10px;
   overflow: hidden;
   border-right: 1px solid $border-color;
-  min-height: 400px;
+  max-height: calc(85vh - 100px);
   @media (max-width: 960px) {
     border-right: none;
     min-height: auto;
@@ -96,7 +95,7 @@
   .post-body {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    padding-block:5px  10px;
     .post-image-container {
       width: 100%;
       border-radius: 12px;
@@ -107,8 +106,7 @@
         width: 100%;
         height: auto;
         display: block;
-        object-fit: cover;
-        max-height: 600px;
+        object-fit: contain;
       }
     }
   }
@@ -173,9 +171,10 @@
       justify-content: space-between;
       flex: 1;
       padding: 0px;
+      height: 100%;
+      max-height: calc(68vh - 49px);
       .drawer-content{
         padding: 8px 10px !important;
-        max-height: calc(85vh - 100px);
         .comments-list{
             .comment-drawer {
                 button{
@@ -197,7 +196,6 @@
     
     @media (max-width: 960px) {
       margin: 16px;
-      max-height: calc(100vh - 32px);
     }
   }
   

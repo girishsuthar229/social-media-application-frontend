@@ -382,17 +382,11 @@
   flex-direction: column;
 }
 
-.form-field.full-width {
-  grid-column: 1 / -1;
-}
-
 /* ========================================== SWITCH STYLING =========================================== */
-  .switch-label span {
-    font-weight: 600;
-    color: $text-dark;
-    font-size: 15px;
-  }
   .switch-button {
+    .MuiSwitch-thumb{
+      color: $text-color;
+    }
     .Mui-checked+.MuiSwitch-track{
       background-color: $primary-color !important;
     }
@@ -400,17 +394,21 @@
       color: $primary-color !important;
     }
   }
-  
+  .switch-button-div{
+    width: 100%;
+    background-color: rgba($primary-light, 0.05);
+    padding: 16px;
+    border-radius: 12px;
+  }
  .switch-label {
    margin: 0 !important;
-   padding: 16px;
-   border-radius: 12px;
-   background-color: $bg-orange-light;
    transition: all 0.3s ease;
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
    cursor: pointer;
+    .MuiFormControlLabel-label{
+     font-weight: 600;
+     color: $primary-color;
+     font-size: 15px;
+    }
  }
 
 /* ========================================== BUTTON GROUP =========================================== */

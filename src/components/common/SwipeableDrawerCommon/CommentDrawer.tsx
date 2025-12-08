@@ -72,14 +72,16 @@ const CommentDrawer: React.FC<CommentDrawerProps> = ({
             <X size={20} />
           </IconButton>
         </Box>
-        <CommentUsersList
-          selectedPostId={selectedPostId}
-          selectedPostUserId={selectedPostUserId}
-          comments={comments}
-          onSendComment={onSendComment}
-          onPostDeleteComment={onPostDeleteComment}
-          currentUser={currentUser}
-        />
+        <Box className="user-list-comment-drawwer scrollbar">
+          <CommentUsersList
+            selectedPostId={selectedPostId}
+            selectedPostUserId={selectedPostUserId}
+            comments={comments}
+            onSendComment={onSendComment}
+            onPostDeleteComment={onPostDeleteComment}
+            currentUser={currentUser}
+          />
+        </Box>
       </Box>
     </SwipeableDrawer>
   );

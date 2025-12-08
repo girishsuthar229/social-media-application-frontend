@@ -135,7 +135,7 @@ const UserlistWithFollowBtn: React.FC<UserListItemProps> = ({
             className="user-avatar"
           />
           <Box className="user-details">
-            <Box display={"flex"} flexDirection={"column"} gap={0.5}>
+            <Box display={"flex"} flexDirection={"column"}>
               <Typography className="user-username" component="h3">
                 {user.user_name}
               </Typography>

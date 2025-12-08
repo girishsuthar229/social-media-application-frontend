@@ -24,26 +24,6 @@ import { Box } from "@mui/material";
 import Link from "next/link";
 import PostCardSkeleton from "@/components/common/Skeleton/postCardSkeleton";
 
-// Types
-interface User {
-  user_id: number;
-  user_name: string;
-  first_name?: string;
-  last_name?: string;
-  avatar: string;
-}
-
-interface Post {
-  id: number;
-  user: { name: string; avatar: string };
-  image: string;
-  caption: string;
-  likes: number;
-  comments: number;
-  timestamp?: string;
-  isLiked?: boolean;
-}
-
 interface FeedProps {
   suggestedUsers: UserAllListModel[];
   currentUser: IUserResponseData | null;
