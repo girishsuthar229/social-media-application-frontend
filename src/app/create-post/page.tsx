@@ -1,24 +1,10 @@
 "use client";
-import { useState, useRef } from "react";
-import { Formik, Form } from "formik";
-import { Box, Avatar, Typography, IconButton, Grid } from "@mui/material";
-import {
-  Image as ImageIcon,
-  Close,
-  EmojiEmotions,
-  LocationOn,
-  People,
-} from "@mui/icons-material";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { IApiError } from "@/models/common.interface";
-import { commonFilePath, STATUS_CODES } from "@/util/constanst";
-import BackButton from "@/components/common/BackButton";
-import AppButton from "@/components/common/AppButton";
+import { STATUS_CODES } from "@/util/constanst";
 import { createPost } from "@/services/post-service.service";
-import { createPostSchema } from "@/util/validations/postSchema.validation";
-import Textarea from "@/components/common/Textarea";
-import { UseUserContext } from "@/components/protected-route/protectedRoute";
 import AddEditPost, { AddEditPostData } from "./components/addEditPost";
 
 const CreatePost = () => {
@@ -26,6 +12,7 @@ const CreatePost = () => {
   const [postLoading, setPostLoading] = useState(false);
 
   const handleSubmit = async (values: AddEditPostData) => {
+    setPostLoading(true);
     const formData = new FormData();
     Object.keys(values).forEach((key) => {
       const value = values[key as keyof AddEditPostData];
@@ -49,6 +36,8 @@ const CreatePost = () => {
     } catch (error) {
       const err = error as IApiError;
       toast.error(err?.message || "Failed to create post");
+    } finally {
+      setPostLoading(false);
     }
   };
 

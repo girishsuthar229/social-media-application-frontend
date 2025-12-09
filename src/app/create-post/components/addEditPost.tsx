@@ -2,24 +2,27 @@ import AppButton from "@/components/common/AppButton";
 import BackButton from "@/components/common/BackButton";
 import Textarea from "@/components/common/Textarea";
 import { UseUserContext } from "@/components/protected-route/protectedRoute";
-import { commonFilePath } from "@/util/constanst";
+import { IApiError } from "@/models/common.interface";
+import { getPostById } from "@/services/post-service.service";
+import { commonFilePath, STATUS_CODES } from "@/util/constanst";
 import { createPostSchema } from "@/util/validations/postSchema.validation";
 import { Close, EmojiEmotions, LocationOn, People } from "@mui/icons-material";
 import { Avatar, Box, Grid, IconButton, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import { ImageIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 export interface AddEditPostData {
-  user_id: number | null;
+  user_id: number;
   content: string;
-  post_image: File | null;
+  post_image: File | string | null;
   comment: string;
 }
 interface AddEditPostProps {
   postId?: number | null;
+  onCanceModalClick?: () => void;
   onAddPostClick?: (addPostdata: AddEditPostData) => void;
   onEditPostClick?: (postId: number, editData: AddEditPostData) => void;
   postLoading: boolean;
@@ -27,6 +30,7 @@ interface AddEditPostProps {
 
 const AddEditPost: React.FC<AddEditPostProps> = ({
   postId,
+  onCanceModalClick,
   onAddPostClick,
   onEditPostClick,
   postLoading,
@@ -35,13 +39,12 @@ const AddEditPost: React.FC<AddEditPostProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const { currentUser } = UseUserContext();
-
-  const initialValues: AddEditPostData = {
-    user_id: currentUser?.id || null,
+  const [initialValues, setInitialValues] = useState<AddEditPostData>({
+    user_id: currentUser?.id || 0,
     content: "",
     post_image: null,
     comment: "",
-  };
+  });
 
   const handleImageSelect = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -74,6 +77,31 @@ const AddEditPost: React.FC<AddEditPostProps> = ({
       onAddPostClick(values);
     }
   };
+
+  const loadUserPostById = async (postId: number) => {
+    try {
+      const res = await getPostById(postId);
+      if (res?.data && res.statusCode === STATUS_CODES.success) {
+        const normilizeData: AddEditPostData = {
+          user_id: res?.data?.user?.id,
+          content: res?.data?.content,
+          post_image: res?.data?.image_url,
+          comment: res?.data?.self_comment || "",
+        };
+        setImagePreview(commonFilePath + res?.data?.image_url);
+        setInitialValues(normilizeData);
+      }
+    } catch (error) {
+      const err = error as IApiError;
+      toast.error(err?.message);
+    }
+  };
+
+  useEffect(() => {
+    if (postId) {
+      loadUserPostById(postId);
+    }
+  }, [postId]);
 
   return (
     <Box className="create-post-container scrollbar">
@@ -117,12 +145,14 @@ const AddEditPost: React.FC<AddEditPostProps> = ({
                 >
                   {imagePreview ? (
                     <div className="image-preview-container">
-                      <IconButton
-                        onClick={() => handleRemoveImage(setFieldValue)}
-                        className="remove-image-button"
-                      >
-                        <Close />
-                      </IconButton>
+                      {!!!postId && (
+                        <IconButton
+                          onClick={() => handleRemoveImage(setFieldValue)}
+                          className="remove-image-button"
+                        >
+                          <Close />
+                        </IconButton>
+                      )}
                       <img
                         src={imagePreview}
                         alt="Preview"
@@ -233,17 +263,40 @@ const AddEditPost: React.FC<AddEditPostProps> = ({
 
             {/* Submit Button */}
             <Box className="post-submit-section">
-              <AppButton
-                type="submit"
-                label={postLoading ? "Posting..." : "Post"}
-                variant="contained"
-                disabled={
-                  postLoading || (!values.content && !values.post_image)
-                }
-                showSpinner={postLoading}
-                className="post-submit-button"
-                fullWidth
-              />
+              {postId ? (
+                <>
+                  <AppButton
+                    type="button"
+                    label={"Cancel"}
+                    variant="outlined"
+                    disabled={
+                      postLoading || (!values.content && !values.post_image)
+                    }
+                    showSpinner={false}
+                    onClick={onCanceModalClick}
+                  />
+                  <AppButton
+                    type="submit"
+                    label={postLoading ? "Updating..." : "Update"}
+                    variant="contained"
+                    disabled={
+                      postLoading || (!values.content && !values.post_image)
+                    }
+                    showSpinner={postLoading}
+                  />
+                </>
+              ) : (
+                <AppButton
+                  type="submit"
+                  label={postLoading ? "Posting..." : "Post"}
+                  variant="contained"
+                  disabled={
+                    postLoading || (!values.content && !values.post_image)
+                  }
+                  showSpinner={postLoading}
+                  fullWidth
+                />
+              )}
             </Box>
           </Form>
         )}

@@ -19,6 +19,12 @@ import AddEditPost, {
   AddEditPostData,
 } from "@/app/create-post/components/addEditPost";
 
+export interface UpdatePostPayload {
+  user_id: number;
+  content: string;
+  comment: string;
+}
+
 interface PostActionMenuProps {
   postObj: {
     postId: number;
@@ -30,6 +36,7 @@ interface PostActionMenuProps {
   onToggleMenu: (postId: number) => void;
   onPostDelete: (postId: number) => void;
   onPostSavedUnsaved: (postId: number, isSaved: boolean) => void;
+  onPostUpdated: (postId: number, updatedData: UpdatePostPayload) => void;
 }
 
 const PostActionMenu: React.FC<PostActionMenuProps> = ({
@@ -39,6 +46,7 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
   onToggleMenu,
   onPostDelete,
   onPostSavedUnsaved,
+  onPostUpdated,
 }) => {
   const isPostByCurrentUser = postObj.userId === loggedUserId;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -102,23 +110,16 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
     values: AddEditPostData
   ) => {
     setPostLoading(true);
-    const formData = new FormData();
-    Object.keys(values).forEach((key) => {
-      const value = values[key as keyof AddEditPostData];
-      if (value !== null && value !== undefined) {
-        if (key === "post_image") {
-          if (value instanceof File) {
-            formData.append(key, value);
-          }
-          return;
-        } else {
-          formData.append(key, String(value));
-        }
-      }
-    });
+    const payloadData: UpdatePostPayload = {
+      user_id: values?.user_id,
+      content: values?.content,
+      comment: values?.comment,
+    };
     try {
-      const response = await updatePost(postId, formData);
+      const response = await updatePost(postId, payloadData);
       if (response?.statusCode === STATUS_CODES.success) {
+        setUserPostModalId(null);
+        onPostUpdated(postId, payloadData);
         toast.success(response?.message);
       }
     } catch (error) {
@@ -216,11 +217,13 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
         <CommonDialogModal
           open={!!userPostModalId}
           onClose={() => setUserPostModalId(null)}
+          title="Edit Post"
         >
           <AddEditPost
             postId={userPostModalId}
             onEditPostClick={handleEditPostSubmit}
             postLoading={postLoading}
+            onCanceModalClick={() => setUserPostModalId(null)}
           />
         </CommonDialogModal>
       )}

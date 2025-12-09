@@ -69,10 +69,18 @@ export interface UserWiseAllPoststPaylod {
 }
 export interface UserWiseAllPostsData {
   post_id: number;
-  image_url: string | null;
+  image_url: string;
   like_count: number;
   share_count: number;
   comment_count: number;
+  content: string;
+  self_comment: string | null;
+  comments: PostComment[];
+  user: PostUser;
+  created_date: string;
+  modified_date: string | null;
+  is_liked: boolean;
+  is_saved: boolean;
 }
 export interface IUserWiseAllPostsResponse {
   count: number;
@@ -96,4 +104,10 @@ export interface IGetPostByIdReponse {
     user_name: string;
     profile_pic_url: string;
   };
+}
+
+export interface IUpdatePayload {
+  user_id: number;
+  content: string;
+  comment?: string;
 }

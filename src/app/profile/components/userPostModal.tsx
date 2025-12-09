@@ -1,4 +1,6 @@
-import PostActionMenu from "@/app/home/components/postActionMenu";
+import PostActionMenu, {
+  UpdatePostPayload,
+} from "@/app/home/components/postActionMenu";
 import CommentUsersList from "@/components/common/CommentUserList/commentUsersList";
 import CommonDialogModal from "@/components/common/commonDialog/commonDialog";
 import LikeUserList from "@/components/common/LikeUserList/likeUserList";
@@ -20,19 +22,10 @@ import {
   unLikePostClickServices,
 } from "@/services/likes-unlike-service.service";
 import { getPostById } from "@/services/post-service.service";
-import { commonFilePath, FollowingsEnum, STATUS_CODES } from "@/util/constanst";
+import { commonFilePath, STATUS_CODES } from "@/util/constanst";
 import { getRelativeTime } from "@/util/helper";
-import {
-  Box,
-  Dialog,
-  DialogContent,
-  IconButton,
-  Tab,
-  Tabs,
-  Typography,
-  DialogActions,
-} from "@mui/material";
-import { X, Heart, MessageCircle, Loader } from "lucide-react";
+import { Box, Tab, Tabs, Typography } from "@mui/material";
+import { Heart, MessageCircle, Loader } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -236,6 +229,16 @@ const UserPostModal = ({
     }
   };
 
+  const handlerPostUpdated = (
+    postId: number,
+    updatedData: UpdatePostPayload
+  ) => {
+    if (postData?.id === postId) {
+      postData.content = updatedData?.content;
+      postData.self_comment = updatedData?.comment;
+    }
+  };
+
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     if (newValue === 0) {
       handleLikeAllUserData(postId ? postId : 0);
@@ -253,7 +256,7 @@ const UserPostModal = ({
     }
   }, [postId]);
   return (
-    <CommonDialogModal open={open} onClose={onClose}>
+    <CommonDialogModal open={open} onClose={onClose} title="User Post">
       <Box className="post-modal-content">
         {/* Left Side - Tabs and User List */}
         <Box className="post-card-section">
@@ -284,6 +287,7 @@ const UserPostModal = ({
                   onToggleMenu={toggleMenu}
                   onPostDelete={onDeletePostClick}
                   onPostSavedUnsaved={updatePostSavedStatus}
+                  onPostUpdated={handlerPostUpdated}
                 />
               </Box>
               <Box className="post-body">

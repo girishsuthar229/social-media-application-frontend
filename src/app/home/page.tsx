@@ -94,6 +94,7 @@ const Home = () => {
       prevPosts.filter((post) => post.post_id !== postId)
     );
   };
+
   return (
     <Box className="page-wrapper">
       {/* Main Content */}
@@ -126,7 +127,6 @@ const Home = () => {
           >
             <Feed
               currentUser={currentUser}
-              suggestedUsers={allUsers}
               posts={allUsersPosts}
               onLoadMore={loadMorePosts}
               isLoading={postLoading}

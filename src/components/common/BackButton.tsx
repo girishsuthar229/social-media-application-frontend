@@ -9,6 +9,7 @@ import {
   PersonAddAlt1Outlined as PersonAddAlt1OutlinedIcon,
   PersonRemoveAlt1Outlined as PersonRemoveAlt1OutlinedIcon,
   DoubleArrow as DoubleArrowIcon,
+  DynamicFeed as DynamicFeedIcon,
 } from "@mui/icons-material";
 import { CircularProgress } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -66,6 +67,8 @@ const BackButton: React.FC<BackButtonProps> = ({
         return <PersonAddAlt1OutlinedIcon />;
       case "remove-person-icon":
         return <PersonRemoveAlt1OutlinedIcon />;
+      case "dynamic-feed-icon":
+        return <DynamicFeedIcon />;
       case "circular-progress":
         return (
           <CircularProgress
@@ -90,7 +93,7 @@ const BackButton: React.FC<BackButtonProps> = ({
       endIcon={iconPosition === "end" && icon}
       fullWidth={fullWidth}
     >
-      {labelText}
+      <span className="back-btn-lable">{labelText}</span>
     </Button>
   );
 };

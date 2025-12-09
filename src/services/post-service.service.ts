@@ -6,6 +6,7 @@ import {
   IUserWiseAllPostsResponse,
   UserWiseAllPoststPaylod,
   IGetPostByIdReponse,
+  IUpdatePayload,
 } from "@/models/postInterface";
 import BaseService from "@/services/base-service.service";
 import { trackPromise } from "react-promise-tracker";
@@ -90,15 +91,11 @@ export const getPostById = async (
 
 export const updatePost = async (
   postId: number,
-  postData: FormData
+  postData: IUpdatePayload
 ): Promise<IApiResponse<IPostData>> => {
   try {
     const response = await trackPromise(
-      BaseService.put(`/posts/${postId}`, postData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
+      BaseService.put(`/posts/update/${postId}`, postData)
     );
     const res = response.data;
     return Promise.resolve(res);

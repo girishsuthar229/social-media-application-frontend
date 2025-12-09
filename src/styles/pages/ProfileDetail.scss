@@ -5,7 +5,7 @@
   display: flex;
   align-items: start;
   justify-content: center;
-  padding: 10px;
+  padding: 10px 0px;
   position: relative;
   overflow: hidden;
   overflow-y: auto;
@@ -58,7 +58,7 @@
 }
 @media (max-width: 600px) {
   .profile-card {
-    padding: 24px 16px;
+    padding: 24px 5px;
     border-radius: 16px;
     max-height: calc(100vh - 80px);
   }
@@ -183,6 +183,7 @@
 .profile-tabs {
   width: 100%;
   display: flex;
+  gap: 10px;
   justify-content: space-between;
   margin-bottom: 20px;
   .tab-button {
@@ -215,6 +216,10 @@
 /* Posts Grid */
 .posts-grid-container {
   width: 100%;
+  .feed-grid{
+    display: flex;
+    justify-content: center;
+  }
   .posts-grid {
     .post-thumbnail {
       position: relative;

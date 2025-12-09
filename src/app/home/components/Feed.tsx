@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, useCallback, useMemo, useEffect } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { Heart, MessageCircle, Loader } from "lucide-react";
-import PostActionMenu from "./postActionMenu";
-import { IUserResponseData, UserAllListModel } from "@/models/userInterface";
+import PostActionMenu, { UpdatePostPayload } from "./postActionMenu";
+import { IUserResponseData } from "@/models/userInterface";
 import { AllPostListModel } from "@/models/postInterface";
 import { commonFilePath, STATUS_CODES } from "@/util/constanst";
 import { getRelativeTime } from "@/util/helper";
@@ -25,11 +25,8 @@ import Link from "next/link";
 import PostCardSkeleton from "@/components/common/Skeleton/postCardSkeleton";
 
 interface FeedProps {
-  suggestedUsers: UserAllListModel[];
   currentUser: IUserResponseData | null;
   posts: AllPostListModel[];
-  onPostClick?: (postId: number) => void;
-  onShareClick?: (postId: number) => void;
   onDeletePostClick: (postId: number) => void;
   isLoading?: boolean;
   hasMore?: boolean;
@@ -40,8 +37,6 @@ interface FeedProps {
 const Feed: React.FC<FeedProps> = ({
   currentUser,
   posts,
-  onPostClick,
-  onShareClick,
   onDeletePostClick,
   isLoading,
   hasMore,
@@ -81,6 +76,18 @@ const Feed: React.FC<FeedProps> = ({
     posts.forEach((post) => {
       if (post.post_id === postId) {
         post.is_saved = isSaved;
+      }
+    });
+  };
+
+  const handlerPostUpdated = (
+    postId: number,
+    updatedData: UpdatePostPayload
+  ) => {
+    posts.forEach((post) => {
+      if (post.post_id === postId) {
+        post.content = updatedData?.content;
+        post.self_comment = updatedData?.comment;
       }
     });
   };
@@ -286,6 +293,7 @@ const Feed: React.FC<FeedProps> = ({
                 onToggleMenu={toggleMenu}
                 onPostDelete={onDeletePostClick}
                 onPostSavedUnsaved={updatePostSavedStatus}
+                onPostUpdated={handlerPostUpdated}
               />
             </header>
 
@@ -296,7 +304,6 @@ const Feed: React.FC<FeedProps> = ({
                 alt="Post"
                 className="post-image"
                 loading="lazy"
-                onClick={() => onPostClick?.(post.post_id)}
               />
             </div>
 
