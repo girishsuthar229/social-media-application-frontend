@@ -80,6 +80,7 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
       const response = await savePostClickServices(postId);
       if (response?.statusCode === STATUS_CODES.success) {
         onPostSavedUnsaved(postId, true);
+        toast.success(response.message);
       }
     } catch (err) {
       const error = err as IApiError;
@@ -92,6 +93,7 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
       const response = await unSavePostClickServices(postId);
       if (response?.statusCode === STATUS_CODES.success) {
         onPostSavedUnsaved(postId, false);
+        toast.success(response.message);
       }
     } catch (err) {
       const error = err as IApiError;

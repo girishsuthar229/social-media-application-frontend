@@ -26,7 +26,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
-import { commonFilePath, localStorageKeys } from "@/util/constanst";
+import { commonFilePath } from "@/util/constanst";
 import { UseUserContext } from "../protected-route/protectedRoute";
 
 const Header = () => {

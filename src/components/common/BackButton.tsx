@@ -21,6 +21,7 @@ interface BackButtonProps {
   onClick?: () => void;
   showIcon?: boolean;
   fullWidth?: boolean;
+  className?: string;
   iconPosition?: "start" | "end";
   underlineOnHover?: boolean;
   iconName?: string;
@@ -34,6 +35,7 @@ const BackButton: React.FC<BackButtonProps> = ({
   iconPosition = "start",
   underlineOnHover = false,
   fullWidth = false,
+  className,
   iconName = "single-arrow",
 }) => {
   const router = useRouter();
@@ -88,7 +90,9 @@ const BackButton: React.FC<BackButtonProps> = ({
   return (
     <Button
       onClick={handleClick}
-      className={`back-btn ${underlineOnHover ? "as-link-styling" : "as-btn"}`}
+      className={`back-btn ${
+        underlineOnHover ? "as-link-styling" : "as-btn"
+      } ${className}`}
       startIcon={iconPosition === "start" && icon}
       endIcon={iconPosition === "end" && icon}
       fullWidth={fullWidth}

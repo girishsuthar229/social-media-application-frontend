@@ -4,12 +4,13 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogTitle,
   IconButton,
   Typography,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
 import { X } from "lucide-react";
+import BackButton from "../BackButton";
 
 interface IButtonProps {
   onClick?: () => void;
@@ -35,42 +36,35 @@ const ConfirmationDialog = ({
 }: IConfirmationModalProps) => {
   return (
     <Dialog open={open} onClose={onClose} className={className}>
-      <DialogContent className="common-model-header" sx={{ padding: 1 }}>
-        <Typography variant="h6" sx={{ flex: 1 }} />
+      <DialogTitle className="common-modal-title">
         <IconButton className="drawer-close-btn" onClick={onClose}>
           <X size={20} />
         </IconButton>
+      </DialogTitle>
+      <DialogContent className="common-dialog-content">
+        <Typography component={'div'} className="confirmation-modal-content">
+          {content}
+        </Typography>
       </DialogContent>
-      <DialogContent className="deny-common-content">
-        <Box sx={{ mt: 2, mb: 3 }}>
-          <div>{content}</div>
-        </Box>
-      </DialogContent>
-      <DialogActions
-        sx={{ justifyContent: "space-between", padding: "0 16px 16px" }}
-      >
+      <DialogActions className="common-dialog-action">
         {denyButton && (
-          <Button
-            className="deny-common-button"
-            variant="outlined"
-            color="primary"
+          <BackButton
             onClick={denyButton.onClick}
-            sx={{ paddingX: 3, paddingY: 1 }}
-          >
-            <Typography variant="button">{denyButton.buttonText}</Typography>
-          </Button>
+            labelText={denyButton.buttonText}
+            showIcon={false}
+            underlineOnHover={false}
+          />
         )}
 
         {confirmButton && (
-          <Button
-            className="confirm-common-button"
-            variant="contained"
-            color="primary"
+          <BackButton
             onClick={confirmButton.onClick}
-            sx={{ paddingX: 3, paddingY: 1 }}
-          >
-            <Typography variant="button">{confirmButton.buttonText}</Typography>
-          </Button>
+            labelText={confirmButton.buttonText}
+            showIcon={true}
+            iconName="remove-person-icon"
+            underlineOnHover={false}
+            className="unfollow-btn"
+          />
         )}
       </DialogActions>
     </Dialog>

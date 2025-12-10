@@ -1,10 +1,8 @@
 "use client";
 import React from "react";
 import { Box, IconButton, SwipeableDrawer, Typography } from "@mui/material";
-import UserlistWithFollowBtn from "../UserlistWithFollow/UserlistWithFollowBtn";
 import { LikeUserListResponse } from "@/models/likesInterface";
 import { X } from "lucide-react";
-import { FollowingsEnum } from "@/util/constanst";
 import { IUserResponseData } from "@/models/userInterface";
 import LikeUserList from "../LikeUserList/likeUserList";
 

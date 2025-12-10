@@ -1,10 +1,7 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { RouterURLs } from "@/util/constanst";
-import { Lock, LogIn, UserPlus, Shield } from "lucide-react";
+import { Lock, Shield } from "lucide-react";
 
 const AccessDenied = () => {
-  const router = useRouter();
 
   return (
     <div className="access-denied-container">

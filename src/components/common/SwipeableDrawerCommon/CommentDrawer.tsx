@@ -1,29 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
-  TextField,
   IconButton,
   Typography,
   SwipeableDrawer,
-  InputAdornment,
-  Tooltip,
 } from "@mui/material";
-import { Info, Loader, SendHorizonal, X } from "lucide-react";
-import { Form, Formik } from "formik";
-import { postCommentSchema } from "@/util/validations/postSchema.validation";
+import { X } from "lucide-react";
 import { CommentUserListResponse } from "@/models/commentsInterface";
-import {
-  deleteCommentPostClickServices,
-  userCommentOnPostServices,
-} from "@/services/comments-service.service";
-import { FollowingsEnum, STATUS_CODES } from "@/util/constanst";
-import { IApiError } from "@/models/common.interface";
-import { toast } from "react-toastify";
-import UserlistWithFollowBtn from "../UserlistWithFollow/UserlistWithFollowBtn";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { UseUserContext } from "@/components/protected-route/protectedRoute";
-import { getRelativeTime } from "@/util/helper";
 import { IUserResponseData } from "@/models/userInterface";
 import CommentUsersList from "../CommentUserList/commentUsersList";
 

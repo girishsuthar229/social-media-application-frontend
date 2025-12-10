@@ -25,7 +25,7 @@ const ProfilePage = () => {
       post_count: currentUser?.post_count,
     };
     setProfileUser(profilData?.id ? profilData : null);
-  }, [currentUser]);
+  }, []);
 
   return (
     <ProfileComponent

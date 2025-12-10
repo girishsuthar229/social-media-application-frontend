@@ -1,15 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Typography, Box, Avatar, Grid } from "@mui/material";
+import { Typography, Box, Avatar } from "@mui/material";
 import { usePathname, useRouter } from "next/navigation";
 import { IApiError } from "@/models/common.interface";
 import { toast } from "react-toastify";
 import BackButton from "@/components/common/BackButton";
-import {
-  GridOnOutlined as GridOnOutlinedIcon,
-  Bookmark,
-  Lock as LockIcon,
-} from "@mui/icons-material";
 import { formatNumber, handleShareData } from "@/util/helper";
 import {
   AuthBaseRoute,
@@ -36,8 +31,9 @@ import ConfirmationDialog from "@/components/common/ConfirmationModal/confirmati
 import { FollowUserListResponse } from "@/models/followsInterface";
 import FollowUserListDrawer from "@/components/common/SwipeableDrawerCommon/FollowUserListDrawer";
 import UserPostModal from "./userPostModal";
-import SquareCardSkeleton from "@/components/common/Skeleton/squareCardSkeleton";
-import Feed from "@/app/home/components/Feed";
+import PostGrid from "./postGrid";
+import TabSections from "./tabSections";
+import ProfileInfoSections from "./profileInfoSections";
 
 interface ProfileComponentProps {
   profileUser: IAnotherUserResponse | null;
@@ -45,7 +41,10 @@ interface ProfileComponentProps {
   isOwnProfile: boolean;
   isUserNotFound?: boolean;
 }
-
+export enum PROFILE_TABS {
+  POSTS = "posts",
+  SAVED = "saved",
+}
 const ProfileComponent = ({
   profileUser,
   currentUser,
@@ -54,11 +53,8 @@ const ProfileComponent = ({
 }: ProfileComponentProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<"posts" | "saved" | "feeds">(
-    "posts"
-  );
+  const [activeTab, setActiveTab] = useState<PROFILE_TABS>(PROFILE_TABS.POSTS);
   const [postValues, setPostValues] = useState<UserWiseAllPostsData[]>([]);
-  const [postOffset, setPostOffset] = useState(0);
   const [postHasMore, setPostHasMore] = useState(true);
   const [savedPosts, setSavedPosts] = useState<AllSavedPostList[]>([]);
   const [isSavedPostsLoaded, setIsSavedPostsLoaded] = useState(false);
@@ -68,20 +64,20 @@ const ProfileComponent = ({
   const [isFollowLoading, setIsFollowLoading] = useState(false);
   const [unFollowConfirmModel, setUnFollowConfirmModel] = useState(false);
   const [isFollowListLoading, setIsFollowListLoading] = useState(false);
-  const [followUserListModel, setFollowUserListModel] = useState(false);
+  const [followUserListDrawer, setFollowUserListDrawer] = useState(false);
   const [followheadingContent, setFollowheadingContent] = useState<
     string | null
   >(null);
-  const [userOffset, setUsersOffset] = useState(0);
+  const [followUserHasMore, setFollowUserHasMore] = useState(true);
   const [followUsers, setFollowUsers] = useState<FollowUserListResponse[]>([]);
   const [userPostModalId, setUserPostModalId] = useState<number | null>(null);
-  const [allPostTotalCount, setAllPostTotalCount] = useState<number>();
+
   const loadUserPosts = async (userId: number) => {
     setIsLoading(true);
     try {
       const payload = {
-        limit: 12,
-        offset: postOffset,
+        limit: 10,
+        offset: postValues.length || 0,
         sortBy: "created_date",
         sortOrder: "DESC" as "DESC",
         userId: userId || 0,
@@ -89,8 +85,7 @@ const ProfileComponent = ({
       const res = await getUserUploadPost(payload);
       if (res?.data && res.statusCode === STATUS_CODES.success) {
         const allPosts = res.data?.rows || [];
-        setPostValues(allPosts);
-        setAllPostTotalCount(res.data.count);
+        setPostValues((prev) => [...prev, ...allPosts]);
         if (res?.data?.rows?.length < 10) {
           setPostHasMore(false);
         }
@@ -110,10 +105,9 @@ const ProfileComponent = ({
   };
 
   useEffect(() => {
-    setUsersOffset(0);
     setUserPostModalId(null);
     if (!isOwnProfile) {
-      setFollowUserListModel(false);
+      setFollowUserListDrawer(false);
     }
     if (profileUser) {
       const canShowPosts =
@@ -181,7 +175,7 @@ const ProfileComponent = ({
     try {
       const payload = {
         limit: 10,
-        offset: postOffset,
+        offset: savedPosts.length || 0,
         sortBy: "created_date",
         sortOrder: "DESC",
         userId: currentUser?.id,
@@ -189,7 +183,7 @@ const ProfileComponent = ({
       const res = await getAllSavedPosts(payload);
       if (res?.data && res.statusCode === STATUS_CODES.success) {
         const allPosts = res.data?.rows || [];
-        setSavedPosts(allPosts);
+        setSavedPosts((prev) => [...prev, ...allPosts]);
         setIsSavedPostsLoaded(true);
       }
     } catch (error) {
@@ -201,18 +195,12 @@ const ProfileComponent = ({
   };
 
   const handlePostTab = () => {
-    setActiveTab("posts");
-  };
-
-  const handleFeedTab = () => {
-    setActiveTab("feeds");
-    setPostOffset(0);
+    setActiveTab(PROFILE_TABS.POSTS);
   };
 
   const handleSaveTab = () => {
-    setActiveTab("saved");
+    setActiveTab(PROFILE_TABS.SAVED);
     if (!isSavedPostsLoaded && isOwnProfile) {
-      setPostOffset(0);
       userSavedPost();
     }
   };
@@ -236,8 +224,8 @@ const ProfileComponent = ({
     setFollowheadingContent("Followers");
     try {
       const payload = {
-        limit: 10,
-        offset: userOffset,
+        limit: 25,
+        offset: followUsers.length || 0,
         sortBy: "created_date",
         sortOrder: "DESC",
       };
@@ -246,9 +234,12 @@ const ProfileComponent = ({
         response.statusCode === STATUS_CODES.success &&
         response?.data?.rows
       ) {
-        setFollowUserListModel(true);
-        setFollowUsers(response?.data?.rows);
-        setUsersOffset((prevOffset) => prevOffset + 10);
+        setFollowUserListDrawer(true);
+        const newUsers = response?.data?.rows;
+        setFollowUsers((prev) => [...prev, ...newUsers]);
+        if (newUsers.length < 25) {
+          setFollowUserHasMore(false);
+        }
       }
     } catch (error) {
       const err = error as IApiError;
@@ -264,8 +255,8 @@ const ProfileComponent = ({
     setFollowheadingContent("Followings");
     try {
       const payload = {
-        limit: 10,
-        offset: userOffset,
+        limit: 25,
+        offset: followUsers.length || 0,
         sortBy: "created_date",
         sortOrder: "DESC",
       };
@@ -274,9 +265,12 @@ const ProfileComponent = ({
         response.statusCode === STATUS_CODES.success &&
         response?.data?.rows
       ) {
-        setFollowUserListModel(true);
-        setFollowUsers(response?.data?.rows);
-        setUsersOffset((prevOffset) => prevOffset + 10);
+        setFollowUserListDrawer(true);
+        const newUsers = response?.data?.rows;
+        setFollowUsers((prev) => [...prev, ...newUsers]);
+        if (newUsers.length < 25) {
+          setFollowUserHasMore(false);
+        }
       }
     } catch (error) {
       const err = error as IApiError;
@@ -301,7 +295,7 @@ const ProfileComponent = ({
     savePostData: AllSavedPostList
   ) => {
     if (isSaved) {
-      setSavedPosts((prev) => [...prev, { ...savePostData }]);
+      setSavedPosts((prev) => [...prev, savePostData]);
     } else {
       setSavedPosts((prevPosts) =>
         prevPosts.filter((post) => post.post_id !== savePostData?.post_id)
@@ -317,302 +311,57 @@ const ProfileComponent = ({
           </Box>
         )}
         {/* Profile Info Section */}
-        <Box className="profile-info-section">
-          <Box className="profile-top">
-            <Box className="profile-avatar-container">
-              <Avatar
-                src={`${commonFilePath}${profileUser?.photo_url}`}
-                alt={profileUser?.user_name?.toLocaleUpperCase()}
-                className="profile-avatar-large"
-              >
-                {!profileUser?.photo_url &&
-                  profileUser?.user_name?.charAt(0).toUpperCase()}
-              </Avatar>
-            </Box>
-            <Box className="profile-bio-section">
-              <Typography className="profile-header-username">
-                {profileUser?.user_name}
-              </Typography>
-              <Typography className="profile-full-name">
-                {profileUser?.first_name} {profileUser?.last_name}
-              </Typography>
-              <Typography className="profile-bio">
-                {profileUser?.bio}
-              </Typography>
-              {isUserNotFound && (
-                <Typography className="profile-full-name">
-                  User Not Found
-                </Typography>
-              )}
-            </Box>
-          </Box>
-          <Box className="profile-status">
-            <Box className="stat-item">
-              <Typography component="span" className="stat-number">
-                {formatNumber(profileUser?.post_count || 0)}
-              </Typography>
-              <Typography component="span" className="stat-label">
-                Posts
-              </Typography>
-            </Box>
-            <Box
-              className="stat-item"
-              onClick={() => {
-                if (canViewPosts) {
-                  setUsersOffset(0);
-                  handleFollowersList(profileUser?.id || null);
-                }
-              }}
-            >
-              <Typography component="span" className="stat-number">
-                {formatNumber(profileUser?.follower_count || 0)}
-              </Typography>
-              <Typography component="span" className="stat-label">
-                Followers
-              </Typography>
-            </Box>
-            <Box
-              className="stat-item"
-              onClick={() => {
-                if (canViewPosts) {
-                  setUsersOffset(0);
-                  handleFollowingsList(profileUser?.id || null);
-                }
-              }}
-            >
-              <Typography component="span" className="stat-number">
-                {formatNumber(profileUser?.following_count || 0)}
-              </Typography>
-              <Typography component="span" className="stat-label">
-                Following
-              </Typography>
-            </Box>
-          </Box>
-          <Box className="profile-actions">
-            {isOwnProfile ? (
-              <BackButton
-                onClick={handleEditProfile}
-                labelText="Edit Profile"
-                iconPosition="start"
-                iconName="edit-button"
-                fullWidth
-              />
-            ) : (
-              <Box className={`profile-tabs ${isFollowing ? " " : "active"}`}>
-                <BackButton
-                  onClick={() =>
-                    isFollowing
-                      ? handlerUnfollowModel(
-                          profileUser?.id ? profileUser?.id : null,
-                          profileUser?.is_private
-                        )
-                      : handleFollowClick(
-                          profileUser?.id ? profileUser?.id : null
-                        )
-                  }
-                  labelText={
-                    isFollowing && followStatus === FollowingsEnum.PENDING
-                      ? "Requested"
-                      : isFollowing && followStatus === FollowingsEnum.ACCEPTED
-                      ? "UnFollow"
-                      : "Follow"
-                  }
-                  iconPosition="start"
-                  iconName={
-                    isFollowLoading
-                      ? "circular-progress"
-                      : isFollowing
-                      ? "remove-person-icon"
-                      : "add-person-icon"
-                  }
-                  fullWidth
-                />
-              </Box>
-            )}
-            <BackButton
-              onClick={handleShareProfile}
-              labelText="Share Profile"
-              iconPosition="start"
-              iconName="share-button"
-              fullWidth
-            />
-          </Box>
-        </Box>
+        <ProfileInfoSections
+          isOwnProfile={isOwnProfile}
+          profileUser={profileUser}
+          isUserNotFound={isUserNotFound}
+          canViewPosts={canViewPosts}
+          isFollowing={isFollowing}
+          isFollowLoading={isFollowLoading}
+          followStatus={followStatus}
+          handleFollowClick={handleFollowClick}
+          handlerUnfollowModel={handlerUnfollowModel}
+          handleEditProfile={handleEditProfile}
+          handleShareProfile={handleShareProfile}
+          handleFollowersList={handleFollowersList}
+          handleFollowingsList={handleFollowingsList}
+        />
 
         <hr className="horitzonal-line" />
 
         {/* Tab Section */}
         {canViewPosts && (
-          <Box className="profile-tabs">
-            <span
-              className={`tab-button ${activeTab === "posts" ? "active" : ""}`}
-            >
-              <BackButton
-                onClick={handlePostTab}
-                labelText="Posts"
-                iconPosition="start"
-                iconName="grid-outlined-icon"
-                fullWidth
-              />
-            </span>
-            <span
-              className={`tab-button ${activeTab === "feeds" ? "active" : ""}`}
-            >
-              <BackButton
-                onClick={handleFeedTab}
-                labelText="Feed"
-                iconPosition="start"
-                iconName="dynamic-feed-icon"
-                fullWidth
-              />
-            </span>
-            {isOwnProfile && (
-              <span
-                className={`tab-button ${
-                  activeTab === "saved" ? "active" : ""
-                }`}
-              >
-                <BackButton
-                  onClick={handleSaveTab}
-                  labelText="Saved"
-                  iconPosition="start"
-                  iconName="book-mark-icon"
-                  fullWidth
-                />
-              </span>
-            )}
-          </Box>
+          <TabSections
+            isOwnProfile={isOwnProfile}
+            activeTab={activeTab}
+            handlePostTab={handlePostTab}
+            handleSaveTab={handleSaveTab}
+          />
         )}
 
         {/* Posts Grid */}
-        <Box
-          className="posts-grid-container"
-          onScroll={(e) => {
-            const bottom =
-              e.currentTarget.scrollHeight -
-                e.currentTarget.scrollTop -
-                e.currentTarget.clientHeight <
-              50;
-            if (bottom && !isLoading && postHasMore) {
-              if (profileUser) {
-                setPostOffset((prevOffset) => prevOffset + 10);
-                loadUserPosts(profileUser?.id);
-              }
-            }
-          }}
-        >
-          {isLoading ? (
-            <SquareCardSkeleton count={3} />
-          ) : canViewPosts === false && canViewPosts !== null ? (
-            <Box className="empty-state">
-              <LockIcon className="empty-icon" />
-              <Typography className="empty-title">
-                This Account is Private
-              </Typography>
-              <Typography className="empty-text">
-                Follow @{profileUser?.user_name} to see their photos and videos.
-              </Typography>
-            </Box>
-          ) : !isLoading &&
-            (activeTab === "posts" || activeTab === "feeds") &&
-            postValues.length === 0 ? (
-            <Box className="empty-state">
-              <GridOnOutlinedIcon className="empty-icon" />
-              <Typography className="empty-title">No Posts Yet</Typography>
-              <Typography className="empty-text">
-                {isOwnProfile
-                  ? "When you share photos, they'll appear on your profile."
-                  : `${profileUser?.user_name} hasn't posted yet.`}
-              </Typography>
-            </Box>
-          ) : !isLoading && activeTab === "posts" && postValues.length > 0 ? (
-            <Grid container spacing={1} className="posts-grid">
-              {postValues.map((post) => (
-                <Grid size={{ xs: 6, sm: 6, md: 4 }} key={post?.post_id}>
-                  <Box
-                    className="post-thumbnail"
-                    onClick={() => handlePostClick(post?.post_id)}
-                  >
-                    <img
-                      src={`${commonFilePath}${post?.image_url}`}
-                      alt={`Post ${post?.post_id}`}
-                      className="image-preview"
-                      loading="lazy"
-                    />
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
-          ) : !isLoading && activeTab === "feeds" && postValues.length > 0 ? (
-            <Box
-              className="feed-grid scrollbar"
-              onScroll={(e) => {
-                const bottom =
-                  e.currentTarget.scrollHeight -
-                    e.currentTarget.scrollTop -
-                    e.currentTarget.clientHeight <
-                  10;
-                if (bottom && postHasMore && !isLoading) {
-                  loadUserPosts(profileUser?.id || 0);
-                }
-              }}
-            >
-              <Feed
-                currentUser={currentUser}
-                posts={postValues}
-                onLoadMore={() => loadUserPosts(profileUser?.id || 0)}
-                isLoading={isLoading}
-                hasMore={
-                  allPostTotalCount
-                    ? allPostTotalCount > postOffset
-                      ? true
-                      : false
-                    : false
-                }
-                onDeletePostClick={handleDeletePost}
-              />
-            </Box>
-          ) : !isLoading && activeTab === "saved" && savedPosts.length > 0 ? (
-            <Grid container spacing={1} className="posts-grid">
-              {savedPosts.map((post) => (
-                <Grid size={{ xs: 6, sm: 6, md: 4 }} key={post?.post_id}>
-                  <Box
-                    className="post-thumbnail"
-                    onClick={() => handlePostClick(post?.post_id)}
-                  >
-                    <img
-                      src={`${commonFilePath}${post?.image_url}`}
-                      alt={`Post ${post?.post_id}`}
-                      className="image-preview"
-                      loading="lazy"
-                    />
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
-          ) : !isLoading && activeTab === "saved" && savedPosts.length === 0 ? (
-            <Box className="empty-state">
-              <Bookmark className="empty-icon" />
-              <Typography className="empty-title">No Saved Posts</Typography>
-              <Typography className="empty-text">
-                Save posts that you want to see again.
-              </Typography>
-            </Box>
-          ) : null}
-        </Box>
+        <PostGrid
+          isLoading={isLoading}
+          canViewPosts={canViewPosts}
+          activeTab={activeTab}
+          postValues={postValues}
+          savedPosts={savedPosts}
+          postHasMore={postHasMore}
+          loadUserPosts={loadUserPosts}
+          profileUser={profileUser}
+          isOwnProfile={isOwnProfile}
+          handlePostClick={handlePostClick}
+        />
       </Box>
       {unFollowConfirmModel && (
         <ConfirmationDialog
           open={unFollowConfirmModel}
           onClose={() => {
             setUnFollowConfirmModel(false);
-            setUsersOffset(0);
+            setFollowUsers([]);
+            setFollowUserHasMore(true);
           }}
-          content={
-            <Typography>
-              Are you sure you want to unfollow this user?
-            </Typography>
-          }
+          content={"Are you sure you want to unfollow this user?"}
           confirmButton={{
             buttonText: "Unfollow",
             onClick: () => {
@@ -629,16 +378,22 @@ const ProfileComponent = ({
           }}
         />
       )}
-      {followUserListModel && (
+      {followUserListDrawer && (
         <FollowUserListDrawer
-          open={followUserListModel}
+          open={followUserListDrawer}
           onClose={() => {
-            setFollowUserListModel(false);
-            setUsersOffset(0);
+            setFollowUserListDrawer(false);
+            setFollowUsers([]);
+            setFollowUserHasMore(true);
           }}
           selectedUserId={Number(profileUser?.id)}
           headingContent={followheadingContent || ""}
           followUsers={followUsers}
+          followUserHasMore={followUserHasMore}
+          isFollowListLoading={isFollowListLoading}
+          handleFollowersList={() =>
+            handleFollowersList(profileUser?.id || null)
+          }
           currentUser={currentUser}
         />
       )}

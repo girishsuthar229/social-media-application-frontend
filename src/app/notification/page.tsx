@@ -14,8 +14,8 @@ import RequestItem from "./components/requestItem";
 const Notification = () => {
   const { currentUser } = UseUserContext();
   const [loading, setLoading] = useState(false);
+  const [userHasMore, setUserHasMore] = useState(true);
   const [requests, setRequests] = useState<PendingFollowResponse[]>([]);
-  const [requestsCount, setRequestsCount] = useState(0);
 
   useEffect(() => {
     if (currentUser?.id) {
@@ -29,8 +29,8 @@ const Notification = () => {
     setLoading(true);
     try {
       const payload = {
-        limit: 10,
-        offset: 0,
+        limit: 25,
+        offset: requests.length,
         sortBy: "created_date",
         sortOrder: "DESC",
       };
@@ -38,10 +38,12 @@ const Notification = () => {
         currentUser.id,
         payload
       );
-
       if (response.statusCode === STATUS_CODES.success) {
-        setRequests(response?.data?.rows || []);
-        setRequestsCount(response?.data?.count || 0);
+        const allRequests = response.data?.rows || [];
+        setRequests((prev) => [...prev, ...allRequests]);
+        if (allRequests.length < 25) {
+          setUserHasMore(false);
+        }
       }
     } catch (error) {
       const err = error as IApiError;
@@ -59,7 +61,16 @@ const Notification = () => {
 
   return (
     <Box className="notification-page">
-      <Box className="notification-container scrollbar">
+      <Box
+        className="notification-container scrollbar"
+        onScroll={(e) => {
+          const T = e.currentTarget;
+          const bottom = T.scrollHeight - T.scrollTop - T.clientHeight < 10;
+          if (bottom && userHasMore && !loading) {
+            loadPendingRequests();
+          }
+        }}
+      >
         <Box className="notification-header">
           <Typography variant="h5" className="page-title">
             Notifications
@@ -67,13 +78,7 @@ const Notification = () => {
         </Box>
 
         <Box className="notification-content">
-          {loading ? (
-            <UserListSkeleton
-              count={3}
-              showBio={true}
-              showFollowButton={true}
-            />
-          ) : requests.length === 0 ? (
+          {!loading && requests.length === 0 ? (
             <Box className="empty-state">
               <UserPlus size={64} className="empty-icon" />
               <Typography variant="h6" className="empty-title">
@@ -96,6 +101,13 @@ const Notification = () => {
                 </Box>
               ))}
             </Box>
+          )}
+          {loading && (
+            <UserListSkeleton
+              count={3}
+              showBio={true}
+              showFollowButton={true}
+            />
           )}
         </Box>
       </Box>

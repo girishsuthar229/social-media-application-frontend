@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { Camera } from "@mui/icons-material";
 import { commonFilePath, STATUS_CODES } from "@/util/constanst";
-import { updateProfileData, userDetail } from "@/services/user-service.service";
+import { updateProfileData } from "@/services/user-service.service";
 import { IApiError } from "@/models/common.interface";
 import { toast } from "react-toastify";
 import TextFieldInput from "@/components/common/TextFieldInput";

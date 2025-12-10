@@ -14,7 +14,6 @@ import { localStorageKeys, STATUS_CODES } from "@/util/constanst";
 import { IApiError } from "@/models/common.interface";
 import { loginUser } from "@/services/auth-service.service";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 const SignIn = () => {
   const router = useRouter();
