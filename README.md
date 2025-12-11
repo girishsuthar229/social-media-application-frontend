@@ -56,7 +56,7 @@ cd linking-you-to-the-world
 
 2️⃣ Install Dependencies
 npm install
-# or
+OR
 yarn install
 
 3️⃣ Environment Variables
@@ -70,7 +70,7 @@ Update with your deployed NestJS backend endpoint.
 
 4️⃣ Run the Development Server
 npm run dev
-# or
+OR
 yarn dev
 
 
