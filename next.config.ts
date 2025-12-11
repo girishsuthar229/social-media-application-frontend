@@ -1,16 +1,21 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactStrictMode: false,
   images: {
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: process.env.NEXT_PUBLIC_HOST || "localhost",
-        port: process.env.NEXT_PUBLIC_PORT || "3000",
+        protocol: "https",
+        hostname:
+          process.env.NEXT_PUBLIC_HOST ||
+          "social-media-application-backend-y8zs.onrender.com",
+        port: process.env.NEXT_PUBLIC_PORT || "5483",
         pathname: "/uploads/**",
       },
+    ],
+    domains: [
+      process.env.NEXT_PUBLIC_HOST ||
+        "social-media-application-backend-y8zs.onrender.com",
     ],
   },
   webpack: (config) => {
