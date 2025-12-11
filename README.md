@@ -11,41 +11,30 @@ https://social-media-application-frontend.onrender.com/sign-in
 👉 Backend Repository:
 https://github.com/girishsuthar229/social-media-application-backend
 
-🚀 Tech Stack Frontend
-
-Next.js  (App Router), 
-React + TypeScript, 
-Tailwind CSS / CSS Modules (update if needed), 
-Next Fonts (Geist), 
+🚀 Tech Stack Frontend:
+Next.js  (App Router) , 
+React + TypeScript , 
+Tailwind CSS , 
+Next Fonts (Geist) , 
 JWT Authentication (Connected with NestJS)
 
-🚀 Tech Stack Backend (Connected Service)
-
-NestJS (TypeScript), 
-TypeORM, 
-PostgreSQL / MySQL (update if needed), 
+🚀 Tech Stack Backend (Connected Service): 
+NestJS (TypeScript) , 
+TypeORM , 
+PostgreSQL / MySQL (update if needed) , 
 JWT Authentication + Guards
 
 Render Deployment:
 
 ✨ Key Features
-
 🔐 User Authentication (Sign Up / Sign In)
-
 👤 Profile Management
-
 📸 Upload & Share Posts
-
 ❤️ Like & Comment
-
 👥 Follow System
-
 🖼 style feed layout
-
 📱 Full Responsive UI
-
 🚀 Fast Rendering with Next.js App Router
-
 📦 Getting Started (Development)
 
 Follow the steps below to run the project locally.
