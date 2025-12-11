@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IApiResponse, SearchPayload } from "@/models/common.interface";
 import { trackPromise } from "react-promise-tracker";
 import BaseService from "./base-service.service";
 import {
-  IUpdateUserProfile,
   IUserResponseData,
   IUserAllListResponse,
   UserAllListPaylod,

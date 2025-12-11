@@ -10,6 +10,7 @@ import { Close, EmojiEmotions, LocationOn, People } from "@mui/icons-material";
 import { Avatar, Box, Grid, IconButton, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import { ImageIcon } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -48,6 +49,7 @@ const AddEditPost: React.FC<AddEditPostProps> = ({
 
   const handleImageSelect = (
     event: React.ChangeEvent<HTMLInputElement>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setFieldValue: any
   ) => {
     const file = event.target.files?.[0];
@@ -60,7 +62,7 @@ const AddEditPost: React.FC<AddEditPostProps> = ({
       reader.readAsDataURL(file);
     }
   };
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleRemoveImage = (setFieldValue: any) => {
     setImagePreview("");
     setFieldValue("post_image", null);
@@ -153,10 +155,13 @@ const AddEditPost: React.FC<AddEditPostProps> = ({
                           <Close />
                         </IconButton>
                       )}
-                      <img
+                      <Image
                         src={imagePreview}
                         alt="Preview"
                         className="image-preview"
+                        width={1000}
+                        height={500}
+                        sizes="(max-width: 768px) 100vw, 50vw"
                       />
                     </div>
                   ) : (

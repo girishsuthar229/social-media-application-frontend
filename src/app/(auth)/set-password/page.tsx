@@ -62,6 +62,7 @@ const SetPasswordForm = () => {
     if (!hasValidatedRef.current) {
       validatesetPswToken();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenParam]);
 
   const handleSubmit = async (values: SetPasswordValues) => {

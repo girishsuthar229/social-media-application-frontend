@@ -22,8 +22,8 @@ const PageNotFound = () => {
           <h1 className="access-denied-title">Content Not Found</h1>
 
           <p className="access-denied-description">
-            Oops! The page you're looking for seems to have vanished into the
-            social media void. Let's get you back on track! 📱
+            Oops! The page you&apos;re looking for seems to have vanished into the
+            social media void. Let&apos;s get you back on track! 📱
           </p>
 
           {/* Action Buttons */}

@@ -26,6 +26,7 @@ import { commonFilePath, STATUS_CODES } from "@/util/constanst";
 import { getRelativeTime } from "@/util/helper";
 import { Box, Tab, Tabs, Typography } from "@mui/material";
 import { Heart, MessageCircle, Loader } from "lucide-react";
+import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -94,41 +95,35 @@ const UserPostModal = ({
     }
   };
 
-  const handleLikeAllUserData = useCallback(
-    async (postId: number) => {
-      setLoaderLike(true);
-      try {
-        const response = await allLikePostClickServices(postId);
-        if (response.statusCode === STATUS_CODES.success) {
-          setLikedUsers(response?.data || []);
-        }
-      } catch (error) {
-        const err = error as IApiError;
-        toast.error(err?.message);
-      } finally {
-        setLoaderLike(false);
+  const handleLikeAllUserData = useCallback(async (postId: number) => {
+    setLoaderLike(true);
+    try {
+      const response = await allLikePostClickServices(postId);
+      if (response.statusCode === STATUS_CODES.success) {
+        setLikedUsers(response?.data || []);
       }
-    },
-    [postData]
-  );
+    } catch (error) {
+      const err = error as IApiError;
+      toast.error(err?.message);
+    } finally {
+      setLoaderLike(false);
+    }
+  }, []);
 
-  const handleCommentAllUserData = useCallback(
-    async (postId: number) => {
-      setLoaderComments(true);
-      try {
-        const response = await allCommentPostClickServices(postId);
-        if (response.statusCode === STATUS_CODES.success) {
-          setCommentUsers(response?.data || []);
-        }
-      } catch (error) {
-        const err = error as IApiError;
-        toast.error(err?.message);
-      } finally {
-        setLoaderComments(false);
+  const handleCommentAllUserData = useCallback(async (postId: number) => {
+    setLoaderComments(true);
+    try {
+      const response = await allCommentPostClickServices(postId);
+      if (response.statusCode === STATUS_CODES.success) {
+        setCommentUsers(response?.data || []);
       }
-    },
-    [postData]
-  );
+    } catch (error) {
+      const err = error as IApiError;
+      toast.error(err?.message);
+    } finally {
+      setLoaderComments(false);
+    }
+  }, []);
 
   const hanldePostComment = (newComment: CommentUserListResponse) => {
     setCommentUsers((prev) => [newComment, ...prev]);
@@ -158,58 +153,54 @@ const UserPostModal = ({
       postData.like_count += likeCountChange;
     }
   };
-  const handleLikePost = useCallback(
-    async (postId: number) => {
-      setSelectedPostId(postId);
-      try {
-        const response = await likePostClickServices(postId);
-        if (response.statusCode === STATUS_CODES.success) {
-          updatePostLikeStatus(postId, true, 1);
-          const newData: LikeUserListResponse = {
+  const handleLikePost = useCallback(async (postId: number) => {
+    setSelectedPostId(postId);
+    try {
+      const response = await likePostClickServices(postId);
+      if (response.statusCode === STATUS_CODES.success) {
+        updatePostLikeStatus(postId, true, 1);
+        const newData: LikeUserListResponse = {
+          id: currentUser?.id || 0,
+          created_date: new Date().toISOString(),
+          user: {
             id: currentUser?.id || 0,
-            created_date: new Date().toISOString(),
-            user: {
-              id: currentUser?.id || 0,
-              user_name: currentUser?.user_name || "",
-              first_name: currentUser?.first_name || "",
-              last_name: currentUser?.last_name || "",
-              photo_url: currentUser?.photo_url || "",
-              bio: currentUser?.bio || "",
-              is_following: false,
-              follow_status: "pending",
-            },
-          };
-          setLikedUsers((prev) => [...prev, { ...newData }]);
-        }
-      } catch (error) {
-        const err = error as IApiError;
-        toast.error(err?.message);
-      } finally {
-        setSelectedPostId(null);
+            user_name: currentUser?.user_name || "",
+            first_name: currentUser?.first_name || "",
+            last_name: currentUser?.last_name || "",
+            photo_url: currentUser?.photo_url || "",
+            bio: currentUser?.bio || "",
+            is_following: false,
+            follow_status: "pending",
+          },
+        };
+        setLikedUsers((prev) => [...prev, { ...newData }]);
       }
-    },
-    [postData]
-  );
-  const handleUnLikePost = useCallback(
-    async (postId: number) => {
-      setSelectedPostId(postId);
-      try {
-        const response = await unLikePostClickServices(postId);
-        if (response.statusCode === STATUS_CODES.success) {
-          updatePostLikeStatus(postId, false, -1);
-          setLikedUsers((prev) =>
-            prev.filter((user) => user.user.id !== currentUser?.id)
-          );
-        }
-      } catch (error) {
-        const err = error as IApiError;
-        toast.error(err?.message);
-      } finally {
-        setSelectedPostId(null);
+    } catch (error) {
+      const err = error as IApiError;
+      toast.error(err?.message);
+    } finally {
+      setSelectedPostId(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const handleUnLikePost = useCallback(async (postId: number) => {
+    setSelectedPostId(postId);
+    try {
+      const response = await unLikePostClickServices(postId);
+      if (response.statusCode === STATUS_CODES.success) {
+        updatePostLikeStatus(postId, false, -1);
+        setLikedUsers((prev) =>
+          prev.filter((user) => user.user.id !== currentUser?.id)
+        );
       }
-    },
-    [postData]
-  );
+    } catch (error) {
+      const err = error as IApiError;
+      toast.error(err?.message);
+    } finally {
+      setSelectedPostId(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const toggleMenu = (postId: number) => {
     setOpenMenuPostId((prev) => (prev === postId ? null : postId));
@@ -254,6 +245,7 @@ const UserPostModal = ({
       loadUserPostById(postId);
       handleLikeAllUserData(postId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postId]);
   return (
     <CommonDialogModal open={open} onClose={onClose} title="User Post">
@@ -293,10 +285,14 @@ const UserPostModal = ({
               <Box className="post-body">
                 {postData?.image_url && (
                   <Box className="post-image-container">
-                    <img
+                    <Image
                       src={`${commonFilePath}${postData?.image_url}`}
                       alt="Post"
                       className="post-image"
+                      loading="lazy"
+                      width={1000}
+                      height={500}
+                      sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   </Box>
                 )}

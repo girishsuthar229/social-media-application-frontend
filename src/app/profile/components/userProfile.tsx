@@ -1,14 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Typography, Box, Avatar } from "@mui/material";
+import { Box } from "@mui/material";
 import { usePathname, useRouter } from "next/navigation";
 import { IApiError } from "@/models/common.interface";
 import { toast } from "react-toastify";
 import BackButton from "@/components/common/BackButton";
-import { formatNumber, handleShareData } from "@/util/helper";
+import { handleShareData } from "@/util/helper";
 import {
   AuthBaseRoute,
-  commonFilePath,
   FollowingsEnum,
   STATUS_CODES,
   STATUS_ERROR,
@@ -79,7 +78,7 @@ const ProfileComponent = ({
         limit: 10,
         offset: postValues.length || 0,
         sortBy: "created_date",
-        sortOrder: "DESC" as "DESC",
+        sortOrder: "DESC",
         userId: userId || 0,
       };
       const res = await getUserUploadPost(payload);
@@ -122,6 +121,7 @@ const ProfileComponent = ({
         loadUserPosts(profileUser?.id);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileUser]);
 
   const handleFollowClick = async (userId: number | null) => {

@@ -23,6 +23,7 @@ import { allCommentPostClickServices } from "@/services/comments-service.service
 import { Box } from "@mui/material";
 import Link from "next/link";
 import PostCardSkeleton from "@/components/common/Skeleton/postCardSkeleton";
+import Image from "next/image";
 
 interface FeedProps {
   currentUser: IUserResponseData | null;
@@ -119,7 +120,8 @@ const Feed: React.FC<FeedProps> = ({
       }
       setLoadingPostId(null);
     },
-    [posts]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
   const handleUnLikePost = useCallback(
@@ -136,7 +138,8 @@ const Feed: React.FC<FeedProps> = ({
       }
       setLoadingPostId(null);
     },
-    [posts]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
   const handleLikeAllUserData = useCallback(
@@ -153,7 +156,8 @@ const Feed: React.FC<FeedProps> = ({
         toast.error(err?.message);
       }
     },
-    [posts]
+
+    []
   );
 
   const handleCommentAllUserData = useCallback(
@@ -299,10 +303,13 @@ const Feed: React.FC<FeedProps> = ({
 
             {/* Post Image */}
             <div className="image-wrapper">
-              <img
+              <Image
+                width={1000}
+                height={500}
                 src={`${commonFilePath}${post.image_url}`}
                 alt="Post"
                 className="post-image"
+                sizes="(max-width: 768px) 100vw, 50vw"
                 loading="lazy"
               />
             </div>
@@ -403,9 +410,10 @@ const Feed: React.FC<FeedProps> = ({
                   <Box className="view-more-comments">
                     <BackButton
                       onClick={() => {
-                        !loaderComments &&
-                          (setLoaderComments(true),
-                          handleCommentAllUserData(post.post_id));
+                        if (!loaderComments) {
+                          setLoaderComments(true);
+                          handleCommentAllUserData(post.post_id);
+                        }
                       }}
                       labelText={
                         loaderComments

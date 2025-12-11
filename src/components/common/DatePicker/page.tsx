@@ -7,7 +7,7 @@ import { DateTimePicker } from "@mui/x-date-pickers";
 import { useField, useFormikContext } from "formik";
 import dayjs, { Dayjs } from "dayjs";
 
-interface MuiDatePickerProps<> {
+interface MuiDatePickerProps {
   name: string;
   id?: string;
   label: string;

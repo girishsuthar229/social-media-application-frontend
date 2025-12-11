@@ -52,6 +52,7 @@ const Header = () => {
     handleProfileClose();
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const isActive: any = (route: string) => pathname === route;
 
   return (

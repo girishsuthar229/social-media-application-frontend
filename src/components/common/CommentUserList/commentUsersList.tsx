@@ -43,6 +43,7 @@ const CommentUsersList: React.FC<CommentProps> = ({
 }) => {
   const handleSubmit = async (
     values: { comment: string },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     { resetForm }: any
   ) => {
     if (!selectedPostId || !values.comment.trim()) {

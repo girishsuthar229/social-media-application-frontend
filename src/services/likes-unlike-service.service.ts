@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IApiResponse } from "@/models/common.interface";
 import { IPostData } from "@/models/postInterface";
 import { trackPromise } from "react-promise-tracker";

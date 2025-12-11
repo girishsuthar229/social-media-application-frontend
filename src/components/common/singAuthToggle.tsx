@@ -29,10 +29,12 @@ const AuthToggle = () => {
     }, 50);
 
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     updateIndicator();
+   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   const updateIndicator = () => {

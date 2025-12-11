@@ -1,5 +1,4 @@
 import React from "react";
-import { PROFILE_TABS } from "./userProfile";
 import BackButton from "@/components/common/BackButton";
 import { Avatar, Box, Typography } from "@mui/material";
 import { formatNumber } from "@/util/helper";

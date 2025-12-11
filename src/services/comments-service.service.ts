@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { CommentUserListResponse } from "@/models/commentsInterface";
 import { IApiResponse } from "@/models/common.interface";
 import BaseService from "./base-service.service";

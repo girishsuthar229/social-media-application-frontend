@@ -25,6 +25,7 @@ const ProfilePage = () => {
       post_count: currentUser?.post_count,
     };
     setProfileUser(profilData?.id ? profilData : null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

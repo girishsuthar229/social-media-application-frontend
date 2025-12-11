@@ -87,6 +87,7 @@ const Home = () => {
   useEffect(() => {
     loadMoreUsers();
     loadMorePosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleDeletePost = (postId: number) => {

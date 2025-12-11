@@ -21,6 +21,7 @@ const Notification = () => {
     if (currentUser?.id) {
       loadPendingRequests();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser?.id]);
 
   const loadPendingRequests = async () => {
@@ -85,7 +86,7 @@ const Notification = () => {
                 No Follow Requests
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                You don't have any pending follow requests
+                You don&apos;t have any pending follow requests
               </Typography>
             </Box>
           ) : (

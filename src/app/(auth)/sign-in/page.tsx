@@ -75,7 +75,7 @@ const SignIn = () => {
 
         {/* Welcome Messages */}
         <Typography className="typography-caption">
-          Welcome Back! Let's Get You Signed In.
+          Welcome Back! LLet&apos;s Get You Signed In.
         </Typography>
         <Typography className="typography-caption-primary">
           Sign in with your credentials to continue.
@@ -124,7 +124,7 @@ const SignIn = () => {
                 variant="body2"
                 sx={{ marginTop: "25px", textAlign: "center" }}
               >
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link href="/sign-up" className="as-link-styling">
                   Create Account
                 </Link>

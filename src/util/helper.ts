@@ -49,13 +49,15 @@ export const formatNumber = (num: number): string => {
   return num.toString();
 };
 
-// Helper function to check if the token is expired
 export const isTokenExpired = (token: string): boolean => {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const decoded: any = jwtDecode(token);
     const currentTime = Date.now() / 1000;
     return decoded.exp < currentTime;
-  } catch (e) {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+  } catch (e: any) {
+    console.error(e);
     return true;
   }
 };

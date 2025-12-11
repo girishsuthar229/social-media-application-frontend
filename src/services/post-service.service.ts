@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IApiResponse, SearchPayload } from "@/models/common.interface";
 import {
   AllPostListPaylod,

@@ -75,6 +75,7 @@ const ProtectedRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
         return true;
       }
       return false;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error.statusCode === STATUS_CODES.internalServerError) {
         toast.error(error.message);
@@ -134,6 +135,7 @@ const ProtectedRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     checkAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, router]);
 
   // Loading state

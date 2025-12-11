@@ -72,6 +72,7 @@ const FindFriendsPage = () => {
           setUserLoading(false);
         }
       }, 300),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -82,7 +83,7 @@ const FindFriendsPage = () => {
   }, [debouncedSearch]);
 
   const handlerSearchKey = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = event.target.value;
+    const value = event.target.value;
     setSearchQuery(value);
     if (value) {
       sessionStorage.setItem("searchQuery", value);
@@ -111,6 +112,7 @@ const FindFriendsPage = () => {
     if (storedSearchQuery) {
       loadMoreUsers(storedSearchQuery);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -177,7 +179,7 @@ const FindFriendsPage = () => {
               }
             }}
           >
-            {suggestedUsers.map((user: UserAllListModel, index: number) => (
+            {suggestedUsers.map((user: UserAllListModel) => (
               <Grid size={{ xs: 12 }} key={user.id}>
                 <UserlistWithFollowBtn
                   user={{
@@ -236,7 +238,7 @@ const FindFriendsPage = () => {
                 No Users Found
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                We couldn't find any users matching your search. Try a different
+                We couldn&apos;t find any users matching your search. Try a different
                 query.
               </Typography>
             </Box>

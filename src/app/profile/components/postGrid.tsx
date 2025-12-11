@@ -11,6 +11,7 @@ import {
 } from "@mui/icons-material";
 import SquareCardSkeleton from "@/components/common/Skeleton/squareCardSkeleton";
 import { commonFilePath } from "@/util/constanst";
+import Image from "next/image";
 
 interface PostGridProps {
   isLoading: boolean;
@@ -87,11 +88,14 @@ const PostGrid: React.FC<PostGridProps> = ({
                 className="post-thumbnail"
                 onClick={() => handlePostClick(post?.post_id)}
               >
-                <img
+                <Image
                   src={`${commonFilePath}${post?.image_url}`}
                   alt={`Post ${post?.post_id}`}
                   className="image-preview"
                   loading="lazy"
+                  width={1000}
+                  height={500}
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </Box>
             </Grid>
@@ -107,11 +111,14 @@ const PostGrid: React.FC<PostGridProps> = ({
                 className="post-thumbnail"
                 onClick={() => handlePostClick(post?.post_id)}
               >
-                <img
+                <Image
                   src={`${commonFilePath}${post?.image_url}`}
                   alt={`Post ${post?.post_id}`}
                   className="image-preview"
                   loading="lazy"
+                  width={1000}
+                  height={500}
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </Box>
             </Grid>

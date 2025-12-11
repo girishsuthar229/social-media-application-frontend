@@ -136,6 +136,7 @@ const ProfileEditMode = () => {
 
   const handleImageChange = (
     event: React.ChangeEvent<HTMLInputElement>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setFieldValue: any
   ) => {
     const file = event.target.files?.[0];

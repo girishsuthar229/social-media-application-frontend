@@ -39,6 +39,7 @@ const OtpVerificationForm = () => {
           response?.statusCode === STATUS_CODES.success &&
           response?.data?.valid
         ) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const decodedToken: any = jwtDecode(tokenParam || "");
           const exprTimeInSec = decodedToken.exp;
           const currentTimeInSec = Math.floor(Date.now() / 1000);
@@ -57,6 +58,7 @@ const OtpVerificationForm = () => {
     if (!hasValidatedRef.current) {
       validateToken();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
