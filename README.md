@@ -12,33 +12,52 @@ https://social-media-application-frontend.onrender.com/sign-in
 https://github.com/girishsuthar229/social-media-application-backend
 
 🚀 Tech Stack
+Frontend
 
-Frontend:
-Next.js (App Router)
+Next.js  (App Router)
+
 React + TypeScript
+
 Tailwind CSS / CSS Modules (update if needed)
+
 Next Fonts (Geist)
+
 JWT Authentication (Connected with NestJS)
 
-Backend :
+Backend (Connected Service)
+
 NestJS (TypeScript)
+
 TypeORM
+
 PostgreSQL / MySQL (update if needed)
+
 JWT Authentication + Guards
 
-Render Deployment;
+Render Deployment
+
 ✨ Key Features
+
 🔐 User Authentication (Sign Up / Sign In)
+
 👤 Profile Management
+
 📸 Upload & Share Posts
+
 ❤️ Like & Comment
+
 👥 Follow System
+
 🖼 style feed layout
+
 📱 Full Responsive UI
+
 🚀 Fast Rendering with Next.js App Router
+
 📦 Getting Started (Development)
 
 Follow the steps below to run the project locally.
+
 1️⃣ Clone the Repository
 git clone <your-frontend-repo-url>
 cd linking-you-to-the-world
@@ -49,8 +68,12 @@ npm install
 yarn install
 
 3️⃣ Environment Variables
+
 Create a .env.local file in the root directory:
+
 NEXT_PUBLIC_API_URL=https://your-backend-url/api
+
+
 Update with your deployed NestJS backend endpoint.
 
 4️⃣ Run the Development Server
@@ -97,9 +120,11 @@ Deployment documentation:
 https://nextjs.org/docs/app/building-your-application/deploying
 
 🧑‍💻 Author
+
 Girish Suthar
 Full Stack Developer – Next.js + NestJS
 Passionate about building clean, scalable, and modern web applications.
 
 ⭐ Support
+
 If you like this project, please star the repository on GitHub—it helps a lot!
