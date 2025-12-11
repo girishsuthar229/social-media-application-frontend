@@ -2,7 +2,6 @@
 A Modern Social Media Application – Frontend (Next.js + TypeScript)
 
 Linking You to the World is an Instagram-style social media platform built using Next.js with TypeScript for the frontend and connected to a NestJS backend.
-This project highlights clean code, modern UI, and scalable architecture—perfect for production use and technical interviews.
 
 🔗 Live Demo
 
