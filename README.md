@@ -27,14 +27,23 @@ JWT Authentication + Guards
 Render Deployment:
 
 ✨ Key Features
+
 🔐 User Authentication (Sign Up / Sign In)
+
 👤 Profile Management
+
 📸 Upload & Share Posts
+
 ❤️ Like & Comment
+
 👥 Follow System
+
 🖼 style feed layout
+
 📱 Full Responsive UI
+
 🚀 Fast Rendering with Next.js App Router
+
 📦 Getting Started (Development)
 
 Follow the steps below to run the project locally.
