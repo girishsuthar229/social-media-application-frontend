@@ -100,6 +100,7 @@ The page auto-updates as you modify files inside the app/ directory.
 
 💻 Next.js GitHub: https://github.com/vercel/next.js
 
+
 ☁ Deployment
 
 The easiest way to deploy your Next.js app is using Vercel:
