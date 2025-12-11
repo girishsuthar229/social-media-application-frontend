@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+🌐 Linking You to the World
+A Modern Social Media Application – Frontend (Next.js + TypeScript)
 
-## Getting Started
+Linking You to the World is an Instagram-style social media platform built using Next.js with TypeScript for the frontend and connected to a NestJS backend.
+This project highlights clean code, modern UI, and scalable architecture—perfect for production use and technical interviews.
 
-First, run the development server:
+🔗 Live Demo
 
-```bash
+👉 Frontend (Hosted on Render):
+https://social-media-application-frontend.onrender.com/sign-in
+
+👉 Backend Repository:
+https://github.com/girishsuthar229/social-media-application-backend
+
+🚀 Tech Stack
+
+Frontend:
+Next.js (App Router)
+React + TypeScript
+Tailwind CSS / CSS Modules (update if needed)
+Next Fonts (Geist)
+JWT Authentication (Connected with NestJS)
+
+Backend :
+NestJS (TypeScript)
+TypeORM
+PostgreSQL / MySQL (update if needed)
+JWT Authentication + Guards
+
+Render Deployment;
+✨ Key Features
+🔐 User Authentication (Sign Up / Sign In)
+👤 Profile Management
+📸 Upload & Share Posts
+❤️ Like & Comment
+👥 Follow System
+🖼 style feed layout
+📱 Full Responsive UI
+🚀 Fast Rendering with Next.js App Router
+📦 Getting Started (Development)
+
+Follow the steps below to run the project locally.
+1️⃣ Clone the Repository
+git clone <your-frontend-repo-url>
+cd linking-you-to-the-world
+
+2️⃣ Install Dependencies
+npm install
+# or
+yarn install
+
+3️⃣ Environment Variables
+Create a .env.local file in the root directory:
+NEXT_PUBLIC_API_URL=https://your-backend-url/api
+Update with your deployed NestJS backend endpoint.
+
+4️⃣ Run the Development Server
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Open your browser and navigate to:
+👉 http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The page auto-updates as you modify files inside the app/ directory.
 
-## Learn More
+📁 Project Structure
+/
+├── app/
+│   ├── sign-in/
+│   ├── sign-up/
+│   ├── feed/
+│   ├── profile/
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+├── services/      → API calls to backend (NestJS)
+├── hooks/
+├── public/
+└── package.json
 
-To learn more about Next.js, take a look at the following resources:
+📘 Learn More About Next.js
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+📄 Next.js Documentation: https://nextjs.org/docs
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+🎓 Learn Next.js Course: https://nextjs.org/learn
 
-## Deploy on Vercel
+💻 Next.js GitHub: https://github.com/vercel/next.js
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+☁ Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The easiest way to deploy your Next.js app is using Vercel:
+
+➡ https://vercel.com/new?utm_medium=default-template
+
+Deployment documentation:
+https://nextjs.org/docs/app/building-your-application/deploying
+
+🧑‍💻 Author
+Girish Suthar
+Full Stack Developer – Next.js + NestJS
+Passionate about building clean, scalable, and modern web applications.
+
+⭐ Support
+If you like this project, please star the repository on GitHub—it helps a lot!
