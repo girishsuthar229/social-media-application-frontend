@@ -1,4 +1,4 @@
-export const commonFilePath = `${process.env.NEXT_PUBLIC_API_URL}uploads/`;
+export const commonFilePath = process.env.NEXT_PUBLIC_IMAGE_CLOUDINARY_BASE_URL;
 
 export class Common {
   static RegularExpression = class RegularExpression {
