@@ -121,7 +121,7 @@ const Feed: React.FC<FeedProps> = ({
       setLoadingPostId(null);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [posts]
   );
 
   const handleUnLikePost = useCallback(
@@ -139,7 +139,7 @@ const Feed: React.FC<FeedProps> = ({
       setLoadingPostId(null);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [posts]
   );
 
   const handleLikeAllUserData = useCallback(

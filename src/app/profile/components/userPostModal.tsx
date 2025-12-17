@@ -153,54 +153,60 @@ const UserPostModal = ({
       postData.like_count += likeCountChange;
     }
   };
-  const handleLikePost = useCallback(async (postId: number) => {
-    setSelectedPostId(postId);
-    try {
-      const response = await likePostClickServices(postId);
-      if (response.statusCode === STATUS_CODES.success) {
-        updatePostLikeStatus(postId, true, 1);
-        const newData: LikeUserListResponse = {
-          id: currentUser?.id || 0,
-          created_date: new Date().toISOString(),
-          user: {
+  const handleLikePost = useCallback(
+    async (postId: number) => {
+      setSelectedPostId(postId);
+      try {
+        const response = await likePostClickServices(postId);
+        if (response.statusCode === STATUS_CODES.success) {
+          updatePostLikeStatus(postId, true, 1);
+          const newData: LikeUserListResponse = {
             id: currentUser?.id || 0,
-            user_name: currentUser?.user_name || "",
-            first_name: currentUser?.first_name || "",
-            last_name: currentUser?.last_name || "",
-            photo_url: currentUser?.photo_url || "",
-            bio: currentUser?.bio || "",
-            is_following: false,
-            follow_status: "pending",
-          },
-        };
-        setLikedUsers((prev) => [...prev, { ...newData }]);
+            created_date: new Date().toISOString(),
+            user: {
+              id: currentUser?.id || 0,
+              user_name: currentUser?.user_name || "",
+              first_name: currentUser?.first_name || "",
+              last_name: currentUser?.last_name || "",
+              photo_url: currentUser?.photo_url || "",
+              bio: currentUser?.bio || "",
+              is_following: false,
+              follow_status: "pending",
+            },
+          };
+          setLikedUsers((prev) => [...prev, { ...newData }]);
+        }
+      } catch (error) {
+        const err = error as IApiError;
+        toast.error(err?.message);
+      } finally {
+        setSelectedPostId(null);
       }
-    } catch (error) {
-      const err = error as IApiError;
-      toast.error(err?.message);
-    } finally {
-      setSelectedPostId(null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  const handleUnLikePost = useCallback(async (postId: number) => {
-    setSelectedPostId(postId);
-    try {
-      const response = await unLikePostClickServices(postId);
-      if (response.statusCode === STATUS_CODES.success) {
-        updatePostLikeStatus(postId, false, -1);
-        setLikedUsers((prev) =>
-          prev.filter((user) => user.user.id !== currentUser?.id)
-        );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [postData]
+  );
+  const handleUnLikePost = useCallback(
+    async (postId: number) => {
+      setSelectedPostId(postId);
+      try {
+        const response = await unLikePostClickServices(postId);
+        if (response.statusCode === STATUS_CODES.success) {
+          updatePostLikeStatus(postId, false, -1);
+          setLikedUsers((prev) =>
+            prev.filter((user) => user.user.id !== currentUser?.id)
+          );
+        }
+      } catch (error) {
+        const err = error as IApiError;
+        toast.error(err?.message);
+      } finally {
+        setSelectedPostId(null);
       }
-    } catch (error) {
-      const err = error as IApiError;
-      toast.error(err?.message);
-    } finally {
-      setSelectedPostId(null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [postData]
+  );
 
   const toggleMenu = (postId: number) => {
     setOpenMenuPostId((prev) => (prev === postId ? null : postId));

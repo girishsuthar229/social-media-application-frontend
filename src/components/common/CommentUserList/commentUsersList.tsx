@@ -111,12 +111,14 @@ const CommentUsersList: React.FC<CommentProps> = ({
                 />
                 {(currentUser?.id === comment?.user.id ||
                   currentUser?.id === selectedPostUserId) && (
-                  <IconButton
-                    className="delete-icon"
-                    onClick={() => handleOnDeleteComment(comment.id)}
-                  >
-                    <HighlightOffIcon />
-                  </IconButton>
+                  <Box>
+                    <IconButton
+                      className="drawer-close-btn"
+                      onClick={() => handleOnDeleteComment(comment.id)}
+                    >
+                      <HighlightOffIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
                 )}
               </Box>
             ))
