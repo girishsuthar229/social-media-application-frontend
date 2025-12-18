@@ -182,8 +182,8 @@ const UserPostModal = ({
       } finally {
         setSelectedPostId(null);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [postData]
   );
   const handleUnLikePost = useCallback(
@@ -203,8 +203,8 @@ const UserPostModal = ({
       } finally {
         setSelectedPostId(null);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [postData]
   );
 
