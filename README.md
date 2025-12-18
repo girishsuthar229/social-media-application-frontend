@@ -97,11 +97,6 @@ The page auto-updates as you modify files inside the app/ directory.
 
 
 ☁ Deployment
-
-The easiest way to deploy your Next.js app is using Vercel:
-
-➡ https://vercel.com/new?utm_medium=default-template
-
 Deployment documentation:
 https://nextjs.org/docs/app/building-your-application/deploying
 
