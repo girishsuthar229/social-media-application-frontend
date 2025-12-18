@@ -6,7 +6,7 @@ Linking You to the World is an Instagram-style social media platform built using
 🔗 Live Demo
 
 👉 Frontend (Hosted on Render):
-https://social-media-application-frontend.onrender.com/sign-in
+https://linking-you-to-the-world.onrender.com/sign-in
 
 👉 Backend Repository:
 https://github.com/girishsuthar229/social-media-application-backend
@@ -59,12 +59,7 @@ yarn install
 
 3️⃣ Environment Variables
 
-Create a .env.local file in the root directory:
-
-NEXT_PUBLIC_API_URL=https://your-backend-url/api
-
-
-Update with your deployed NestJS backend endpoint.
+Create a .env.local file in the root directory and update with your deployed NestJS backend endpoint.
 
 4️⃣ Run the Development Server
 npm run dev
