@@ -169,6 +169,7 @@
       padding: 0px;
       height: 100%;
       max-height: calc(85vh - 57px);
+      overflow-y: scroll;
       @media (max-width: 960px) {
         max-height: calc(55vh - 57px);
       }

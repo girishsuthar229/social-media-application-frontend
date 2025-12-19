@@ -43,7 +43,7 @@ const CommentDrawer: React.FC<CommentDrawerProps> = ({
       }}
       slotProps={{
         paper: {
-          className: "drawer-paper-centered",
+          className: "drawer-paper-centered scrollbar",
         },
       }}
     >

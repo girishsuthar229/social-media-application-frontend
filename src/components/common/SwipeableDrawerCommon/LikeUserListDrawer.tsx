@@ -29,7 +29,7 @@ const LikeUserListDrawer: React.FC<LikeUserListDrawerProps> = ({
       onOpen={() => {}}
       slotProps={{
         paper: {
-          className: "drawer-paper-centered",
+          className: "drawer-paper-centered scrollbar",
         },
       }}
       ModalProps={{

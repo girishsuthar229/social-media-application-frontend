@@ -84,19 +84,14 @@
   }
 /* ==========================================  LikeUserListDrawer  =========================================== */
   .user-list-likes-drawwer{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     padding: 0px;
     height: 100%;
-    max-height: calc(85vh - 127px);
+    max-height: calc(100vh - 140px); 
   }
   .like-user-list {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    display: flex;
-    flex-direction: column;
     gap: 0;
     width: 100%;
     @media (max-width: 600px) {
@@ -145,12 +140,9 @@
   
   /* ==========================================  CommentDrawer  =========================================== */  
   .user-list-comment-drawwer{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     padding: 0px;
     height: 100%;
-    max-height: calc(85vh - 127px);
+    max-height: calc(100vh - 140px); 
   }
   .comments-list {
     height: 100%;
@@ -184,7 +176,7 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: inherit;
+    background-color: $white;
     padding: 8px 16px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
   }

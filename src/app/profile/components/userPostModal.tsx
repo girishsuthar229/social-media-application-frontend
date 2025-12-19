@@ -417,7 +417,7 @@ const UserPostModal = ({
           </Tabs>
           {/* Likes Tab Content */}
           {activeTab === 0 && (
-            <Box className="user-list-content">
+            <Box className="user-list-content scrollbar">
               {!loaderLike && (
                 <LikeUserList
                   likedUsers={likedUsers}
@@ -437,7 +437,7 @@ const UserPostModal = ({
           )}
           {/* Comments Tab Content */}
           {activeTab === 1 && (
-            <Box className="user-list-content">
+            <Box className="user-list-content scrollbar">
               {!loaderComments && (
                 <CommentUsersList
                   selectedPostId={postId || 0}
