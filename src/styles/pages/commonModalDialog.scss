@@ -55,6 +55,7 @@
     border-right: none;
     min-height: auto;
     gap: 5px;
+    max-height: calc(50vh - 57px);
   }
 
   .post-header {
@@ -124,7 +125,7 @@
     flex: 1;
     padding: 0px 2px;
     overflow: hidden;
-  
+    max-height: calc(85vh - 57px);
     .user-list-tabs {
       background-color: #fff;
       border-bottom: 1px solid #e0e0e0;
@@ -168,13 +169,13 @@
       flex: 1;
       padding: 0px;
       height: 100%;
-      max-height: calc(85vh - 57px);
-      overflow-y: scroll;
+      max-height: calc(85vh - 114px);
       @media (max-width: 960px) {
-        max-height: calc(55vh - 57px);
+        max-height: calc(50vh - 114px);
       }
       .drawer-content{
         padding: 8px 10px !important;
+        overflow-y: scroll !important;
         .comments-list{
             .comment-drawer {
                 button{
