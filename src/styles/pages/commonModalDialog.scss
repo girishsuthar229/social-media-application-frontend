@@ -50,7 +50,7 @@
   flex-direction: column;
   overflow: hidden;
   border-right: 1px solid $border-color;
-  max-height: calc(85vh - 100px);
+  max-height: calc(85vh - 57px);
   @media (max-width: 960px) {
     border-right: none;
     min-height: auto;
@@ -122,12 +122,8 @@
   // Right Side - User List Section
 .user-list-section {
     flex: 1;
-    padding: 0px 10px;
+    padding: 0px 2px;
     overflow: hidden;
-
-    @media (max-width: 960px) {
-      min-height: 400px;
-    }
   
     .user-list-tabs {
       background-color: #fff;
@@ -172,7 +168,10 @@
       flex: 1;
       padding: 0px;
       height: 100%;
-      max-height: calc(68vh - 49px);
+      max-height: calc(85vh - 57px);
+      @media (max-width: 960px) {
+        max-height: calc(55vh - 57px);
+      }
       .drawer-content{
         padding: 8px 10px !important;
         .comments-list{

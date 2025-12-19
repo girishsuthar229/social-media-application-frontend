@@ -422,6 +422,7 @@ const UserPostModal = ({
                 <LikeUserList
                   likedUsers={likedUsers}
                   currentUser={currentUser}
+                  showFollowButton={false}
                 />
               )}
               {loaderLike && (

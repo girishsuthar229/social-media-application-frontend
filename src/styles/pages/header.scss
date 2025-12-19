@@ -74,7 +74,7 @@
        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
      }
    
-     &:hover {
+     &:hover:not(:active) {
        background-color: rgba($primary-color, 0.08) !important;
        color: $primary-color !important;
      }
@@ -86,31 +86,15 @@
      &.active {
        color: $primary-color !important;
        background-color: rgba($primary-color, 0.12) !important;
-   
-       &::before {
-         width: 80%;
-       }
-   
        svg {
          animation: iconBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
        }
      }
-   
-     &.inactive {
-       color: $text-gray !important;
-     }
-   
      svg {
        font-size: 26px;
        transition: all 0.3s ease;
-   
-       @media (max-width: 960px) {
-         font-size: 24px;
-       }
      }
-   
-
-   
+     
      @media (max-width: 600px) {
        padding: 6px !important;
        border-radius: 10px !important;
@@ -127,12 +111,11 @@
     border-radius: 50%;
     &.active {
       border-color: $primary-color;
-      box-shadow: 0 4px 16px rgba($primary-color, 0.3);
+      box-shadow: none;
     }
     &:hover, &:active {
       border-color: $primary-color;
       box-shadow: 0 4px 16px rgba($primary-color, 0.3);
-      transform: scale(1.05);
     }
     transition: all 0.3s ease-in-out;
   }
@@ -239,9 +222,6 @@
    @media (min-width: 600px) and (max-width: 959px) {
      .header-icon {
        padding: 6px !important;
-       svg {
-         font-size: 24px;
-       }
      }
    }
    

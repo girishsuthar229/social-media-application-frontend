@@ -1,5 +1,4 @@
 import AppButton from "@/components/common/AppButton";
-import BackButton from "@/components/common/BackButton";
 import Textarea from "@/components/common/Textarea";
 import { UseUserContext } from "@/components/protected-route/protectedRoute";
 import { IApiError } from "@/models/common.interface";
@@ -11,7 +10,6 @@ import { Avatar, Box, Grid, IconButton, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import { ImageIcon } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -36,7 +34,6 @@ const AddEditPost: React.FC<AddEditPostProps> = ({
   onEditPostClick,
   postLoading,
 }) => {
-  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const { currentUser } = UseUserContext();
@@ -107,12 +104,6 @@ const AddEditPost: React.FC<AddEditPostProps> = ({
 
   return (
     <Box className="create-post-container scrollbar">
-      {!postId && (
-        <Box className="create-post-header">
-          <BackButton labelText="Back" onClick={() => router.back()} />
-        </Box>
-      )}
-
       <Formik
         initialValues={initialValues}
         validationSchema={createPostSchema}

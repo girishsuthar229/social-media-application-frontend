@@ -8,11 +8,13 @@ import { FollowingsEnum } from "@/util/constanst";
 interface LikeUserListProps {
   currentUser: IUserResponseData | null;
   likedUsers: LikeUserListResponse[];
+  showFollowButton: boolean;
 }
 
 const LikeUserList: React.FC<LikeUserListProps> = ({
   currentUser,
   likedUsers,
+  showFollowButton,
 }) => {
   return (
     <Box className="drawer-content scrollbar">
@@ -36,7 +38,7 @@ const LikeUserList: React.FC<LikeUserListProps> = ({
                 }}
                 showBio={true}
                 showFullName={true}
-                showFollowButton={true}
+                showFollowButton={showFollowButton}
                 currentUser={currentUser}
               />
             </Box>
