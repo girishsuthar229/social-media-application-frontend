@@ -1,4 +1,3 @@
-
 export interface UserUploadPostReponse {
   id: number;
   post_img_url: string;
@@ -78,4 +77,12 @@ export interface IAnotherUserResponse {
   follower_count?: number;
   following_count?: number;
   post_count?: number;
+}
+export interface NewUserNotification {
+  id: number;
+  user_name: string;
+  first_name: string | null;
+  last_name: string | null;
+  bio: string | null;
+  photo_url: string | null;
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { CommentUserListResponse } from "@/models/commentsInterface";
 import { IApiError } from "@/models/common.interface";
 import { IUserResponseData } from "@/models/userInterface";
@@ -41,6 +41,11 @@ const CommentUsersList: React.FC<CommentProps> = ({
   onPostDeleteComment,
   currentUser,
 }) => {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const handleTooltipToggle = () => {
+    setTooltipOpen(!tooltipOpen);
+  };
+
   const handleSubmit = async (
     values: { comment: string },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -156,7 +161,12 @@ const CommentUsersList: React.FC<CommentProps> = ({
                   endAdornment:
                     touched.comment && errors.comment ? (
                       <InputAdornment position="end">
-                        <Tooltip title={errors.comment}>
+                        <Tooltip
+                          title={errors.comment}
+                          open={tooltipOpen}
+                          onClick={handleTooltipToggle}
+                          onMouseEnter={handleTooltipToggle}
+                        >
                           <Info size={18} color="#f44336" />
                         </Tooltip>
                       </InputAdornment>

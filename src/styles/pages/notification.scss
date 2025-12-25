@@ -306,4 +306,21 @@
   }
 }
 
+.new-users-list {
+  display: flex;
+  flex-direction: column;
+  padding: 0px;
+}
+.new-users-message {
+  padding-left: 1.2rem;
+  display: flex  !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin-bottom: 16px !important;
+  font-size: 0.875rem !important; 
+
+  .MuiTypography-body2 {
+    color: $text-light !important;
+  }
+}
 

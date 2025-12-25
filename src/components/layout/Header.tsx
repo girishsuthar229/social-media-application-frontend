@@ -14,14 +14,14 @@ import {
   HomeOutlined as HomeOutlinedIcon,
   People as PeopleIcon,
   PeopleAltOutlined as PeopleAltOutlinedIcon,
-  PlayCircleOutline as PlayCircleOutlineIcon,
-  PlayCircleFilled as PlayCircleFilledIcon,
   FavoriteBorder as FavoriteBorderIcon,
   Favorite as FavoriteIcon,
   AddCircleOutline as AddCircleOutlineIcon,
   AddCircle as AddCircleIcon,
   Logout as LogoutIcon,
   AccountCircle as AccountCircleIcon,
+  Chat as ChatIcon,
+  ChatOutlined as ChatOutlinedIcon,
 } from "@mui/icons-material";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -87,16 +87,16 @@ const Header = () => {
               )}
             </IconButton>
           </Link>
-          <Link href="/reels" passHref>
+          <Link href="/create-post" passHref>
             <IconButton
               className={`header-icon ${
-                isActive("/reels") ? "active" : "inactive"
+                isActive("/create-post") ? "active" : "inactive"
               }`}
             >
-              {isActive("/reels") ? (
-                <PlayCircleFilledIcon />
+              {isActive("/create-post") ? (
+                <AddCircleIcon />
               ) : (
-                <PlayCircleOutlineIcon />
+                <AddCircleOutlineIcon />
               )}
             </IconButton>
           </Link>
@@ -113,20 +113,27 @@ const Header = () => {
               )}
             </IconButton>
           </Link>
-          <Link href="/create-post" passHref>
+          <Link
+            href="/chats"
+            passHref
+            onClick={() => {
+              sessionStorage.removeItem("searchMessagesUsers");
+            }}
+          >
             <IconButton
               className={`header-icon ${
-                isActive("/create-post") ? "active" : "inactive"
+                isActive("/chats") || isActive("/chats/user")
+                  ? "active"
+                  : "inactive"
               }`}
             >
-              {isActive("/create-post") ? (
-                <AddCircleIcon />
+              {isActive("/chats") || isActive("/chats/user") ? (
+                <ChatIcon />
               ) : (
-                <AddCircleOutlineIcon />
+                <ChatOutlinedIcon />
               )}
             </IconButton>
           </Link>
-
           {/* Profile Avatar with Menu */}
           <Avatar
             className={`profile-avatar ${

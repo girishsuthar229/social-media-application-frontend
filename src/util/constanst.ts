@@ -89,4 +89,6 @@ export const AuthBaseRoute = {
   profile: "/profile",
   profileEdit: "/profile/edit",
   anotherProfile: "/profile/user-name",
+  chatMessgae: "/chats",
+  chatUser: "/chats/user",
 };

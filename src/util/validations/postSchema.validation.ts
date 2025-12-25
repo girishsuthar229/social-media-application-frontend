@@ -56,3 +56,11 @@ export const postCommentSchema = Yup.object().shape({
     .max(2000, "Comment must not exceed 2000 characters")
     .trim(),
 });
+
+export const chatMessageSchema = Yup.object().shape({
+  inputMessage: Yup.string()
+    .required("Message is required")
+    .min(1, "Message cannot be empty")
+    .max(2000, "Message must not exceed 2000 characters")
+    .trim(),
+});

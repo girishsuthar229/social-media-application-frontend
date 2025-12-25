@@ -81,24 +81,6 @@ const ProfileEditMode = () => {
         address: currentUser?.address || null,
         is_private: currentUser?.is_private || false,
       });
-      console.log("check::", {
-        id: currentUser?.id || null,
-        user_name: currentUser.user_name || "",
-        first_name: currentUser.first_name || "",
-        last_name: currentUser.last_name || "",
-        email: currentUser.email || "",
-        bio: currentUser.bio || "",
-        mobile_number: currentUser.mobile_number || "",
-        user_image: currentUser.photo_url || null,
-        birth_date: currentUser.birth_date
-          ? moment(currentUser.birth_date).format(
-              regionDateAndTime().DATE_FORMAT
-            )
-          : null,
-        role_id: currentUser.role_id || null,
-        address: currentUser?.address || null,
-        is_private: currentUser?.is_private || false,
-      });
       setImagePreview(`${commonFilePath}${currentUser?.photo_url}` || "");
       setEditMode(true);
     }

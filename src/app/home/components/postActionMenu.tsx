@@ -13,7 +13,6 @@ import {
   savePostClickServices,
   unSavePostClickServices,
 } from "@/services/saved-service.service";
-import { Share2 } from "lucide-react";
 import CommonDialogModal from "@/components/common/commonDialog/commonDialog";
 import AddEditPost, {
   AddEditPostData,
@@ -101,11 +100,11 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
     }
   };
 
-  const handleShareClick = async (postId: number) => {
-    if (postId) {
-      console.log("handleShareClick");
-    }
-  };
+  // const handleShareClick = async (postId: number) => {
+  //   if (postId) {
+  //     console.log("handleShareClick");
+  //   }
+  // };
 
   const handleEditPostSubmit = async (
     postId: number,
@@ -206,14 +205,14 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
             </>
           )}
         </MenuItem>
-        <MenuItem
+        {/* <MenuItem
           key="share"
           className="post-menu-item"
           onClick={() => handleShareClick(postObj?.postId)}
         >
           <Share2 size={18} />
           <span className={"action-text"}>Share</span>
-        </MenuItem>
+        </MenuItem> */}
       </Menu>
       {userPostModalId && (
         <CommonDialogModal

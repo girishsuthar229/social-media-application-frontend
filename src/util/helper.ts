@@ -15,21 +15,19 @@ export const getRelativeTime = (create_date: string): string => {
   const now = moment();
   const date = moment(create_date);
 
-  // Calculate the difference and return relative time
   const differenceInHours = now.diff(date, "hours");
   const differenceInDays = now.diff(date, "days");
   const differenceInMonths = now.diff(date, "months");
   const differenceInYears = now.diff(date, "years");
 
-  // Return relative time based on the difference
   if (differenceInHours < 24) {
-    return date.fromNow(); // e.g., "2 hours ago"
+    return date.fromNow();
   } else if (differenceInDays < 30) {
-    return date.fromNow(); // e.g., "1 day ago"
+    return date.fromNow();
   } else if (differenceInMonths < 12) {
-    return date.format("D MMM YYYY"); // e.g., "1 Jan 2024"
+    return date.format("D MMM YYYY");
   } else if (differenceInYears) {
-    return date.format("D MMM YYYY"); // e.g., "1 Jan 2024"
+    return date.format("D MMM YYYY");
   } else {
     return date.toString();
   }

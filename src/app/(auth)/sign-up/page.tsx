@@ -17,8 +17,20 @@ import { useRouter } from "next/navigation";
 const SignUp = () => {
   const initialValues = { user_name: "", email: "", password: "" };
   const router = useRouter();
+  // const socket = useSocket("");
   const handleSubmit = async (values: ISingUpPayload) => {
     try {
+      // if (!socket) return;
+      // const createNewUser: NewUserNotification = {
+      //   id: 0,
+      //   user_name: values?.user_name,
+      //   first_name: null,
+      //   last_name: null,
+      //   bio: null,
+      //   photo_url: null,
+      // };
+      // socket.emit("send_message", createNewUser);
+
       const response = await signUpUser(values);
       if (response?.statusCode === STATUS_CODES.success) {
         toast.success(response?.message);

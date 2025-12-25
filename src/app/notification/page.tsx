@@ -10,12 +10,34 @@ import { pendingAccptedFollowListService } from "@/services/follows-service.serv
 import { PendingFollowResponse } from "@/models/followsInterface";
 import UserListSkeleton from "@/components/common/Skeleton/userListSkeleton";
 import RequestItem from "./components/requestItem";
+import useSocket from "@/util/socket";
+import { useRouter } from "next/navigation";
+import BackButton from "@/components/common/BackButton";
+import { NewUserNotification } from "@/models/userInterface";
 
 const Notification = () => {
   const { currentUser } = UseUserContext();
   const [loading, setLoading] = useState(false);
   const [userHasMore, setUserHasMore] = useState(true);
   const [requests, setRequests] = useState<PendingFollowResponse[]>([]);
+  const [newUsers, setNewUsers] = useState<NewUserNotification[]>([]);
+  const socket = useSocket(currentUser?.id.toString());
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!socket) return;
+    socket.on("new_user_created", (user) => {
+      setNewUsers((prev) => [...prev, user]);
+    });
+
+    return () => {
+      socket.off("new_user_created");
+    };
+  }, [socket]);
+
+  const handleUserClick = (username: string) => {
+    router.push(`/profile/user-name?username=${username}`);
+  };
 
   useEffect(() => {
     if (currentUser?.id) {
@@ -72,6 +94,34 @@ const Notification = () => {
           }
         }}
       >
+        <Box className="notification-header">
+          <Typography variant="h5" className="page-title">
+            Highlights
+          </Typography>
+        </Box>
+        <Box className="new-users-list">
+          {/* List of new users */}
+          {newUsers.length > 0 ? (
+            newUsers.map((user) => (
+              <Box key={user.id} className="new-users-message">
+                <Typography variant="body2">
+                  New user created, please follow them!{" "}
+                  <BackButton
+                    onClick={() => handleUserClick(user.user_name)}
+                    labelText={`@ ${user.user_name}`}
+                    showIcon={false}
+                    underlineOnHover={true}
+                  />
+                </Typography>
+              </Box>
+            ))
+          ) : (
+            <Box className="new-users-message">
+              <Typography variant="body2">No Highlights</Typography>
+            </Box>
+          )}
+        </Box>
+
         <Box className="notification-header">
           <Typography variant="h5" className="page-title">
             Notifications
