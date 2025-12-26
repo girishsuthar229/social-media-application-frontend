@@ -6,22 +6,71 @@ import { commonFilePath, STATUS_CODES } from "@/util/constanst";
 import { Avatar, Box, Typography } from "@mui/material";
 import { IApiError } from "@/models/common.interface";
 import { toast } from "react-toastify";
-import { MsgUserListResponseModel } from "@/models/messageInterface";
+import {
+  IUserMessage,
+  MsgUserListResponseModel,
+} from "@/models/messageInterface";
 import { getAllMsgUsers } from "@/services/message-services.service";
 import SearchField from "@/components/common/SearchField/searchField";
 import UserListSkeleton from "@/components/common/Skeleton/userListSkeleton";
 import { debounce } from "lodash";
+import { UseUserContext } from "@/components/protected-route/protectedRoute";
+import useSocket from "@/util/socket";
 
 const ChatApp = () => {
   // const [messages, setMessages] = useState({});
   // const [inputMessage, setInputMessage] = useState("");
-  // const { currentUser } = UseUserContext();
+  const { currentUser } = UseUserContext();
   const [allUsers, setAllUsers] = useState<MsgUserListResponseModel[]>([]);
   // const [userHasMore, setUserHasMore] = useState(true);
   const [userOffset, setUserOffset] = useState<number>(0);
   const [userLoading, setUserLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const router = useRouter();
+  const socket = useSocket(currentUser?.id.toString());
+
+  useEffect(() => {
+    if (!socket) return;
+    socket.on("receive_message", (message: IUserMessage) => {
+      setAllUsers((prevUsers) => {
+        const updatedUsers = [...prevUsers];
+        const userIndex = updatedUsers.findIndex(
+          (user) => user.user_name === message.sender?.user_name
+        );
+
+        if (userIndex >= 0) {
+          updatedUsers[userIndex].message.last_message = message.message;
+        } else {
+          updatedUsers.push({
+            id: message.id,
+            user_name: message.sender.user_name,
+            first_name: message?.sender?.first_name || "",
+            last_name: message?.sender?.last_name || "",
+            photo_url: message?.sender?.photo_url || "",
+            message: {
+              id: message.id,
+              last_message: message.message,
+              created_date: message.created_date,
+              sender_id: message?.sender?.id,
+              receiver_id: message?.receiver?.id,
+              modified_date: message?.modified_date || "",
+              is_read: message?.is_read,
+            },
+          });
+        }
+        updatedUsers.sort((a, b) => {
+          const aDate = new Date(a.message.created_date).getTime();
+          const bDate = new Date(b.message.created_date).getTime();
+          return bDate - aDate;
+        });
+        return updatedUsers;
+      });
+    });
+
+    return () => {
+      socket.off("receive_message");
+    };
+  }, [socket, allUsers]);
 
   const loadMessageUsers = async (searchValue: string) => {
     if (userLoading) return;
@@ -41,7 +90,16 @@ const ChatApp = () => {
         if (newUsers.length < 10) {
           // setUserHasMore(false);
         }
-        setAllUsers((prev) => [...prev, ...newUsers]);
+        setAllUsers((prev) => {
+          const updatedUsers = [...prev, ...newUsers];
+          updatedUsers.sort((a, b) => {
+            const aDate = new Date(a.message.created_date).getTime();
+            const bDate = new Date(b.message.created_date).getTime();
+            return bDate - aDate;
+          });
+
+          return updatedUsers;
+        });
       }
     } catch (error) {
       const err = error as IApiError;
@@ -114,7 +172,7 @@ const ChatApp = () => {
             searchQuery={searchQuery}
           />
         </Box>
-        <div className="user-list">
+        <div className="user-list scrollbar">
           {allUsers.map((user) => (
             <Box
               className="user-item"
@@ -134,15 +192,24 @@ const ChatApp = () => {
                   <Typography className="user-username" component="h3">
                     {user?.user_name}
                   </Typography>
-                  {user?.first_name && (
+                  {/* {user?.first_name && (
                     <Typography className="user-display-name" variant="body2">
                       {user?.first_name + " " + user?.last_name}
                     </Typography>
-                  )}
-                  {/* <p className="user-last-message">{user.lastMessage}</p> */}
-                  {/* {user.unread > 0 && (
-                    <div className="unread-badge">{user.unread}</div>
                   )} */}
+                  {user?.message.last_message && (
+                    <Typography
+                      className={`user-last-message ${
+                        user?.message?.is_read ||
+                        user?.message?.sender_id === currentUser?.id
+                          ? ""
+                          : "bold"
+                      }`}
+                      variant="body1"
+                    >
+                      {user.message?.last_message}
+                    </Typography>
+                  )}
                 </Box>
               </Box>
             </Box>

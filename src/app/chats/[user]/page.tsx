@@ -47,16 +47,30 @@ const ChatView: React.FC = () => {
   const socket = useSocket(currentUser?.id.toString());
   useEffect(() => {
     if (!socket) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    socket.on("receive_message", (message: any) => {
+    socket.on("receive_message", (message: IUserMessage) => {
       const newMessage: IUserMessage = {
-        id: Date.now(),
-        sender_id: message.sender_id,
-        receiver_id: message.receiver_id,
+        id: message.id,
         message: message.message,
-        created_at: message.created_at,
+        created_date: message?.created_date.toString(),
+        modified_date: message?.modified_date?.toString() || "",
+        sender: {
+          id: message?.sender?.id,
+          user_name: message?.sender?.user_name,
+          first_name: message?.sender?.first_name,
+          last_name: message?.sender?.last_name,
+          photo_url: message?.sender?.photo_url,
+        },
+        receiver: {
+          id: message?.receiver?.id,
+          user_name: message?.receiver?.user_name,
+          first_name: message?.receiver?.first_name,
+          last_name: message?.receiver?.last_name,
+          photo_url: message?.receiver?.photo_url,
+        },
       };
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      if (newMessage?.sender?.id !== newMessage?.receiver?.id) {
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+      }
     });
     return () => {
       socket.off("receive_message");
@@ -74,10 +88,22 @@ const ChatView: React.FC = () => {
     try {
       const newMessage: IUserMessage = {
         id: Date.now(),
-        sender_id: currentUser?.id || 0,
-        receiver_id: selectedUser.id,
         message: values?.inputMessage,
-        created_at: new Date().toISOString(),
+        created_date: new Date().toISOString(),
+        sender: {
+          id: currentUser?.id || 0,
+          user_name: currentUser?.user_name || "",
+          first_name: currentUser?.first_name || null,
+          last_name: currentUser?.last_name || null,
+          photo_url: currentUser?.photo_url || null,
+        },
+        receiver: {
+          id: selectedUser?.id || 0,
+          user_name: selectedUser?.user_name || "",
+          first_name: selectedUser?.first_name || null,
+          last_name: selectedUser?.last_name || null,
+          photo_url: selectedUser?.photo_url || null,
+        },
       };
       socket.emit("send_message", newMessage);
       const payload = {
@@ -86,8 +112,9 @@ const ChatView: React.FC = () => {
         message: values?.inputMessage || "",
       };
       const response = await userSendMessageServices(payload);
-      if (response?.statusCode === STATUS_CODES.success) {
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
+      if (response?.statusCode === STATUS_CODES.success && response.data) {
+        const data: IUserMessage = response.data;
+        setMessages((prevMessages) => [...prevMessages, data]);
         resetForm();
       }
     } catch (err) {
@@ -195,17 +222,17 @@ const ChatView: React.FC = () => {
                 <div
                   key={msg.id}
                   className={`message-wrapper ${
-                    msg.sender_id == currentUser?.id ? "me" : "them"
+                    msg.sender.id == currentUser?.id ? "me" : "them"
                   }`}
                 >
                   <div
                     className={`message ${
-                      msg.sender_id == currentUser?.id ? "me" : "them"
+                      msg.sender.id == currentUser?.id ? "me" : "them"
                     }`}
                   >
                     <p className="message-text">{msg.message}</p>
                     <span className="message-time">
-                      {getRelativeTime(msg.created_at)}
+                      {getRelativeTime(msg.created_date)}
                     </span>
                   </div>
                 </div>

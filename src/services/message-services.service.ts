@@ -28,9 +28,9 @@ export const getAllMsgUsers = async (
   }
 };
 
-  export const userSendMessageServices = async (
+export const userSendMessageServices = async (
   values: SendMessagePayload
-): Promise<IApiResponse<null>> => {
+): Promise<IApiResponse<IUserMessage>> => {
   try {
     const response = await trackPromise(
       BaseService.post(`/message/send-message`, values)
