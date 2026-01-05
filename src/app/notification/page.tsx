@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Box, Button, List, Typography } from "@mui/material";
+import { Box, List, Typography } from "@mui/material";
 import { UserPlus } from "lucide-react";
 import { toast } from "react-toastify";
 import { IApiError } from "@/models/common.interface";
@@ -37,6 +37,7 @@ const Notification = () => {
 
   useEffect(() => {
     if (!socket) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     socket.on("new_user_created", (user: any) => {
       const newUser: NewUserNotification = {
         id: user?.id,
