@@ -66,7 +66,7 @@ const FindFriendsPage = () => {
         setSuggestedUsers([]);
         setUserHasMore(false);
         setUserOffset(0);
-        if (value) {
+        if (value.trim()) {
           await loadMoreUsers(value);
         } else {
           setUserLoading(false);
@@ -85,14 +85,17 @@ const FindFriendsPage = () => {
   const handlerSearchKey = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setSearchQuery(value);
-    if (value) {
-      sessionStorage.setItem("searchQuery", value);
-    }
-    const displayValue = value.trim().replace(/\s+/g, " ");
-    const trimSearchQuery = searchQuery.trim().replace(/\s+/g, " ");
-    if (displayValue !== trimSearchQuery) {
+    const trimmedValue = value.trim();
+
+    if (trimmedValue) {
+      sessionStorage.setItem("searchQuery", trimmedValue);
       setUserLoading(true);
-      debouncedSearch(displayValue.toLocaleLowerCase());
+      debouncedSearch(trimmedValue.toLowerCase());
+    } else {
+      sessionStorage.removeItem("searchQuery");
+      setSuggestedUsers([]);
+      setUserHasMore(false);
+      setUserLoading(false);
     }
   };
 
@@ -108,8 +111,6 @@ const FindFriendsPage = () => {
     const storedSearchQuery = sessionStorage.getItem("searchQuery");
     if (storedSearchQuery) {
       setSearchQuery(storedSearchQuery);
-    }
-    if (storedSearchQuery) {
       loadMoreUsers(storedSearchQuery);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -136,23 +137,20 @@ const FindFriendsPage = () => {
               input: {
                 startAdornment: (
                   <InputAdornment position="start">
-                    {" "}
-                    <SearchIcon fontSize="small" />{" "}
+                    <SearchIcon fontSize="small" />
                   </InputAdornment>
                 ),
                 endAdornment: (
                   <InputAdornment position="end" sx={{ alignItems: "center" }}>
-                    {" "}
                     {searchQuery && (
                       <IconButton
                         onClick={handlerClearSearchKey}
                         size="small"
                         sx={{ p: 0.5 }}
                       >
-                        {" "}
-                        <CloseIcon fontSize="small" />{" "}
+                        <CloseIcon fontSize="small" />
                       </IconButton>
-                    )}{" "}
+                    )}
                   </InputAdornment>
                 ),
               },
@@ -163,45 +161,45 @@ const FindFriendsPage = () => {
             }}
           />
         </Box>
-        {!userLoading && (
-          <Grid
-            container
-            spacing={2}
-            className="suggested-user-grid scrollbar"
-            onScroll={(e) => {
-              const bottom =
-                e.currentTarget.scrollHeight -
-                  e.currentTarget.scrollTop -
-                  e.currentTarget.clientHeight <
-                50;
-              if (bottom && !userLoading && userHasMore) {
-                loadMoreUsers();
-              }
-            }}
-          >
-            {suggestedUsers.map((user: UserAllListModel) => (
-              <Grid size={{ xs: 12 }} key={user.id}>
-                <UserlistWithFollowBtn
-                  user={{
-                    id: user?.id,
-                    user_name: user?.user_name,
-                    first_name: user?.first_name,
-                    last_name: user?.last_name,
-                    photo_url: user?.photo_url,
-                    bio: user?.bio || null,
-                    is_following: user?.is_following,
-                    follow_status: user?.follow_status,
-                  }}
-                  showBio={true}
-                  showFullName={true}
-                  showFollowButton={false}
-                  currentUser={currentUser}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        )}
-        {!userLoading && userHasMore && searchQuery && (
+
+        <Grid
+          container
+          spacing={2}
+          className="suggested-user-grid scrollbar"
+          onScroll={(e) => {
+            const bottom =
+              e.currentTarget.scrollHeight -
+                e.currentTarget.scrollTop -
+                e.currentTarget.clientHeight <
+              50;
+            if (bottom && !userLoading && userHasMore) {
+              loadMoreUsers();
+            }
+          }}
+        >
+          {suggestedUsers.map((user: UserAllListModel) => (
+            <Grid size={{ xs: 12 }} key={user.id}>
+              <UserlistWithFollowBtn
+                user={{
+                  id: user?.id,
+                  user_name: user?.user_name,
+                  first_name: user?.first_name,
+                  last_name: user?.last_name,
+                  photo_url: user?.photo_url,
+                  bio: user?.bio || null,
+                  is_following: user?.is_following,
+                  follow_status: user?.follow_status,
+                }}
+                showBio={true}
+                showFullName={true}
+                showFollowButton={false}
+                currentUser={currentUser}
+              />
+            </Grid>
+          ))}
+        </Grid>
+
+        {!userLoading && userHasMore && searchQuery.trim() !== "" && (
           <div className="load-more-div">
             <BackButton
               onClick={!userLoading ? loadMoreUsers : undefined}
@@ -214,8 +212,8 @@ const FindFriendsPage = () => {
         {userLoading && (
           <UserListSkeleton count={3} showBio={true} showFollowButton={false} />
         )}
-        {/* Empty State when no search query is entered */}
-        {!userLoading && (!searchQuery || searchQuery.trim() === "") && (
+        {/* Show Users or Empty States */}
+        {!userLoading && searchQuery.trim() === "" && (
           <Box className="empty-state">
             <Search size={64} className="empty-icon" />
             <Box>
@@ -229,21 +227,23 @@ const FindFriendsPage = () => {
             </Box>
           </Box>
         )}
-        {/* Empty State when search query has no results */}
-        {!userLoading && searchQuery && suggestedUsers.length === 0 && (
-          <Box className="empty-state">
-            <UserPlus size={64} className="empty-icon" />
-            <Box>
-              <Typography variant="h6" className="empty-title">
-                No Users Found
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                We couldn&apos;t find any users matching your search. Try a different
-                query.
-              </Typography>
+
+        {!userLoading &&
+          searchQuery.trim() !== "" &&
+          suggestedUsers.length === 0 && (
+            <Box className="empty-state">
+              <UserPlus size={64} className="empty-icon" />
+              <Box>
+                <Typography variant="h6" className="empty-title">
+                  No Users Found
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  We couldn&apos;t find any users matching your search. Try a
+                  different query.
+                </Typography>
+              </Box>
             </Box>
-          </Box>
-        )}
+          )}
       </Container>
     </Box>
   );
