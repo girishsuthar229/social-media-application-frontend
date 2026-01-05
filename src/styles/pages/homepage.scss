@@ -134,7 +134,16 @@
       }
     }
   }
-  
+  .notofication-sgstd-user-div{
+    margin-top: 0px;
+    margin-inline: 0.2rem;
+    .user-list-item{
+      border-bottom: none;
+    }
+    ul{
+      height: calc(75vh - 389px);
+    }
+  }
   .load-more-div {
     display: flex;
     justify-content: flex-end;

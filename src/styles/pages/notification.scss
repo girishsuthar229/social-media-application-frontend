@@ -311,16 +311,44 @@
   flex-direction: column;
   padding: 0px;
 }
+
 .new-users-message {
   padding-left: 1.2rem;
-  display: flex  !important;
-  align-items: center !important;
-  gap: 10px !important;
-  margin-bottom: 16px !important;
-  font-size: 0.875rem !important; 
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping of usernames */
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  font-size: 0.875rem;
+}
 
-  .MuiTypography-body2 {
-    color: $text-light !important;
+
+.user-name-container, .more-users-message {  
+  font-size: 15px;
+  font-weight: 600;
+  color: $text-light;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+  &:hover {
+    cursor: pointer;
+    color: $primary-color;
   }
+}
+
+
+.more-users-message {
+  font-weight: bold !important;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+
+/* Optional: Style for when the "5+ more" is clicked */
+.more-users-message:active {
+  color: #1565c0; /* Slightly darker on click */
 }
 
