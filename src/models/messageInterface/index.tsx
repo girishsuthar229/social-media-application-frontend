@@ -23,6 +23,7 @@ export interface MsgUserListResponseModel {
     created_date: string;
     modified_date: string | null;
     is_read?: boolean;
+    status?: string;
   };
 }
 
@@ -43,7 +44,8 @@ export interface IUserMessage {
   message: string;
   created_date: string;
   modified_date?: string;
-  is_read?: boolean;
+  status: string;
+  is_read: boolean;
   sender: {
     id: number;
     user_name: string;
@@ -58,4 +60,16 @@ export interface IUserMessage {
     last_name: string | null;
     photo_url?: string | null;
   };
+}
+
+export interface IUserReadMessage {
+  selected_user_id: number;
+  current_user_id: number;
+}
+
+export interface IUserTypingMessage {
+  receiver_id: number;
+  is_typing: boolean;
+  type_user_id: number;
+  type_user_name: string;
 }

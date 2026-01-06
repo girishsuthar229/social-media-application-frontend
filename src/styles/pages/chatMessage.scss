@@ -124,6 +124,30 @@
   }
 }
 
+.typing-indicator {
+  display: flex ;
+  align-items: center ;
+  gap: 0.4rem ;
+  border-radius: 8px ;
+  font-size: 14px ;
+  color: $lightText ;
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: $lightText;
+    animation: typing 1.5s infinite ;
+    &:nth-child(2) {
+      animation-delay: 0.2s ;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.4s ;
+    }
+  }
+}
+
+
 // User List Container
 .user-list {
   overflow-y: auto;
@@ -175,6 +199,25 @@
       border: 2px solid $border-color;
       transition: $transition;
     }
+
+    .user-last-message-main-div{
+      display: flex;
+      justify-content: flex-start;
+      .sent-msg-icon{
+        color: $lightText;
+        font-size: 18px;
+        margin-inline-end: 2px;
+      }
+      .seen-msg-icon{
+        color: $bg-gradient-start;
+        font-size: 18px;
+        margin-inline-end: 2px;
+      }
+      .typing-indicator {
+        padding: 5px 0rem ;
+      }
+    }
+
     .user-last-message{
       font-size: 14px;
       color: $lightText;
@@ -257,6 +300,26 @@
         font-size: 0.938rem;
       }
 
+      .user-last-message-main-div{
+        display: flex;
+        justify-content: flex-start;
+      }
+      
+      .message-time-and-status{
+        display: flex;
+        justify-content: flex-end;
+      }
+      .sent-msg-icon{
+        color: $white;
+        font-size: 17px;
+        margin-inline-start: 2px;
+      }
+      .seen-msg-icon{
+        color: $bg-gradient-start;
+        font-size: 18px;
+        margin-inline-start: 2px;
+      }
+
       .message-time {
         font-size: 0.688rem;
         display: block;
@@ -272,57 +335,13 @@
         color: rgba($primary-light, 0.8);
       }
     }
-  }
-  // Date Divider
-  .date-divider {
-    text-align: center;
-    margin: 1rem 0;
-    position: relative;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 50%;
-      height: 1px;
-    }
-
-    span {
-      padding: 0.25rem 1rem;
-      font-size: 0.75rem;
-      color: $lightText;
-      position: relative;
-      z-index: 1;
-      border-radius: 12px;
+    .typing-indicator {
+      padding: 0;
     }
   }
-
-  // .typing-indicator {
-  //   display: flex;
-  //   align-items: center;
-  //   gap: 0.5rem;
-  //   padding: 0.75rem 1rem;
-  //   background-color: $white;
-  //   border-radius: 8px;
-  //   max-width: 70px;
-  //   box-shadow: $shadow-sm;
-
-  //   .dot {
-  //     width: 8px;
-  //     height: 8px;
-  //     border-radius: 50%;
-  //     animation: typing 1.4s infinite;
-
-  //     &:nth-child(2) {
-  //       animation-delay: 0.2s;
-  //     }
-
-  //     &:nth-child(3) {
-  //       animation-delay: 0.4s;
-  //     }
-  //   }
-  // }
+  .typing-indicator-main {
+    padding:1rem ;
+  }
 }
 
 // Responsive Design
@@ -479,11 +498,17 @@
 }
 
 @keyframes typing {
-  0%, 60%, 100% {
-    transform: translateY(0);
+  0% {
+    opacity: 0;
   }
-  30% {
-    transform: translateY(-10px);
+  33% {
+    opacity: 1;
+  }
+  66% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
   }
 }
 

@@ -61,6 +61,11 @@ export enum STATUS_ERROR {
   UserAcountPrivate = "UserAcountPrivate",
 }
 
+export enum MESSAGE_SENT_STATUS {
+  SENT = "sent",
+  DELIVERED = "delivered",
+  SEEN = "seen",
+}
 export enum STATUS_CODES {
   success = 200,
   create = 201,

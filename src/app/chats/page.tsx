@@ -2,75 +2,33 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { commonFilePath, STATUS_CODES } from "@/util/constanst";
+import {
+  commonFilePath,
+  MESSAGE_SENT_STATUS,
+  STATUS_CODES,
+} from "@/util/constanst";
 import { Avatar, Box, Typography } from "@mui/material";
 import { IApiError } from "@/models/common.interface";
 import { toast } from "react-toastify";
-import {
-  IUserMessage,
-  MsgUserListResponseModel,
-} from "@/models/messageInterface";
 import { getAllMsgUsers } from "@/services/message-services.service";
 import SearchField from "@/components/common/SearchField/searchField";
 import UserListSkeleton from "@/components/common/Skeleton/userListSkeleton";
 import { debounce } from "lodash";
 import { UseUserContext } from "@/components/protected-route/protectedRoute";
-import useSocket from "@/util/socket";
+import DoneIcon from "@mui/icons-material/Done";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
+import { useChatMessagesHook } from "./useChatMessagesHook";
 
 const ChatApp = () => {
-  // const [messages, setMessages] = useState({});
-  // const [inputMessage, setInputMessage] = useState("");
   const { currentUser } = UseUserContext();
-  const [allUsers, setAllUsers] = useState<MsgUserListResponseModel[]>([]);
-  // const [userHasMore, setUserHasMore] = useState(true);
   const [userOffset, setUserOffset] = useState<number>(0);
   const [userLoading, setUserLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const router = useRouter();
-  const socket = useSocket(currentUser?.id.toString());
-
-  useEffect(() => {
-    if (!socket) return;
-    socket.on("receive_message", (message: IUserMessage) => {
-      setAllUsers((prevUsers) => {
-        const updatedUsers = [...prevUsers];
-        const userIndex = updatedUsers.findIndex(
-          (user) => user.user_name === message.sender?.user_name
-        );
-
-        if (userIndex >= 0) {
-          updatedUsers[userIndex].message.last_message = message.message;
-        } else {
-          updatedUsers.push({
-            id: message.id,
-            user_name: message.sender.user_name,
-            first_name: message?.sender?.first_name || "",
-            last_name: message?.sender?.last_name || "",
-            photo_url: message?.sender?.photo_url || "",
-            message: {
-              id: message.id,
-              last_message: message.message,
-              created_date: message.created_date,
-              sender_id: message?.sender?.id,
-              receiver_id: message?.receiver?.id,
-              modified_date: message?.modified_date || "",
-              is_read: message?.is_read,
-            },
-          });
-        }
-        updatedUsers.sort((a, b) => {
-          const aDate = new Date(a.message.created_date).getTime();
-          const bDate = new Date(b.message.created_date).getTime();
-          return bDate - aDate;
-        });
-        return updatedUsers;
-      });
-    });
-
-    return () => {
-      socket.off("receive_message");
-    };
-  }, [socket, allUsers]);
+  const { allUsers, setAllUsers, typingUser } = useChatMessagesHook({
+    currentUserId: currentUser?.id,
+    selectedUserId: null,
+  });
 
   const loadMessageUsers = async (searchValue: string) => {
     if (userLoading) return;
@@ -192,23 +150,44 @@ const ChatApp = () => {
                   <Typography className="user-username" component="h3">
                     {user?.user_name}
                   </Typography>
-                  {/* {user?.first_name && (
-                    <Typography className="user-display-name" variant="body2">
-                      {user?.first_name + " " + user?.last_name}
-                    </Typography>
-                  )} */}
-                  {user?.message.last_message && (
-                    <Typography
-                      className={`user-last-message ${
-                        user?.message?.is_read ||
-                        user?.message?.sender_id === currentUser?.id
-                          ? ""
-                          : "bold"
-                      }`}
-                      variant="body1"
-                    >
-                      {user.message?.last_message}
-                    </Typography>
+                  {typingUser &&
+                  typingUser?.is_typing &&
+                  typingUser?.type_user_id === user.id ? (
+                    <Box className="user-last-message-main-div">
+                      <p className="typing-indicator">
+                        <span className="dot" />
+                        <span className="dot" />
+                        <span className="dot" />
+                      </p>
+                    </Box>
+                  ) : (
+                    user?.message.last_message && (
+                      <Box className="user-last-message-main-div">
+                        {user?.message?.sender_id === currentUser?.id ? (
+                          user?.message?.is_read &&
+                          user?.message?.status === MESSAGE_SENT_STATUS.SEEN ? (
+                            <DoneAllIcon className="seen-msg-icon  " />
+                          ) : (
+                            <DoneIcon className="sent-msg-icon" />
+                          )
+                        ) : (
+                          <></>
+                        )}
+                        <Typography
+                          className={`user-last-message ${
+                            (user?.message?.is_read &&
+                              user?.message?.status ===
+                                MESSAGE_SENT_STATUS.SEEN) ||
+                            user?.message?.sender_id === currentUser?.id
+                              ? ""
+                              : "bold"
+                          }`}
+                          variant="body1"
+                        >
+                          {user.message?.last_message}
+                        </Typography>
+                      </Box>
+                    )
                   )}
                 </Box>
               </Box>

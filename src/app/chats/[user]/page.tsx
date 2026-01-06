@@ -14,7 +14,12 @@ import {
 import { Form, Formik } from "formik";
 import { chatMessageSchema } from "@/util/validations/postSchema.validation";
 import { Info, Loader, SendHorizonal } from "lucide-react";
-import { commonFilePath, STATUS_CODES, STATUS_ERROR } from "@/util/constanst";
+import {
+  commonFilePath,
+  MESSAGE_SENT_STATUS,
+  STATUS_CODES,
+  STATUS_ERROR,
+} from "@/util/constanst";
 import { toast } from "react-toastify";
 import { IApiError } from "@/models/common.interface";
 import { getAnotherUserProfile } from "@/services/user-service.service";
@@ -26,9 +31,12 @@ import {
   getAllMessages,
   userSendMessageServices,
 } from "@/services/message-services.service";
-import { IUserMessage } from "@/models/messageInterface";
+import { IUserMessage, IUserReadMessage } from "@/models/messageInterface";
 import { getRelativeTime } from "@/util/helper";
 import MessageSkeleton from "@/components/common/Skeleton/messageSkeleton";
+import DoneIcon from "@mui/icons-material/Done";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
+import { useChatMessagesHook } from "../useChatMessagesHook";
 
 const ChatView: React.FC = () => {
   const { currentUser } = UseUserContext();
@@ -39,43 +47,22 @@ const ChatView: React.FC = () => {
   );
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const [messages, setMessages] = useState<IUserMessage[]>([]);
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const handleTooltipToggle = () => {
     setTooltipOpen(!tooltipOpen);
   };
   const socket = useSocket(currentUser?.id.toString());
-  useEffect(() => {
-    if (!socket) return;
-    socket.on("receive_message", (message: IUserMessage) => {
-      const newMessage: IUserMessage = {
-        id: message.id,
-        message: message.message,
-        created_date: message?.created_date.toString(),
-        modified_date: message?.modified_date?.toString() || "",
-        sender: {
-          id: message?.sender?.id,
-          user_name: message?.sender?.user_name,
-          first_name: message?.sender?.first_name,
-          last_name: message?.sender?.last_name,
-          photo_url: message?.sender?.photo_url,
-        },
-        receiver: {
-          id: message?.receiver?.id,
-          user_name: message?.receiver?.user_name,
-          first_name: message?.receiver?.first_name,
-          last_name: message?.receiver?.last_name,
-          photo_url: message?.receiver?.photo_url,
-        },
-      };
-      if (newMessage?.sender?.id !== newMessage?.receiver?.id) {
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-      }
-    });
-    return () => {
-      socket.off("receive_message");
-    };
-  }, [socket]);
+  const {
+    messages,
+    setMessages,
+    typingUser,
+    handleSendMsg,
+    handleTyping,
+    handleReadMessage,
+  } = useChatMessagesHook({
+    currentUserId: currentUser?.id,
+    selectedUserId: selectedUser?.id,
+  });
 
   const handleSendMessage = async (
     values: { inputMessage: string },
@@ -86,26 +73,6 @@ const ChatView: React.FC = () => {
       return;
     }
     try {
-      const newMessage: IUserMessage = {
-        id: Date.now(),
-        message: values?.inputMessage,
-        created_date: new Date().toISOString(),
-        sender: {
-          id: currentUser?.id || 0,
-          user_name: currentUser?.user_name || "",
-          first_name: currentUser?.first_name || null,
-          last_name: currentUser?.last_name || null,
-          photo_url: currentUser?.photo_url || null,
-        },
-        receiver: {
-          id: selectedUser?.id || 0,
-          user_name: selectedUser?.user_name || "",
-          first_name: selectedUser?.first_name || null,
-          last_name: selectedUser?.last_name || null,
-          photo_url: selectedUser?.photo_url || null,
-        },
-      };
-      socket.emit("send_message", newMessage);
       const payload = {
         sender_id: currentUser?.id.toString() || "",
         receiver_id: selectedUser?.id.toString() || "",
@@ -115,6 +82,8 @@ const ChatView: React.FC = () => {
       if (response?.statusCode === STATUS_CODES.success && response.data) {
         const data: IUserMessage = response.data;
         setMessages((prevMessages) => [...prevMessages, data]);
+        handleSendMsg(data);
+        handleTyping("", selectedUser?.user_name);
         resetForm();
       }
     } catch (err) {
@@ -172,7 +141,9 @@ const ChatView: React.FC = () => {
   useEffect(() => {
     if (messagesAreaRef.current) {
       messagesAreaRef.current.scrollTop = messagesAreaRef.current.scrollHeight;
+      handleReadMessage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
   return (
@@ -231,12 +202,33 @@ const ChatView: React.FC = () => {
                     }`}
                   >
                     <p className="message-text">{msg.message}</p>
-                    <span className="message-time">
-                      {getRelativeTime(msg.created_date)}
+                    <span className="message-time-and-status">
+                      <span className="message-time">
+                        {getRelativeTime(msg.created_date)}
+                      </span>
+                      {msg?.sender?.id === currentUser?.id ? (
+                        msg?.is_read &&
+                        msg?.status === MESSAGE_SENT_STATUS.SEEN ? (
+                          <DoneAllIcon className="seen-msg-icon  " />
+                        ) : (
+                          <DoneIcon className="sent-msg-icon" />
+                        )
+                      ) : (
+                        <></>
+                      )}
                     </span>
                   </div>
                 </div>
               ))}
+              <div className="message-wrapper typing-indicator-main ">
+                {typingUser && typingUser?.is_typing && (
+                  <p className="typing-indicator">
+                    <span className="dot" />
+                    <span className="dot" />
+                    <span className="dot" />
+                  </p>
+                )}
+              </div>
             </>
           )}
           {loading && (
@@ -265,7 +257,10 @@ const ChatView: React.FC = () => {
                 placeholder="Write a message..."
                 size="small"
                 value={values.inputMessage}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e);
+                  handleTyping(e.target.value, selectedUser?.user_name);
+                }}
                 // onBlur={handleBlur}
                 error={touched.inputMessage && Boolean(errors.inputMessage)}
                 slotProps={{

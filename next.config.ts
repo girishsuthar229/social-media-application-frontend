@@ -6,11 +6,12 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "res.cloudinary.com",
+        hostname: process.env.NEXT_PUBLIC_IMAGE_HOST || "",
+        port: process.env.NEXT_PUBLIC_PORT || "",
         pathname: "/**",
       },
     ],
-    domains: ["res.cloudinary.com"],
+    domains: [process.env.NEXT_PUBLIC_IMAGE_HOST || ""],
   },
   webpack: (config) => {
     // Disable webpack filesystem cache to avoid serialization warnings
