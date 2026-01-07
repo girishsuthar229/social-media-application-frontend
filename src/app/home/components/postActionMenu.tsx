@@ -4,7 +4,7 @@ import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import BorderColorOutlined from "@mui/icons-material/BorderColorOutlined";
 import BookmarkAddOutlinedIcon from "@mui/icons-material/BookmarkAddOutlined";
 import BookmarkRemoveOutlinedIcon from "@mui/icons-material/BookmarkRemoveOutlined";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import { Menu, MenuItem } from "@mui/material";
 import { deletePost, updatePost } from "@/services/post-service.service";
 import { IApiError } from "@/models/common.interface";

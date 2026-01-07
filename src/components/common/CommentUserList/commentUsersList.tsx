@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import UserlistWithFollowBtn from "../UserlistWithFollow/UserlistWithFollowBtn";
 import { FollowingsEnum } from "@/util/constanst";
 import { Form, Formik } from "formik";

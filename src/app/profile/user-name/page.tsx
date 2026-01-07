@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import ProfileComponent from "../components/userProfile";
 import { IAnotherUserResponse } from "@/models/userInterface";
 import { UseUserContext } from "@/components/protected-route/protectedRoute";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import { getAnotherUserProfile } from "@/services/user-service.service";
 import { STATUS_CODES, STATUS_ERROR } from "@/util/constanst";
 import { IApiError } from "@/models/common.interface";

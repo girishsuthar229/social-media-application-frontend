@@ -20,7 +20,7 @@ import {
   STATUS_CODES,
   STATUS_ERROR,
 } from "@/util/constanst";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import { IApiError } from "@/models/common.interface";
 import { getAnotherUserProfile } from "@/services/user-service.service";
 import { IAnotherUserResponse } from "@/models/userInterface";

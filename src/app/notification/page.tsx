@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, List, Typography } from "@mui/material";
 import { UserPlus } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import { IApiError } from "@/models/common.interface";
 import { STATUS_CODES } from "@/util/constanst";
 import { UseUserContext } from "@/components/protected-route/protectedRoute";

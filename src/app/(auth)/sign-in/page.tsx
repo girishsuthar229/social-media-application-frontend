@@ -8,7 +8,7 @@ import Link from "next/link";
 import TextFieldInput from "@/components/common/TextFieldInput";
 import AppButton from "@/components/common/AppButton";
 import AuthToggle from "@/components/common/singAuthToggle";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import { ILoginPayload } from "@/models/authInterface/login";
 import { localStorageKeys, STATUS_CODES } from "@/util/constanst";
 import { IApiError } from "@/models/common.interface";

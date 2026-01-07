@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { Common, STATUS_CODES } from "@/util/constanst";
 import { formatTimeMinAndSec } from "@/util/helper";
 import Link from "next/link";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import {
   validateTokenUser,
   verifyOtpUser,

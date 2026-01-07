@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import { IApiError } from "@/models/common.interface";
 import { STATUS_CODES } from "@/util/constanst";
 import { createPost } from "@/services/post-service.service";

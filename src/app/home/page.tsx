@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { getAllUsers } from "@/services/user-service.service";
 import { getAllPosts } from "@/services/post-service.service";
 import { AllPostListModel } from "@/models/postInterface";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import { IApiError } from "@/models/common.interface";
 import { STATUS_CODES } from "@/util/constanst";
 

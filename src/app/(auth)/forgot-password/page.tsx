@@ -8,7 +8,7 @@ import TextFieldInput from "@/components/common/TextFieldInput";
 import AppButton from "@/components/common/AppButton";
 import BackButton from "@/components/common/BackButton";
 import { IApiError } from "@/models/common.interface";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import { STATUS_CODES } from "@/util/constanst";
 import { forgotPasswordUser } from "@/services/auth-service.service";
 import { useRouter } from "next/navigation";

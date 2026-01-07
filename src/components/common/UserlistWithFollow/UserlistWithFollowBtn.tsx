@@ -7,7 +7,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { IApiError } from "@/models/common.interface";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import { commonFilePath, FollowingsEnum, STATUS_CODES } from "@/util/constanst";
 import {
   followUserService,

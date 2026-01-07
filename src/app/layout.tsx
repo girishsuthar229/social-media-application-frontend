@@ -4,7 +4,7 @@ import "./globals.css";
 import "../index.scss";
 import ProtectedRoute from "@/components/protected-route/protectedRoute";
 import GlobalLoader from "@/components/common/Loader";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer } from "@/util/reactToastify";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

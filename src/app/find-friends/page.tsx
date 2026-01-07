@@ -13,7 +13,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect, useMemo } from "react";
 import { getAllUsers } from "@/services/user-service.service";
 import { IApiError } from "@/models/common.interface";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import { UseUserContext } from "@/components/protected-route/protectedRoute";
 import { UserAllListModel } from "@/models/userInterface";
 import UserlistWithFollowBtn from "@/components/common/UserlistWithFollow/UserlistWithFollowBtn";

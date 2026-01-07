@@ -11,7 +11,7 @@ import { Form, Formik } from "formik";
 import { ImageIcon } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 
 export interface AddEditPostData {
   user_id: number;

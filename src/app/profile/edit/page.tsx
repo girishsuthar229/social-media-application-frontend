@@ -13,7 +13,7 @@ import { Camera } from "@mui/icons-material";
 import { commonFilePath, STATUS_CODES } from "@/util/constanst";
 import { updateProfileData } from "@/services/user-service.service";
 import { IApiError } from "@/models/common.interface";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import TextFieldInput from "@/components/common/TextFieldInput";
 import AppButton from "@/components/common/AppButton";
 import { profileSchema } from "@/util/validations/profileSchema.validation";

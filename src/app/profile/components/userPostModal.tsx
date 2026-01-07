@@ -28,7 +28,7 @@ import { Box, Tab, Tabs, Typography } from "@mui/material";
 import { Heart, MessageCircle, Loader } from "lucide-react";
 import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 
 interface IPost {
   id: number;

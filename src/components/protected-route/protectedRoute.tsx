@@ -19,7 +19,7 @@ import {
 import { isTokenExpired } from "@/util/helper";
 import AccessDenied from "../common/AccessDenied/AccessDenied ";
 import PageNotFound from "../common/PageNotFound/PageNotFound";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import Header from "../layout/Header";
 
 interface UserContextType {

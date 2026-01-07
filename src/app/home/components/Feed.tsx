@@ -6,7 +6,7 @@ import { IUserResponseData } from "@/models/userInterface";
 import { AllPostListModel } from "@/models/postInterface";
 import { commonFilePath, STATUS_CODES } from "@/util/constanst";
 import { getRelativeTime } from "@/util/helper";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import { IApiError } from "@/models/common.interface";
 import {
   allLikePostClickServices,

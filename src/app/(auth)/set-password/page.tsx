@@ -13,7 +13,7 @@ import {
 } from "@/services/auth-service.service";
 import { useRouter, useSearchParams } from "next/navigation";
 import { STATUS_CODES } from "@/util/constanst";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import { IApiError } from "@/models/common.interface";
 import { IUpdatePasswordPayload } from "@/models/authInterface/setPassword";
 

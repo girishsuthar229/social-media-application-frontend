@@ -17,7 +17,7 @@ import {
   unfollowUserService,
 } from "@/services/follows-service.service";
 import { IApiError } from "@/models/common.interface";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import { useRouter } from "next/navigation";
 
 interface RequestItemProps {

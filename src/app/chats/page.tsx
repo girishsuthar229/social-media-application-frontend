@@ -9,7 +9,7 @@ import {
 } from "@/util/constanst";
 import { Avatar, Box, Typography } from "@mui/material";
 import { IApiError } from "@/models/common.interface";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import { getAllMsgUsers } from "@/services/message-services.service";
 import SearchField from "@/components/common/SearchField/searchField";
 import UserListSkeleton from "@/components/common/Skeleton/userListSkeleton";

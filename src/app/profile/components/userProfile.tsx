@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import { usePathname, useRouter } from "next/navigation";
 import { IApiError } from "@/models/common.interface";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import BackButton from "@/components/common/BackButton";
 import { handleShareData } from "@/util/helper";
 import {

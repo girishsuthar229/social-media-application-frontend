@@ -10,7 +10,7 @@ import AuthToggle from "@/components/common/singAuthToggle";
 import { ISingUpPayload } from "@/models/authInterface/singup";
 import { signUpUser } from "@/services/auth-service.service";
 import { STATUS_CODES } from "@/util/constanst";
-import { toast } from "react-toastify";
+import { toast } from "@/util/reactToastify";
 import { IApiError } from "@/models/common.interface";
 import { useRouter } from "next/navigation";
 
