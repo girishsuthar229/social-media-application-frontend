@@ -303,7 +303,7 @@ const ProfileComponent = ({
     }
   };
   return (
-    <Box className="profile-page scrollbar">
+    <Box className="profile-page">
       <Box className="profile-card scrollbar">
         {usePathname() !== AuthBaseRoute.profile && (
           <Box paddingBlockEnd={1}>

@@ -132,7 +132,7 @@ const ProfileEditMode = () => {
     }
   };
   return (
-    <Box className="profile-page scrollbar">
+    <Box className="profile-page">
       <Box className="profile-card scrollbar">
         <div className="decorCircleTop" />
         {/* Header */}
