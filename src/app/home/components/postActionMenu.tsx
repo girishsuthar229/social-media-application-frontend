@@ -205,14 +205,6 @@ const PostActionMenu: React.FC<PostActionMenuProps> = ({
             </>
           )}
         </MenuItem>
-        {/* <MenuItem
-          key="share"
-          className="post-menu-item"
-          onClick={() => handleShareClick(postObj?.postId)}
-        >
-          <Share2 size={18} />
-          <span className={"action-text"}>Share</span>
-        </MenuItem> */}
       </Menu>
       {userPostModalId && (
         <CommonDialogModal

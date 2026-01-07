@@ -31,7 +31,7 @@ import {
   getAllMessages,
   userSendMessageServices,
 } from "@/services/message-services.service";
-import { IUserMessage, IUserReadMessage } from "@/models/messageInterface";
+import { IUserMessage } from "@/models/messageInterface";
 import { getRelativeTime } from "@/util/helper";
 import MessageSkeleton from "@/components/common/Skeleton/messageSkeleton";
 import DoneIcon from "@mui/icons-material/Done";

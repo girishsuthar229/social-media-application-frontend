@@ -123,8 +123,8 @@
   }
 
   &:disabled {
-    border-color: lighten($primary-color, 25%) !important;
-    color: lighten($primary-color, 25%) !important;
+    border-color: rgba($primary-color, 50%) !important;
+    color: rgba($primary-color, 50%) !important;
     cursor: not-allowed;
     box-shadow: none;
   }

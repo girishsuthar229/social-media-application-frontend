@@ -1,4 +1,5 @@
-@import '../colors';
+@use "../colors" as *;;
+
 /* ========================================== swipeableDrawer =========================================== */
   .drawer-paper-centered {
     border-top-left-radius: 16px !important;
