@@ -21,7 +21,7 @@ const SignUp = () => {
   const handleSubmit = async (values: ISingUpPayload) => {
     try {
       const response = await signUpUser(values);
-      if (response?.statusCode === STATUS_CODES.success && response?.data) {
+      if (response?.statusCode === STATUS_CODES.success) {
         toast.success(response?.message);
         router.replace("/sign-in");
       }
