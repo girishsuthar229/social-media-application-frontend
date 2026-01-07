@@ -167,7 +167,7 @@
     cursor: pointer;
     transition: $transition;
     position: relative;
-
+    width: 100%;
     &:hover {
       background-color: rgba($primary-light, 0.3);
       border-radius: 10px;
@@ -203,6 +203,7 @@
     .user-last-message-main-div{
       display: flex;
       justify-content: flex-start;
+      width: 100%;
       .sent-msg-icon{
         color: $lightText;
         font-size: 18px;

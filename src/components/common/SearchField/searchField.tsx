@@ -30,8 +30,8 @@ const SearchField: React.FC<SearchFieldProps> = ({
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    const normalizedValue = value.trim().replace(/\s+/g, " ");
-    onSearchChange(normalizedValue);
+    // const normalizedValue = value.trim().replace(/\s+/g, " ");
+    onSearchChange(value);
   };
 
   const handleClearSearch = () => {

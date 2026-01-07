@@ -25,13 +25,17 @@
 }
 
 /* ==========================================  Search Section =========================================== */
-
-.search-section {
-  margin-top: 25px;
-  margin-bottom: 10px;
-  max-width: 100%;
-  @media (max-width: 600px) {
-    margin-bottom: 24px;
+.find-search-section{
+  margin-top: 15px;
+  .subtitle {
+    padding-left: 4px;
+  }
+  .search-section {
+    margin: 17px 0px;
+    max-width: 100%;
+    svg{
+      color:  $text-light !important;
+    }
   }
 }
 .subtitle {

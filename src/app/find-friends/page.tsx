@@ -21,6 +21,7 @@ import BackButton from "@/components/common/BackButton";
 import UserListSkeleton from "@/components/common/Skeleton/userListSkeleton";
 import { Search, UserPlus } from "lucide-react";
 import { debounce } from "lodash";
+import SearchField from "@/components/common/SearchField/searchField";
 
 const FindFriendsPage = () => {
   const { currentUser } = UseUserContext();
@@ -29,7 +30,6 @@ const FindFriendsPage = () => {
   const [userOffset, setUserOffset] = useState<number>(0);
   const [userLoading, setUserLoading] = useState(false);
   const [userHasMore, setUserHasMore] = useState(true);
-  const [isFocused, setIsFocused] = useState(false);
 
   const loadMoreUsers = async (searchName?: string) => {
     if (userLoading || !userHasMore) return;
@@ -82,8 +82,7 @@ const FindFriendsPage = () => {
     };
   }, [debouncedSearch]);
 
-  const handlerSearchKey = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
+  const handlerSearchKey = (value: string) => {
     setSearchQuery(value);
     const trimmedValue = value.trim();
 
@@ -120,45 +119,15 @@ const FindFriendsPage = () => {
     <Box className="container">
       <Container maxWidth="lg" className="content-wrapper">
         {/* Search Section */}
-        <Box className="search-section">
+        <Box className="find-search-section">
           <Typography variant="body2" className="subtitle">
             Discover and connect with people who share your interests
           </Typography>
-
-          <TextField
-            fullWidth
+          <SearchField
             placeholder="Search by name ..."
-            value={searchQuery}
-            onChange={handlerSearchKey}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            slotProps={{
-              inputLabel: { shrink: isFocused || !!searchQuery },
-              input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon fontSize="small" />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end" sx={{ alignItems: "center" }}>
-                    {searchQuery && (
-                      <IconButton
-                        onClick={handlerClearSearchKey}
-                        size="small"
-                        sx={{ p: 0.5 }}
-                      >
-                        <CloseIcon fontSize="small" />
-                      </IconButton>
-                    )}
-                  </InputAdornment>
-                ),
-              },
-            }}
-            className="common-textfield-input"
-            sx={{
-              ".MuiInputBase-input": { padding: "12px 12px 12px 0px" },
-            }}
+            onSearchChange={handlerSearchKey}
+            onClearSearch={handlerClearSearchKey}
+            searchQuery={searchQuery}
           />
         </Box>
 

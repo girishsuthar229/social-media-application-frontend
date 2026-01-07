@@ -4,6 +4,7 @@ import {
   IUserTypingMessage,
   MsgUserListResponseModel,
 } from "@/models/messageInterface";
+import { toast } from "@/util/reactToastify";
 import useSocket from "@/util/socket";
 import { useEffect, useState } from "react";
 
@@ -17,6 +18,7 @@ export const useChatMessagesHook = ({
   selectedUserId,
 }: UseChatMessagesProps) => {
   const socket = useSocket(currentUserId?.toString());
+  const [newMessage, setNewMessage] = useState<IUserMessage | null>(null);
   const [messages, setMessages] = useState<IUserMessage[]>([]);
   const [allUsers, setAllUsers] = useState<MsgUserListResponseModel[]>([]);
   const [typingUser, setTypingUser] = useState<IUserTypingMessage | null>(null);
@@ -85,6 +87,7 @@ export const useChatMessagesHook = ({
         photo_url: message?.receiver?.photo_url,
       },
     };
+    setNewMessage(newMessage);
     if (newMessage?.sender?.id !== newMessage?.receiver?.id) {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     }
@@ -167,6 +170,7 @@ export const useChatMessagesHook = ({
   };
 
   return {
+    newMessage,
     messages,
     setMessages,
     allUsers,

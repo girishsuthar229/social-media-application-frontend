@@ -73,20 +73,27 @@ const ChatApp = () => {
 
   const debouncedSearch = useMemo(
     () =>
-      debounce((value: string) => {
-        loadMessageUsers(value);
-      }, 500),
+      debounce(async (value: string) => {
+        await loadMessageUsers(value);
+      }, 300),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
   const handleSearchChange = (value: string) => {
-    sessionStorage.setItem("searchMessagesUsers", value);
     setSearchQuery(value);
+    const trimmedValue = value.trim();
+    if (trimmedValue) {
+      sessionStorage.setItem("searchMessagesUsers", trimmedValue);
+      setUserLoading(true);
+    } else {
+      sessionStorage.removeItem("searchMessagesUsers");
+      setUserLoading(false);
+    }
+    debouncedSearch(trimmedValue.toLowerCase());
     setUserOffset(0);
-    // setUserHasMore(true);
     setAllUsers([]);
-    debouncedSearch(value);
+    // setUserHasMore(true);
   };
 
   const handlerClearSearchKey = () => {

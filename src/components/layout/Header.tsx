@@ -24,10 +24,12 @@ import {
   ChatOutlined as ChatOutlinedIcon,
 } from "@mui/icons-material";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { commonFilePath } from "@/util/constanst";
 import { UseUserContext } from "../protected-route/protectedRoute";
+import { useChatMessagesHook } from "@/app/chats/useChatMessagesHook";
+import { toast } from "@/util/reactToastify";
 
 const Header = () => {
   const router = useRouter();
@@ -37,6 +39,19 @@ const Header = () => {
   const handleProfileClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
+  const { newMessage } = useChatMessagesHook({
+    currentUserId: currentUser?.id,
+  });
+
+  useEffect(() => {
+    if (newMessage && newMessage.receiver.id === currentUser?.id) {
+      toast.newMessage(`${newMessage?.message || "sent you a message"}`, {
+        userName: newMessage?.sender.user_name || "",
+        photoUrl: newMessage?.sender.photo_url || "",
+      });
+    }
+  }, [newMessage]);
 
   const handleProfileClose = () => {
     setAnchorEl(null);

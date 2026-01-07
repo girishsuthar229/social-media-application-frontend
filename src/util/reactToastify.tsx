@@ -1,22 +1,38 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { CheckCircle, XCircle, X, Info, AlertTriangle } from "lucide-react";
+import { Avatar } from "@mui/material";
+import { commonFilePath } from "./constanst";
 
-type ToastType = "success" | "error" | "info" | "warn" | "warning";
+type ToastType =
+  | "success"
+  | "error"
+  | "info"
+  | "warn"
+  | "warning"
+  | "newMessage";
 
 interface Toast {
   id: string;
   type: ToastType;
   message: string;
+  user?: {
+    userName: string;
+    photoUrl: string;
+  };
 }
 
 // Toast context/state
 let toasts: Toast[] = [];
 let listeners: Array<(toasts: Toast[]) => void> = [];
 
-const notify = (type: ToastType, message: string) => {
+const notify = (
+  type: ToastType,
+  message: string,
+  user?: { userName: string; photoUrl: string }
+) => {
   const id = Date.now().toString() + Math.random().toString(36);
-  toasts = [...toasts, { id, type, message }];
+  toasts = [...toasts, { id, type, message, user }];
   listeners.forEach((listener) => listener(toasts));
 
   setTimeout(() => {
@@ -31,12 +47,12 @@ export const toast = {
   info: (message?: string) => notify("info", message || ""),
   warn: (message?: string) => notify("warn", message || ""),
   warning: (message?: string) => notify("warning", message || ""),
+  newMessage: (message: string, user: { userName: string; photoUrl: string }) =>
+    notify("newMessage", message, user),
 };
 
-// Toast icon component
 const ToastIcon = ({ type }: { type: ToastType }) => {
   const normalizedType = type === "warning" ? "warn" : type;
-
   switch (normalizedType) {
     case "success":
       return (
@@ -87,20 +103,40 @@ export const ToastContainer = () => {
   return (
     <>
       <div className="toast-container">
-        {currentToasts.map((t) => {
-          const normalizedType = t.type === "warning" ? "warn" : t.type;
+        {currentToasts.map((toast) => {
+          const normalizedType = toast.type === "warning" ? "warn" : toast.type;
 
           return (
-            <div key={t.id} className={`toast toast--${normalizedType}`}>
+            <div key={toast.id} className={`toast toast--${normalizedType}`}>
               <div className="toast__content">
-                <ToastIcon type={t.type} />
-
-                <div className="toast__text">
-                  <p className="toast__message">{t.message}</p>
-                </div>
+                {toast.type === "newMessage" && toast.user ? (
+                  <>
+                    <div className="toast-icon toast-icon--newMessage">
+                      <Avatar
+                        src={
+                          toast.user.photoUrl
+                            ? `${commonFilePath}${toast.user.photoUrl}`
+                            : undefined
+                        }
+                        className="toast-icon__image"
+                      />
+                    </div>
+                    <div className="toast__text ">
+                      <p className="toast__user-name">{toast.user.userName}</p>
+                      <p className="toast__message">{toast.message}</p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <ToastIcon type={toast.type} />
+                    <div className="toast__text">
+                      <p className="toast__message">{toast.message}</p>
+                    </div>
+                  </>
+                )}
 
                 <button
-                  onClick={() => removeToast(t.id)}
+                  onClick={() => removeToast(toast.id)}
                   className="toast__close"
                 >
                   <X className="toast__close-icon" />
