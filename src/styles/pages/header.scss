@@ -45,9 +45,6 @@
      align-items: center;
      justify-content: center;
      gap: 20px;
-     position: absolute;
-     left: 50%;
-     transform: translateX(-50%);
    }
    
 
@@ -78,14 +75,10 @@
        background-color: rgba($primary-color, 0.08) !important;
        color: $primary-color !important;
      }
-   
-     &:active {
-       transform: translateY(0);
-     }
-   
      &.active {
        color: $primary-color !important;
        background-color: rgba($primary-color, 0.12) !important;
+       border-radius: 50% !important;
        svg {
          animation: iconBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
        }
@@ -103,7 +96,6 @@
    
    /* ==========================================  PROFILE AVATAR (RIGHT SIDE)  =========================================== */
    .profile-avatar {
-    margin-left: auto;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: 2px solid transparent;
@@ -232,11 +224,17 @@
        transform: none;
        justify-content: flex-start;
        flex: 1;
-       gap: 10px !important;
+       gap: 15px !important;
        overflow-x: auto;
       }
    }
-   
+
+   @media (max-width: 350px) {
+    .toolbar > div {
+      gap: 10px !important;
+      justify-content: space-between !important;
+     }
+  }
    // Extra Small (480px and below)
    @media (max-width: 480px) {
      .toolbar {
@@ -249,3 +247,28 @@
        min-height: 40px;
      }
   }
+
+  .header-icon {
+    .MuiBadge-badge {
+      background: $error-color;
+      color: $white;
+      font-size: 0.6rem;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+      top: -5px; 
+      right: -5px; 
+      transform-origin: center;  
+      transition: transform 0.2s ease;
+      animation: badgePulse 2s ease-in-out infinite; 
+    }
+  }
+  
+  @keyframes badgePulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.10);
+    }
+  }
+  

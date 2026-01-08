@@ -334,6 +334,9 @@
   line-height: 1.3;
   &:hover {
     cursor: pointer;
+    color: $primary-light;
+  }
+  &:active {
     color: $primary-color;
   }
 }
@@ -345,10 +348,3 @@
     text-decoration: underline;
   }
 }
-
-
-/* Optional: Style for when the "5+ more" is clicked */
-.more-users-message:active {
-  color: #1565c0; /* Slightly darker on click */
-}
-

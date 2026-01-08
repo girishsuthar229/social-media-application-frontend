@@ -63,3 +63,21 @@ export const getAllMessages = async (
     });
   }
 };
+
+export const getUnReadMsgUsers = async (): Promise<
+  IApiResponse<{ totalCount: number }>
+> => {
+  try {
+    const response = await trackPromise(
+      BaseService.get("/message/get-unread-users-total-count")
+    );
+    return Promise.resolve(response.data);
+  } catch (error: any) {
+    return Promise.reject({
+      statusCode: error.response?.status || 500,
+      message: error.response?.data?.message || error.message,
+      error: error.response?.data?.error || error.response?.data || error,
+      data: null as any,
+    });
+  }
+};

@@ -1,15 +1,5 @@
 "use client";
-import {
-  Box,
-  TextField,
-  Grid,
-  Typography,
-  InputAdornment,
-  Container,
-  IconButton,
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import CloseIcon from "@mui/icons-material/Close";
+import { Box, Grid, Typography, Container } from "@mui/material";
 import { useState, useEffect, useMemo } from "react";
 import { getAllUsers } from "@/services/user-service.service";
 import { IApiError } from "@/models/common.interface";

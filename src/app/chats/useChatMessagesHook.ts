@@ -4,7 +4,6 @@ import {
   IUserTypingMessage,
   MsgUserListResponseModel,
 } from "@/models/messageInterface";
-import { toast } from "@/util/reactToastify";
 import useSocket from "@/util/socket";
 import { useEffect, useState } from "react";
 
@@ -22,6 +21,11 @@ export const useChatMessagesHook = ({
   const [messages, setMessages] = useState<IUserMessage[]>([]);
   const [allUsers, setAllUsers] = useState<MsgUserListResponseModel[]>([]);
   const [typingUser, setTypingUser] = useState<IUserTypingMessage | null>(null);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
+
+  const unreadMessageUserCount = (response: { totalCount: number }) => {
+    setUnreadCount(response.totalCount);
+  };
 
   const updateReadMessages = (updatedMessages: IUserMessage[]) => {
     if (!updatedMessages?.length) return;
@@ -119,6 +123,7 @@ export const useChatMessagesHook = ({
       }
       return [newUserMessage, ...prevUsers];
     });
+    setUnreadCount((prevCount) => prevCount + 1);
   };
 
   const userTyping = (data: IUserTypingMessage) => {
@@ -132,11 +137,13 @@ export const useChatMessagesHook = ({
     socket.on("receive_message", receiveNewMessage);
     socket.on("check_read_message", updateReadMessages);
     socket.on("user_typing", userTyping);
+    socket.on("unread_messages_total_users", unreadMessageUserCount);
 
     return () => {
       socket.off("receive_message", receiveNewMessage);
       socket.off("check_read_message", updateReadMessages);
       socket.off("user_typing", userTyping);
+      socket.off("unread_messages_total_users", unreadMessageUserCount);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, selectedUserId]);
@@ -180,5 +187,7 @@ export const useChatMessagesHook = ({
     handleSendMsg,
     handleTyping,
     handleReadMessage,
+    unreadCount,
+    setUnreadCount,
   };
 };

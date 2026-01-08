@@ -178,20 +178,6 @@
       border-radius: 10px;
     }
 
-    &.has-new-message {
-      background-color: $primary-light;
-
-      .user-name {
-        font-weight: 700;
-      }
-
-      .user-time {
-        font-weight: 600;
-        color: $primary-color;
-      }
-    }
-
- 
     .user-avatar {
       width: 52px;
       height: 52px;
@@ -200,40 +186,52 @@
       transition: $transition;
     }
 
-    .user-last-message-main-div{
-      display: flex;
-      justify-content: flex-start;
-      width: 100%;
-      .sent-msg-icon{
-        color: $lightText;
-        font-size: 18px;
-        margin-inline-end: 2px;
+    .user-details{
+      width: 100% !important;
+      .user-username{
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        line-clamp: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
-      .seen-msg-icon{
-        color: $bg-gradient-start;
-        font-size: 18px;
-        margin-inline-end: 2px;
-      }
-      .typing-indicator {
-        padding: 5px 0rem ;
+      .user-last-message-main-div{
+        display: flex;
+        justify-content: flex-start;
+        width: 100%;
+        .sent-msg-icon{
+          color: $lightText;
+          font-size: 18px;
+          margin-inline-end: 2px;
+        }
+        .seen-msg-icon{
+          color: $bg-gradient-start;
+          font-size: 18px;
+          margin-inline-end: 2px;
+        }
+        .typing-indicator {
+          padding: 5px 0rem ;
+        }
+        .user-last-message{
+          font-size: 14px;
+          color: $lightText;
+          margin: 0;
+          line-height: 1;
+          padding-top: 4px;
+          font-weight: 400;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+          line-clamp: 1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          &.bold{
+            font-weight: bolder;
+          }
+        }
       }
     }
-
-    .user-last-message{
-      font-size: 14px;
-      color: $lightText;
-      margin: 0;
-      line-height: 1;
-      padding-top: 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-weight: 400;
-      &.bold{
-        font-weight: bolder;
-      }
-    }
-    
   }
 
   // Loading State
@@ -257,7 +255,7 @@
 // Messages Area
 .messages-area {
   padding: 1rem;
-  height: calc(100vh - 200px);
+  height: calc(100vh - 183px);
   gap: 0.5rem;
   display: flex;
   flex-direction: column;
@@ -342,6 +340,12 @@
   }
   .typing-indicator-main {
     padding:1rem ;
+  }
+  @media (max-width: 960px) {
+    height: calc(100vh - 180px);
+  }
+  @media (max-width: 600px) {
+    height: calc(100vh - 175px);
   }
 }
 

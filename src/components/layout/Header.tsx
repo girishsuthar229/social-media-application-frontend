@@ -8,6 +8,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Badge,
 } from "@mui/material";
 import {
   Home as HomeIcon,
@@ -26,10 +27,12 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { commonFilePath } from "@/util/constanst";
+import { AuthBaseRoute, commonFilePath, STATUS_CODES } from "@/util/constanst";
 import { UseUserContext } from "../protected-route/protectedRoute";
 import { useChatMessagesHook } from "@/app/chats/useChatMessagesHook";
 import { toast } from "@/util/reactToastify";
+import { getUnReadMsgUsers } from "@/services/message-services.service";
+import { IApiError } from "@/models/common.interface";
 
 const Header = () => {
   const router = useRouter();
@@ -40,17 +43,41 @@ const Header = () => {
     setAnchorEl(event.currentTarget);
   };
 
-  const { newMessage } = useChatMessagesHook({
+  const { newMessage, unreadCount, setUnreadCount } = useChatMessagesHook({
     currentUserId: currentUser?.id,
   });
+  useEffect(() => {
+    const unreadMessageUserCount = async () => {
+      try {
+        const response = await getUnReadMsgUsers();
+        if (response?.data && response.statusCode === STATUS_CODES.success) {
+          setUnreadCount(response.data?.totalCount);
+        }
+      } catch (error) {
+        const err = error as IApiError;
+        toast.error(err?.message);
+      }
+    };
+
+    unreadMessageUserCount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    if (newMessage && newMessage.receiver.id === currentUser?.id) {
+    const isChatRoute = pathname.startsWith(AuthBaseRoute.chatUser);
+    const isChatUserRoute = pathname.startsWith(AuthBaseRoute.chatMessgae);
+    if (
+      newMessage &&
+      newMessage.receiver.id === currentUser?.id &&
+      !isChatRoute &&
+      !isChatUserRoute
+    ) {
       toast.newMessage(`${newMessage?.message || "sent you a message"}`, {
         userName: newMessage?.sender.user_name || "",
         photoUrl: newMessage?.sender.photo_url || "",
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newMessage]);
 
   const handleProfileClose = () => {
@@ -63,7 +90,7 @@ const Header = () => {
   };
 
   const handleProfileNavigate = () => {
-    router.push("/profile");
+    router.push(AuthBaseRoute.profile);
     handleProfileClose();
   };
 
@@ -74,17 +101,21 @@ const Header = () => {
     <AppBar position="static" className="header">
       <Toolbar className="toolbar">
         <Box sx={{ display: "flex", flex: 1 }} className="link-items">
-          <Link href="/home" passHref>
+          <Link href={AuthBaseRoute.home} passHref>
             <IconButton
               className={`header-icon ${
-                isActive("/home") ? "active" : "inactive"
+                isActive(AuthBaseRoute.home) ? "active" : "inactive"
               }`}
             >
-              {isActive("/home") ? <HomeIcon /> : <HomeOutlinedIcon />}
+              {isActive(AuthBaseRoute.home) ? (
+                <HomeIcon />
+              ) : (
+                <HomeOutlinedIcon />
+              )}
             </IconButton>
           </Link>
           <Link
-            href="/find-friends"
+            href={AuthBaseRoute.findFirends}
             onClick={() => {
               sessionStorage.removeItem("searchQuery");
             }}
@@ -92,36 +123,36 @@ const Header = () => {
           >
             <IconButton
               className={`header-icon ${
-                isActive("/find-friends") ? "active" : "inactive"
+                isActive(AuthBaseRoute.findFirends) ? "active" : "inactive"
               }`}
             >
-              {isActive("/find-friends") ? (
+              {isActive(AuthBaseRoute.findFirends) ? (
                 <PeopleIcon />
               ) : (
                 <PeopleAltOutlinedIcon />
               )}
             </IconButton>
           </Link>
-          <Link href="/create-post" passHref>
+          <Link href={AuthBaseRoute.createPost} passHref>
             <IconButton
               className={`header-icon ${
-                isActive("/create-post") ? "active" : "inactive"
+                isActive(AuthBaseRoute.createPost) ? "active" : "inactive"
               }`}
             >
-              {isActive("/create-post") ? (
+              {isActive(AuthBaseRoute.createPost) ? (
                 <AddCircleIcon />
               ) : (
                 <AddCircleOutlineIcon />
               )}
             </IconButton>
           </Link>
-          <Link href="/notification" passHref>
+          <Link href={AuthBaseRoute.notification} passHref>
             <IconButton
               className={`header-icon ${
-                isActive("/notification") ? "active" : "inactive"
+                isActive(AuthBaseRoute.notification) ? "active" : "inactive"
               }`}
             >
-              {isActive("/notification") ? (
+              {isActive(AuthBaseRoute.notification) ? (
                 <FavoriteIcon />
               ) : (
                 <FavoriteBorderIcon />
@@ -129,7 +160,7 @@ const Header = () => {
             </IconButton>
           </Link>
           <Link
-            href="/chats"
+            href={AuthBaseRoute.chatUser}
             passHref
             onClick={() => {
               sessionStorage.removeItem("searchMessagesUsers");
@@ -137,12 +168,27 @@ const Header = () => {
           >
             <IconButton
               className={`header-icon ${
-                isActive("/chats") || isActive("/chats/user")
+                isActive(AuthBaseRoute.chatUser) ||
+                isActive(AuthBaseRoute.chatMessgae)
                   ? "active"
                   : "inactive"
               }`}
             >
-              {isActive("/chats") || isActive("/chats/user") ? (
+              {unreadCount !== 0 ? (
+                <Badge
+                  badgeContent={unreadCount}
+                  overlap="circular"
+                  color="error"
+                >
+                  {isActive(AuthBaseRoute.chatUser) ||
+                  isActive(AuthBaseRoute.chatMessgae) ? (
+                    <ChatIcon />
+                  ) : (
+                    <ChatOutlinedIcon />
+                  )}
+                </Badge>
+              ) : isActive(AuthBaseRoute.chatUser) ||
+                isActive(AuthBaseRoute.chatMessgae) ? (
                 <ChatIcon />
               ) : (
                 <ChatOutlinedIcon />
@@ -152,7 +198,7 @@ const Header = () => {
           {/* Profile Avatar with Menu */}
           <Avatar
             className={`profile-avatar ${
-              pathname == "/profile" ? "active" : ""
+              isActive(AuthBaseRoute.profile) ? "active" : ""
             }`}
             src={`${commonFilePath}${currentUser?.photo_url}`}
             onClick={handleProfileClick}

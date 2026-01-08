@@ -339,12 +339,12 @@
     }
 
     &.Mui-error {
-      color: #d32f2f;
+      color: $error-color;
     }
   }
 
   .MuiFormHelperText-root {
-    color: #d32f2f;
+    color: $error-color;
     font-size: 12px;
     margin-top: 4px;
   }
