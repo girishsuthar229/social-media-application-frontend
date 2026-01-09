@@ -52,6 +52,7 @@ const Feed: React.FC<FeedProps> = ({
   const [selectedPostUserId, setSelectedPostUserId] = useState<number | null>(
     null
   );
+  const [loaderlikesUser, setLoaderlikesUser] = useState<boolean>(false);
   const [likeDrawerOpen, setLikeDrawerOpen] = useState(false);
   const [likedUsers, setLikedUsers] = useState<LikeUserListResponse[]>([]);
   const [loaderComments, setLoaderComments] = useState<boolean>(false);
@@ -144,16 +145,19 @@ const Feed: React.FC<FeedProps> = ({
 
   const handleLikeAllUserData = useCallback(
     async (postId: number) => {
+      setLoaderlikesUser(true);
+      setLikeDrawerOpen(true);
       setSelectedPostId(postId);
       try {
         const response = await allLikePostClickServices(postId);
         if (response.statusCode === STATUS_CODES.success) {
-          setLikeDrawerOpen(true);
           setLikedUsers(response?.data || []);
         }
       } catch (error) {
         const err = error as IApiError;
         toast.error(err?.message);
+      } finally {
+        setLoaderlikesUser(false);
       }
     },
 
@@ -162,6 +166,8 @@ const Feed: React.FC<FeedProps> = ({
 
   const handleCommentAllUserData = useCallback(
     async (postId: number) => {
+      setLoaderComments(true);
+      setCommentsModalOpen(true);
       setSelectedPostId(postId);
       posts.forEach((post) => {
         if (post.post_id === postId) {
@@ -172,14 +178,14 @@ const Feed: React.FC<FeedProps> = ({
       try {
         const response = await allCommentPostClickServices(postId);
         if (response.statusCode === STATUS_CODES.success) {
-          setCommentsModalOpen(true);
           setCommentsUsers(response?.data || []);
         }
       } catch (error) {
         const err = error as IApiError;
         toast.error(err?.message);
+      } finally {
+        setLoaderComments(false);
       }
-      setLoaderComments(false);
     },
     [posts]
   );
@@ -354,7 +360,11 @@ const Feed: React.FC<FeedProps> = ({
               {/* Comment Button */}
               <button
                 className={"action-button"}
-                onClick={() => handleCommentAllUserData(post?.post_id)}
+                onClick={() => {
+                  if (!loaderComments) {
+                    handleCommentAllUserData(post.post_id);
+                  }
+                }}
                 aria-label="Comment on post"
                 title="Comment"
               >
@@ -411,15 +421,10 @@ const Feed: React.FC<FeedProps> = ({
                     <BackButton
                       onClick={() => {
                         if (!loaderComments) {
-                          setLoaderComments(true);
                           handleCommentAllUserData(post.post_id);
                         }
                       }}
-                      labelText={
-                        loaderComments
-                          ? "Loading..."
-                          : ` View all ${post.comment_count} comments`
-                      }
+                      labelText={`View all ${post.comment_count} comments`}
                       showIcon={false}
                       underlineOnHover={true}
                     />
@@ -461,6 +466,7 @@ const Feed: React.FC<FeedProps> = ({
           onClose={likeCloseDrawer}
           likedUsers={likedUsers}
           currentUser={currentUser}
+          loaderlikesUser={loaderlikesUser}
         />
       )}
       {/* Comments Drawer */}
@@ -474,6 +480,7 @@ const Feed: React.FC<FeedProps> = ({
           onSendComment={(newComment) => hanldePostComment(newComment)}
           onPostDeleteComment={handleDeletePostComment}
           currentUser={currentUser}
+          loaderComments={loaderComments}
         />
       )}
     </div>

@@ -1,11 +1,6 @@
 "use client";
 import React from "react";
-import {
-  Box,
-  IconButton,
-  Typography,
-  SwipeableDrawer,
-} from "@mui/material";
+import { Box, IconButton, Typography, SwipeableDrawer } from "@mui/material";
 import { X } from "lucide-react";
 import { CommentUserListResponse } from "@/models/commentsInterface";
 import { IUserResponseData } from "@/models/userInterface";
@@ -20,6 +15,7 @@ interface CommentDrawerProps {
   onSendComment: (newComment: CommentUserListResponse) => void;
   onPostDeleteComment: (commentId: number, select_post_id: number) => void;
   currentUser: IUserResponseData | null;
+  loaderComments: boolean;
 }
 
 const CommentDrawer: React.FC<CommentDrawerProps> = ({
@@ -31,6 +27,7 @@ const CommentDrawer: React.FC<CommentDrawerProps> = ({
   onSendComment,
   onPostDeleteComment,
   currentUser,
+  loaderComments,
 }) => {
   return (
     <SwipeableDrawer
@@ -64,6 +61,7 @@ const CommentDrawer: React.FC<CommentDrawerProps> = ({
             onSendComment={onSendComment}
             onPostDeleteComment={onPostDeleteComment}
             currentUser={currentUser}
+            loaderComments={loaderComments}
           />
         </Box>
       </Box>

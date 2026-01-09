@@ -23,6 +23,7 @@ import { Form, Formik } from "formik";
 import { postCommentSchema } from "@/util/validations/postSchema.validation";
 import { getRelativeTime } from "@/util/helper";
 import { Info, Loader, SendHorizonal } from "lucide-react";
+import UserListSkeleton from "../Skeleton/userListSkeleton";
 
 interface CommentProps {
   selectedPostId: number;
@@ -31,6 +32,7 @@ interface CommentProps {
   onSendComment: (newComment: CommentUserListResponse) => void;
   onPostDeleteComment: (commentId: number, select_post_id: number) => void;
   currentUser: IUserResponseData | null;
+  loaderComments: boolean;
 }
 
 const CommentUsersList: React.FC<CommentProps> = ({
@@ -40,6 +42,7 @@ const CommentUsersList: React.FC<CommentProps> = ({
   onSendComment,
   onPostDeleteComment,
   currentUser,
+  loaderComments,
 }) => {
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const handleTooltipToggle = () => {
@@ -85,48 +88,59 @@ const CommentUsersList: React.FC<CommentProps> = ({
     <>
       <Box className="drawer-content scrollbar">
         <div className="comments-list">
-          {comments.length === 0 ? (
-            <Typography className="no-comments">
-              No comments yet. Be the first!
-            </Typography>
-          ) : (
-            comments.map((comment: CommentUserListResponse, index: number) => (
-              <Box key={index} className="comment-drawer">
-                <UserlistWithFollowBtn
-                  user={{
-                    id: comment?.user?.id,
-                    user_name: comment?.user?.user_name,
-                    first_name: comment.user?.first_name,
-                    last_name: comment.user?.last_name,
-                    photo_url: comment.user?.photo_url,
-                    bio: comment?.user?.bio || null,
-                    is_following: comment?.user?.is_following || false,
-                    follow_status:
-                      comment?.user?.follow_status || FollowingsEnum.PENDING,
-                  }}
-                  showTimeStamp={
-                    comment.created_date &&
-                    getRelativeTime(comment.created_date)
-                  }
-                  showComment={comment?.comment || null}
-                  showBio={false}
-                  showFullName={false}
-                  showFollowButton={false}
-                  currentUser={currentUser}
-                />
-                {(currentUser?.id === comment?.user.id ||
-                  currentUser?.id === selectedPostUserId) && (
-                  <Box>
-                    <IconButton
-                      className="drawer-close-btn"
-                      onClick={() => handleOnDeleteComment(comment.id)}
-                    >
-                      <HighlightOffIcon fontSize="small" />
-                    </IconButton>
+          {!loaderComments &&
+            (comments.length === 0 ? (
+              <Typography className="no-comments">
+                No comments yet. Be the first!
+              </Typography>
+            ) : (
+              comments.map(
+                (comment: CommentUserListResponse, index: number) => (
+                  <Box key={index} className="comment-drawer">
+                    <UserlistWithFollowBtn
+                      user={{
+                        id: comment?.user?.id,
+                        user_name: comment?.user?.user_name,
+                        first_name: comment.user?.first_name,
+                        last_name: comment.user?.last_name,
+                        photo_url: comment.user?.photo_url,
+                        bio: comment?.user?.bio || null,
+                        is_following: comment?.user?.is_following || false,
+                        follow_status:
+                          comment?.user?.follow_status ||
+                          FollowingsEnum.PENDING,
+                      }}
+                      showTimeStamp={
+                        comment.created_date &&
+                        getRelativeTime(comment.created_date)
+                      }
+                      showComment={comment?.comment || null}
+                      showBio={false}
+                      showFullName={false}
+                      showFollowButton={false}
+                      currentUser={currentUser}
+                    />
+                    {(currentUser?.id === comment?.user.id ||
+                      currentUser?.id === selectedPostUserId) && (
+                      <Box>
+                        <IconButton
+                          className="drawer-close-btn"
+                          onClick={() => handleOnDeleteComment(comment.id)}
+                        >
+                          <HighlightOffIcon fontSize="small" />
+                        </IconButton>
+                      </Box>
+                    )}
                   </Box>
-                )}
-              </Box>
-            ))
+                )
+              )
+            ))}
+          {loaderComments && (
+            <UserListSkeleton
+              count={3}
+              showBio={true}
+              showFollowButton={false}
+            />
           )}
         </div>
       </Box>

@@ -67,34 +67,35 @@ const FollowUserListDrawer: React.FC<FollowUserListDrawerProps> = ({
           }}
         >
           <div className="like-user-list">
-            {followUsers.length === 0 ? (
-              <Typography className="no-likes">Not found.</Typography>
-            ) : (
-              followUsers.map(
-                (followUser: FollowUserListResponse, index: number) => (
-                  <Box key={index}>
-                    <UserlistWithFollowBtn
-                      user={{
-                        id: followUser?.user?.id,
-                        user_name: followUser?.user?.user_name,
-                        first_name: followUser?.user?.first_name,
-                        last_name: followUser?.user?.last_name,
-                        photo_url: followUser?.user?.photo_url,
-                        bio: followUser?.user?.bio || null,
-                        is_following: followUser?.user?.is_following || false,
-                        follow_status:
-                          followUser?.user?.follow_status ||
-                          FollowingsEnum.PENDING,
-                      }}
-                      showBio={true}
-                      showFullName={true}
-                      showFollowButton={true}
-                      currentUser={currentUser}
-                    />
-                  </Box>
+            {!isFollowListLoading &&
+              (followUsers.length === 0 ? (
+                <Typography className="no-likes">Not found.</Typography>
+              ) : (
+                followUsers.map(
+                  (followUser: FollowUserListResponse, index: number) => (
+                    <Box key={index}>
+                      <UserlistWithFollowBtn
+                        user={{
+                          id: followUser?.user?.id,
+                          user_name: followUser?.user?.user_name,
+                          first_name: followUser?.user?.first_name,
+                          last_name: followUser?.user?.last_name,
+                          photo_url: followUser?.user?.photo_url,
+                          bio: followUser?.user?.bio || null,
+                          is_following: followUser?.user?.is_following || false,
+                          follow_status:
+                            followUser?.user?.follow_status ||
+                            FollowingsEnum.PENDING,
+                        }}
+                        showBio={true}
+                        showFullName={true}
+                        showFollowButton={true}
+                        currentUser={currentUser}
+                      />
+                    </Box>
+                  )
                 )
-              )
-            )}
+              ))}
             {isFollowListLoading && (
               <UserListSkeleton
                 count={3}

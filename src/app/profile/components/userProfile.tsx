@@ -234,7 +234,6 @@ const ProfileComponent = ({
         response.statusCode === STATUS_CODES.success &&
         response?.data?.rows
       ) {
-        setFollowUserListDrawer(true);
         const newUsers = response?.data?.rows;
         setFollowUsers((prev) => [...prev, ...newUsers]);
         if (newUsers.length < 25) {
@@ -323,8 +322,14 @@ const ProfileComponent = ({
           handlerUnfollowModel={handlerUnfollowModel}
           handleEditProfile={handleEditProfile}
           handleShareProfile={handleShareProfile}
-          handleFollowersList={handleFollowersList}
-          handleFollowingsList={handleFollowingsList}
+          handleFollowersList={(userId: number | null) => {
+            setFollowUserListDrawer(true);
+            handleFollowersList(userId);
+          }}
+          handleFollowingsList={(userId: number | null) => {
+            setFollowUserListDrawer(true);
+            handleFollowingsList(userId);
+          }}
         />
 
         <hr className="horitzonal-line" />

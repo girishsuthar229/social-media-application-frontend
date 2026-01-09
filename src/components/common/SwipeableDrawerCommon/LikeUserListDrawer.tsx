@@ -12,6 +12,7 @@ interface LikeUserListDrawerProps {
   onClose: () => void;
   currentUser: IUserResponseData | null;
   likedUsers: LikeUserListResponse[];
+  loaderlikesUser: boolean;
 }
 
 const LikeUserListDrawer: React.FC<LikeUserListDrawerProps> = ({
@@ -20,6 +21,7 @@ const LikeUserListDrawer: React.FC<LikeUserListDrawerProps> = ({
   onClose,
   currentUser,
   likedUsers,
+  loaderlikesUser,
 }) => {
   return (
     <SwipeableDrawer
@@ -50,6 +52,7 @@ const LikeUserListDrawer: React.FC<LikeUserListDrawerProps> = ({
             likedUsers={likedUsers}
             currentUser={currentUser}
             showFollowButton={true}
+            loaderlikesUser={loaderlikesUser}
           />
         </Box>
       </Box>

@@ -5,7 +5,6 @@ import CommentUsersList from "@/components/common/CommentUserList/commentUsersLi
 import CommonDialogModal from "@/components/common/commonDialog/commonDialog";
 import LikeUserList from "@/components/common/LikeUserList/likeUserList";
 import PostCardSkeleton from "@/components/common/Skeleton/postCardSkeleton";
-import UserListSkeleton from "@/components/common/Skeleton/userListSkeleton";
 import UserlistWithFollowBtn from "@/components/common/UserlistWithFollow/UserlistWithFollowBtn";
 import { CommentUserListResponse } from "@/models/commentsInterface";
 import { IApiError } from "@/models/common.interface";
@@ -72,8 +71,11 @@ const UserPostModal = ({
   const [postData, setPostData] = useState<IPost | null>(null);
   const [openMenuPostId, setOpenMenuPostId] = useState<number | null>(null);
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
+  const [likeUserListShow, setLikeUserListShow] = useState<boolean>(false);
   const [loaderLike, setLoaderLike] = useState<boolean>(false);
   const [likedUsers, setLikedUsers] = useState<LikeUserListResponse[]>([]);
+  const [commentUserListShow, setCommentUserListShow] =
+    useState<boolean>(false);
   const [loaderComments, setLoaderComments] = useState<boolean>(false);
   const [commentUsers, setCommentUsers] = useState<CommentUserListResponse[]>(
     []
@@ -96,6 +98,7 @@ const UserPostModal = ({
   };
 
   const handleLikeAllUserData = useCallback(async (postId: number) => {
+    setLikeUserListShow(true);
     setLoaderLike(true);
     try {
       const response = await allLikePostClickServices(postId);
@@ -111,6 +114,7 @@ const UserPostModal = ({
   }, []);
 
   const handleCommentAllUserData = useCallback(async (postId: number) => {
+    setCommentUserListShow(true);
     setLoaderComments(true);
     try {
       const response = await allCommentPostClickServices(postId);
@@ -416,46 +420,28 @@ const UserPostModal = ({
             />
           </Tabs>
           {/* Likes Tab Content */}
-          {activeTab === 0 && (
+          {activeTab === 0 && likeUserListShow && (
             <Box className="user-list-content scrollbar">
-              {!loaderLike && (
-                <LikeUserList
-                  likedUsers={likedUsers}
-                  currentUser={currentUser}
-                  showFollowButton={false}
-                />
-              )}
-              {loaderLike && (
-                <UserListSkeleton
-                  count={3}
-                  showFullName={true}
-                  showBio={true}
-                  showFollowButton={true}
-                />
-              )}
+              <LikeUserList
+                likedUsers={likedUsers}
+                currentUser={currentUser}
+                showFollowButton={false}
+                loaderlikesUser={loaderLike}
+              />
             </Box>
           )}
           {/* Comments Tab Content */}
-          {activeTab === 1 && (
+          {activeTab === 1 && commentUserListShow && (
             <Box className="user-list-content scrollbar">
-              {!loaderComments && (
-                <CommentUsersList
-                  selectedPostId={postId || 0}
-                  selectedPostUserId={Number(profileUser?.id) || 0}
-                  comments={commentUsers}
-                  onSendComment={hanldePostComment}
-                  onPostDeleteComment={handleDeletePostComment}
-                  currentUser={currentUser}
-                />
-              )}
-              {loaderComments && (
-                <UserListSkeleton
-                  count={3}
-                  showFullName={true}
-                  showBio={true}
-                  showFollowButton={true}
-                />
-              )}
+              <CommentUsersList
+                selectedPostId={postId || 0}
+                selectedPostUserId={Number(profileUser?.id) || 0}
+                comments={commentUsers}
+                onSendComment={hanldePostComment}
+                onPostDeleteComment={handleDeletePostComment}
+                currentUser={currentUser}
+                loaderComments={loaderComments}
+              />
             </Box>
           )}
         </Box>
