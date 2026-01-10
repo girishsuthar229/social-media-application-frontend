@@ -2,6 +2,11 @@ export interface SendMessagePayload {
   sender_id: string;
   receiver_id: string;
   message: string;
+  file?: File;
+  file_type?: string;
+  latitude?: number;
+  longitude?: number;
+  location_name?: string;
 }
 
 export interface AllMsgUsersPaylod {
@@ -46,6 +51,15 @@ export interface IUserMessage {
   modified_date?: string;
   status: string;
   is_read: boolean;
+  deleted_date: string;
+  is_edited: boolean;
+  file_url?: string;
+  file_type?: "image" | "video" | "document" | "audio";
+  file_name?: string;
+  file_size?: number;
+  latitude?: number;
+  longitude?: number;
+  location_name?: string;
   sender: {
     id: number;
     user_name: string;
@@ -72,4 +86,13 @@ export interface IUserTypingMessage {
   is_typing: boolean;
   type_user_id: number;
   type_user_name: string;
+}
+
+export interface IEditMessagePayload {
+  message_id: number;
+  message: string;
+}
+
+export interface IDeleteMessagePayload {
+  message_id: number;
 }

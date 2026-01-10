@@ -203,14 +203,17 @@
 /* ========================================== CONFIRMATION MODAL CSS START =========================================== */     
 .common-modal-title{
   display: flex;
-  justify-content: flex-end;
-  padding: 8px 10px 4px 0px !important;
+  justify-content: space-between;
+  align-items: center;
 }
 .common-dialog-content{
-  padding: 10px 24px !important;
+  padding-bottom: 0px !important;
 }
 .common-dialog-action{
-  .unfollow-btn {
-    color: $primary-color !important;
+  .deny-btn, .confirm-btn{
+    color: $text-light !important;
+    &:hover{
+      color: $primary-color !important;
+    }
   }
 }
