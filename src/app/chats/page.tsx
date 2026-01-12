@@ -36,7 +36,7 @@ const ChatApp = () => {
     const payload = {
       limit: 50,
       offset: userOffset,
-      sortBy: "created_at",
+      sortBy: "created_date",
       sortOrder: "DESC",
       searchName: searchValue.toLowerCase() || searchQuery.toLowerCase(),
     };

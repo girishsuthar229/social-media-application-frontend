@@ -12,8 +12,8 @@ export interface IPostData {
     last_name: string;
     user_image: string;
   };
-  created_at: string;
-  updated_at: string;
+  created_date: string;
+  modified_date: string;
 }
 
 export interface ICreatePostPayload {

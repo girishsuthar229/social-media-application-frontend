@@ -75,7 +75,7 @@ const SignIn = () => {
 
         {/* Welcome Messages */}
         <Typography className="typography-caption">
-          Welcome Back! LLet&apos;s Get You Signed In.
+          Welcome Back! Let&apos;s Get You Signed In.
         </Typography>
         <Typography className="typography-caption-primary">
           Sign in with your credentials to continue.
