@@ -3,11 +3,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  IconButton,
-  Typography,
 } from "@mui/material";
 import React from "react";
-import { X } from "lucide-react";
 import BackButton from "../BackButton";
 
 interface IButtonProps {
@@ -22,6 +19,7 @@ interface IConfirmationModalProps {
   confirmButton?: IButtonProps;
   denyButton?: IButtonProps;
   className?: string;
+  title?: string;
 }
 
 const ConfirmationDialog = ({
@@ -31,19 +29,14 @@ const ConfirmationDialog = ({
   confirmButton,
   denyButton,
   className,
+  title,
 }: IConfirmationModalProps) => {
   return (
     <Dialog open={open} onClose={onClose} className={className}>
-      <DialogTitle className="common-modal-title">
-        <IconButton className="drawer-close-btn" onClick={onClose}>
-          <X size={20} />
-        </IconButton>
-      </DialogTitle>
-      <DialogContent className="common-dialog-content">
-        <Typography component={'div'} className="confirmation-modal-content">
-          {content}
-        </Typography>
-      </DialogContent>
+      {title && (
+        <DialogTitle className="common-modal-title">{title}</DialogTitle>
+      )}
+      <DialogContent className="common-dialog-content">{content}</DialogContent>
       <DialogActions className="common-dialog-action">
         {denyButton && (
           <BackButton
@@ -51,6 +44,7 @@ const ConfirmationDialog = ({
             labelText={denyButton.buttonText}
             showIcon={false}
             underlineOnHover={false}
+            className="deny-btn"
           />
         )}
 
@@ -58,10 +52,9 @@ const ConfirmationDialog = ({
           <BackButton
             onClick={confirmButton.onClick}
             labelText={confirmButton.buttonText}
-            showIcon={true}
-            iconName="remove-person-icon"
+            showIcon={false}
             underlineOnHover={false}
-            className="unfollow-btn"
+            className="confirm-btn"
           />
         )}
       </DialogActions>

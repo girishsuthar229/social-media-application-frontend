@@ -62,10 +62,10 @@ const SignUp = () => {
 
         {/* Welcome Messages */}
         <Typography className="typography-caption">
-          Join Us! Create Your Account in Just a Few Steps.
+          Create Your Account in Few Steps.
         </Typography>
         <Typography className="typography-caption-primary">
-          Fill in your details and become part of the community!
+          Fill out the form and join our community today!
         </Typography>
 
         {/* Create Form */}

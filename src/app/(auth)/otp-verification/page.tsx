@@ -162,7 +162,7 @@ const OtpVerificationForm = () => {
           response?.statusCode === STATUS_CODES.success &&
           response?.data?.verified === true
         ) {
-          toast.success(response?.message);
+          toast.success(response?.message || "OTP Verifiy successfully");
           router.replace(`/set-password?token=${response.data?.token}`);
           setError(null);
           setIsSubmitting(false);
