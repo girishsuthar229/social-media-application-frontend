@@ -74,7 +74,7 @@ const ProfileInfoSections: React.FC<ProfileInfoProps> = ({
           </Typography>
         </Box>
         <Box
-          className="stat-item"
+          className="stat-item follower-item"
           onClick={() => {
             if (canViewPosts) {
               handleFollowersList(profileUser?.id || null);
@@ -89,7 +89,7 @@ const ProfileInfoSections: React.FC<ProfileInfoProps> = ({
           </Typography>
         </Box>
         <Box
-          className="stat-item"
+          className="stat-item following-item"
           onClick={() => {
             if (canViewPosts) {
               handleFollowingsList(profileUser?.id || null);

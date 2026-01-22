@@ -122,7 +122,6 @@
       display: flex;
       
       .stat-item {
-        cursor: pointer;
         text-align: center;
         font-size: 18px;
         padding-inline: 10px;
@@ -134,6 +133,11 @@
           color: $text-gray;
         }
       }
+    
+      .follower-item, .following-item{
+        cursor: pointer;
+      }
+      
       @media (max-width:400px) {
        flex-wrap: wrap;
       }
