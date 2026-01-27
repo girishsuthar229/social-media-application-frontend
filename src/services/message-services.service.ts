@@ -8,6 +8,7 @@ import {
   AllMsgUsersPaylod,
   SendMessagePayload,
   IUserMessage,
+  IDeleteMessagePayload,
 } from "@/models/messageInterface";
 
 export const getAllMsgUsers = async (
@@ -70,6 +71,43 @@ export const getUnReadMsgUsers = async (): Promise<
   try {
     const response = await trackPromise(
       BaseService.get("/message/get-unread-users-total-count")
+    );
+    return Promise.resolve(response.data);
+  } catch (error: any) {
+    return Promise.reject({
+      statusCode: error.response?.status || 500,
+      message: error.response?.data?.message || error.message,
+      error: error.response?.data?.error || error.response?.data || error,
+      data: null as any,
+    });
+  }
+};
+
+export const editMessageService = async (
+  message_id: number,
+  values: SendMessagePayload
+): Promise<IApiResponse<IUserMessage>> => {
+  try {
+    const response = await trackPromise(
+      BaseService.put(`/message/edit-message/${message_id}`, values)
+    );
+    return Promise.resolve(response.data);
+  } catch (error: any) {
+    return Promise.reject({
+      statusCode: error.response?.status || 500,
+      message: error.response?.data?.message || error.message,
+      error: error.response?.data?.error || error.response?.data || error,
+      data: null as any,
+    });
+  }
+};
+
+export const deleteMessageService = async (
+  payload: IDeleteMessagePayload
+): Promise<IApiResponse<null>> => {
+  try {
+    const response = await trackPromise(
+      BaseService.delete(`/message/delete-message/${payload.message_id}`)
     );
     return Promise.resolve(response.data);
   } catch (error: any) {

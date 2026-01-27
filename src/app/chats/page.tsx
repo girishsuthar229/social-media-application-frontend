@@ -51,9 +51,13 @@ const ChatApp = () => {
         setAllUsers((prev) => {
           const updatedUsers = [...prev, ...newUsers];
           updatedUsers.sort((a, b) => {
-            const aDate = new Date(a.message.created_date).getTime();
-            const bDate = new Date(b.message.created_date).getTime();
-            return bDate - aDate;
+            const aTime = a.message?.created_date
+              ? new Date(a.message.created_date).getTime()
+              : 0;
+            const bTime = b.message?.created_date
+              ? new Date(b.message.created_date).getTime()
+              : 0;
+            return bTime - aTime;
           });
 
           return updatedUsers;

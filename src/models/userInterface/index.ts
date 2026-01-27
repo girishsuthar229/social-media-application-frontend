@@ -57,7 +57,7 @@ export interface UserAllListModel {
   following_count: number;
   role_id: number;
   created_date: Date;
-  modified_date: Date | null;
+  modified_date?: Date | null;
 }
 export interface IUserAllListResponse {
   count: number;

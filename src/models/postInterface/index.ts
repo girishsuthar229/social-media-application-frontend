@@ -13,7 +13,7 @@ export interface IPostData {
     user_image: string;
   };
   created_date: string;
-  modified_date: string;
+  modified_date?: string;
 }
 
 export interface ICreatePostPayload {
@@ -52,7 +52,7 @@ export interface AllPostListModel {
   comments: PostComment[];
   user: PostUser;
   created_date: string;
-  modified_date: string | null;
+  modified_date?: string | null;
   is_liked: boolean;
   is_saved: boolean;
 }
@@ -78,7 +78,7 @@ export interface UserWiseAllPostsData {
   comments: PostComment[];
   user: PostUser;
   created_date: string;
-  modified_date: string | null;
+  modified_date?: string | null;
   is_liked: boolean;
   is_saved: boolean;
 }
@@ -96,7 +96,7 @@ export interface IGetPostByIdReponse {
   self_comment: string | null;
   comment_count: number;
   created_date: string;
-  modified_date: string | null;
+  modified_date?: string | null;
   is_liked: boolean;
   is_saved: boolean;
   user: {

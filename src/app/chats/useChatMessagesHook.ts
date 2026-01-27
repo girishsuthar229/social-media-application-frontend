@@ -76,6 +76,14 @@ export const useChatMessagesHook = ({
       modified_date: message.modified_date?.toString() || "",
       status: message.status,
       is_read: message.is_read,
+      deleted_date: message.deleted_date?.toString() || "",
+      file_url: message?.file_url,
+      file_type: message?.file_type,
+      file_name: message?.file_name,
+      file_size: message?.file_size,
+      latitude: message?.latitude,
+      longitude: message?.longitude,
+      location_name: message?.location_name,
       sender: {
         id: message?.sender?.id,
         user_name: message?.sender?.user_name,
@@ -132,18 +140,61 @@ export const useChatMessagesHook = ({
     }
   };
 
+  const messageEdited = (data: IUserMessage) => {
+    setMessages((prev) => prev.map((msg) => (msg.id === data.id ? data : msg)));
+    setAllUsers((prevUsers) =>
+      prevUsers.map((user) => {
+        if (user.message?.id === data.id) {
+          return {
+            ...user,
+            message: {
+              ...user.message,
+              ...data,
+              modified_date:
+                data.modified_date?.toString() ?? user.message.modified_date,
+            },
+          };
+        }
+
+        return user;
+      })
+    );
+  };
+  const messageDeleted = (data: { message_id: number }) => {
+    setMessages((prev) => prev.filter((msg) => msg.id !== data.message_id));
+    setAllUsers((prevUsers) =>
+      prevUsers.map((user) => {
+        if (user.message?.id === data.message_id) {
+          return {
+            ...user,
+            message: {
+              ...user.message,
+              last_message: "This message was deleted",
+            },
+          };
+        }
+
+        return user;
+      })
+    );
+  };
+
   useEffect(() => {
     if (!socket) return;
     socket.on("receive_message", receiveNewMessage);
     socket.on("check_read_message", updateReadMessages);
     socket.on("user_typing", userTyping);
     socket.on("unread_messages_total_users", unreadMessageUserCount);
+    socket.on("message_edited", messageEdited);
+    socket.on("message_deleted", messageDeleted);
 
     return () => {
       socket.off("receive_message", receiveNewMessage);
       socket.off("check_read_message", updateReadMessages);
       socket.off("user_typing", userTyping);
       socket.off("unread_messages_total_users", unreadMessageUserCount);
+      socket.off("message_edited", messageEdited);
+      socket.off("message_deleted", messageDeleted);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, selectedUserId]);
@@ -176,6 +227,22 @@ export const useChatMessagesHook = ({
     }
   };
 
+  const handleEditMessage = (updatedData: IUserMessage) => {
+    if (socket && updatedData) {
+      socket.emit("edit_message", updatedData);
+    }
+  };
+
+  const handleDeleteMessage = (messageId: number) => {
+    if (socket) {
+      socket.emit("delete_message", {
+        message_id: messageId,
+        receiver_id: selectedUserId,
+        sender_id: currentUserId,
+      });
+    }
+  };
+
   return {
     newMessage,
     messages,
@@ -189,5 +256,7 @@ export const useChatMessagesHook = ({
     handleReadMessage,
     unreadCount,
     setUnreadCount,
+    handleEditMessage,
+    handleDeleteMessage,
   };
 };

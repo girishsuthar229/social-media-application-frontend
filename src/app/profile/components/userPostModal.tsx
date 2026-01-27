@@ -38,7 +38,7 @@ interface IPost {
   comment_count: number;
   self_comment: string | null;
   created_date: string;
-  modified_date: string | null;
+  modified_date?: string | null;
   is_liked: boolean;
   is_saved: boolean;
   user: {
@@ -87,7 +87,7 @@ const UserPostModal = ({
     try {
       const res = await getPostById(postId);
       if (res?.data && res.statusCode === STATUS_CODES.success) {
-        setPostData(res.data);
+        setPostData(res?.data);
       }
     } catch (error) {
       const err = error as IApiError;

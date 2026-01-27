@@ -98,7 +98,7 @@
 
 .more-options-menu {
   .MuiPaper-root {
-    width: 150px;
+    // width: 150px;
     border-radius: 12px;
     box-shadow: $shadow-sm;
     border: 1px solid $border-color;
@@ -110,6 +110,7 @@
 /* Menu Item Styles */
 .post-menu-item {
   gap: 10px ;
+  min-height: auto !important;
   svg {
    transition: all 0.3s ease !important;
   }
