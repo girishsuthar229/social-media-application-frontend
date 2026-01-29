@@ -40,7 +40,7 @@ export const useChatMessagesHook = ({
           ...msg,
           is_read: updated.is_read,
           status: updated.status,
-          modified_date: updated.modified_date?.toString() ?? msg.modified_date,
+          modified_date: updated.modified_date?.toString() ?? "",
         };
       });
     });
@@ -150,8 +150,7 @@ export const useChatMessagesHook = ({
             message: {
               ...user.message,
               ...data,
-              modified_date:
-                data.modified_date?.toString() ?? user.message.modified_date,
+              modified_date: data.modified_date?.toString() ?? "",
             },
           };
         }

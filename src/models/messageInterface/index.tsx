@@ -51,6 +51,7 @@ export interface IUserMessage {
   modified_date?: string;
   status: string;
   is_read: boolean;
+  is_edited?: boolean;
   deleted_date?: string;
   file_url?: string;
   file_type?: "image" | "video" | "document" | "audio";

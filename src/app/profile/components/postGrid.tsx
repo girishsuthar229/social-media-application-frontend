@@ -20,7 +20,7 @@ interface PostGridProps {
   postValues: UserWiseAllPostsData[];
   savedPosts: AllSavedPostList[];
   postHasMore: boolean;
-  loadUserPosts: (userId: number) => void;
+  loadUserPosts: (userId: number, offset: number) => void;
   profileUser: IAnotherUserResponse | null;
   isOwnProfile: boolean;
   handlePostClick: (postId: number) => void;
@@ -49,7 +49,7 @@ const PostGrid: React.FC<PostGridProps> = ({
           50;
         if (bottom && !isLoading && postHasMore) {
           if (profileUser) {
-            loadUserPosts(profileUser?.id);
+            loadUserPosts(profileUser?.id, postValues?.length);
           }
         }
       }}

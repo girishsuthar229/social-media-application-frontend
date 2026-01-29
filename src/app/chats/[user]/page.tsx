@@ -244,6 +244,7 @@ const ChatView: React.FC = () => {
                   ...msg,
                   message: updatedData?.message,
                   modified_date: updatedData?.modified_date,
+                  is_edited: true,
                 }
               : msg
           )
@@ -253,7 +254,7 @@ const ChatView: React.FC = () => {
         resetForm();
         handleRemoveFile();
         setLocation(null);
-        toast.success(response.message);
+        // toast.success(response.message);
       }
     } catch (err) {
       const error = err as IApiError;
@@ -488,7 +489,7 @@ const ChatView: React.FC = () => {
                           ) : (
                             <DoneIcon className="sent-msg-icon" />
                           ))}
-                        {msg.modified_date && !msg?.deleted_date && (
+                        {msg.is_edited && !msg?.deleted_date && (
                           <EditOutlined className="edit-message-icon" />
                         )}
                       </span>

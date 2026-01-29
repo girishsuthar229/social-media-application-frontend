@@ -71,12 +71,12 @@ const ProfileComponent = ({
   const [followUsers, setFollowUsers] = useState<FollowUserListResponse[]>([]);
   const [userPostModalId, setUserPostModalId] = useState<number | null>(null);
 
-  const loadUserPosts = async (userId: number) => {
+  const loadUserPosts = async (userId: number, offset: number) => {
     setIsLoading(true);
     try {
       const payload = {
         limit: 10,
-        offset: postValues.length || 0,
+        offset: offset || 0,
         sortBy: "created_date",
         sortOrder: "DESC",
         userId: userId || 0,
@@ -118,7 +118,11 @@ const ProfileComponent = ({
       setIsFollowing(!!profileUser?.is_following);
       setFollowStatus(profileUser?.follow_status || null);
       if (canShowPosts) {
-        loadUserPosts(profileUser?.id);
+        setPostValues([]);
+        setFollowUsers([]);
+        setFollowUserHasMore(true);
+        setFollowUserListDrawer(false);
+        loadUserPosts(profileUser?.id, 0);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
