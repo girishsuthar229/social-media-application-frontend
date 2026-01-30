@@ -9,6 +9,7 @@ import {
   SendMessagePayload,
   IUserMessage,
   IDeleteMessagePayload,
+  IUnreadUserMessagesResponse,
 } from "@/models/messageInterface";
 
 export const getAllMsgUsers = async (
@@ -66,7 +67,7 @@ export const getAllMessages = async (
 };
 
 export const getUnReadMsgUsers = async (): Promise<
-  IApiResponse<{ totalCount: number }>
+  IApiResponse<IUnreadUserMessagesResponse>
 > => {
   try {
     const response = await trackPromise(

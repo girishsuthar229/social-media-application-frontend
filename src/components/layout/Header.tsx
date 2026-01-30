@@ -51,7 +51,7 @@ const Header = () => {
       try {
         const response = await getUnReadMsgUsers();
         if (response?.data && response.statusCode === STATUS_CODES.success) {
-          setUnreadCount(response.data?.totalCount);
+          setUnreadCount(response.data);
         }
       } catch (error) {
         const err = error as IApiError;
@@ -174,9 +174,9 @@ const Header = () => {
                   : "inactive"
               }`}
             >
-              {unreadCount !== 0 ? (
+              {unreadCount.totalUsersCount !== 0 ? (
                 <Badge
-                  badgeContent={unreadCount}
+                  badgeContent={unreadCount.totalUsersCount}
                   overlap="circular"
                   color="error"
                 >

@@ -91,3 +91,17 @@ export interface IUserTypingMessage {
 export interface IDeleteMessagePayload {
   message_id: number;
 }
+export interface IUnreadUserMessagesResponse {
+  totalUsersCount: number;
+  users: {
+    m_sender_id: number;
+    eachUserMsgCount: string;
+  }[];
+}
+export interface UnreadUserMessages {
+  totalUsersCount: number;
+  users: {
+    m_sender_id: number;
+    eachUserMsgCount: string;
+  }[];
+}

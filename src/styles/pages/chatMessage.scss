@@ -259,32 +259,47 @@
         width: 100%;
         .sent-msg-icon{
           color: $lightText;
-          font-size: 18px;
+          font-size: 15px;
           margin-inline-end: 2px;
         }
         .seen-msg-icon{
           color: $bg-gradient-start;
-          font-size: 18px;
+          font-size: 15px;
           margin-inline-end: 2px;
         }
         .typing-indicator {
           padding: 5px 0rem ;
         }
-        .user-last-message{
-          font-size: 14px;
-          color: $lightText;
-          margin: 0;
-          line-height: 1;
-          padding-top: 4px;
-          font-weight: 400;
-          display: -webkit-box;
-          -webkit-line-clamp: 1;
-          -webkit-box-orient: vertical;
-          line-clamp: 1;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          &.bold{
-            font-weight: bolder;
+        .user-send-recieve-message{
+          display: flex;
+          justify-content: space-between;
+          width: 100%;
+          .user-last-message{
+            font-size: 14px;
+            color: $lightText;
+            margin: 0;
+            line-height: 1;
+            font-weight: 400;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            line-clamp: 1;
+            overflow: hidden;
+            &.bold{
+              font-weight: bolder;
+            }
+          }
+          .user-unread-count {
+            background-color: $lightText; 
+            color: $white;
+            height: 16px; 
+            width: 16px;
+            border-radius: 50%;
+            text-align: center;
+           .unread-number{
+              font-size: 10px;
+              padding: 1px;
+            }
           }
         }
       }

@@ -3,6 +3,7 @@ import {
   IUserReadMessage,
   IUserTypingMessage,
   MsgUserListResponseModel,
+  UnreadUserMessages,
 } from "@/models/messageInterface";
 import useSocket from "@/util/socket";
 import { useEffect, useState } from "react";
@@ -21,10 +22,13 @@ export const useChatMessagesHook = ({
   const [messages, setMessages] = useState<IUserMessage[]>([]);
   const [allUsers, setAllUsers] = useState<MsgUserListResponseModel[]>([]);
   const [typingUser, setTypingUser] = useState<IUserTypingMessage | null>(null);
-  const [unreadCount, setUnreadCount] = useState<number>(0);
+  const [unreadCount, setUnreadCount] = useState<UnreadUserMessages>({
+    totalUsersCount: 0,
+    users: [],
+  });
 
-  const unreadMessageUserCount = (response: { totalCount: number }) => {
-    setUnreadCount(response.totalCount);
+  const unreadMessageUserCount = (response: UnreadUserMessages) => {
+    setUnreadCount(response);
   };
 
   const updateReadMessages = (updatedMessages: IUserMessage[]) => {
@@ -131,7 +135,43 @@ export const useChatMessagesHook = ({
       }
       return [newUserMessage, ...prevUsers];
     });
-    setUnreadCount((prevCount) => prevCount + 1);
+
+    setUnreadCount((prevUser: UnreadUserMessages | undefined) => {
+      const userIndex = prevUser?.users.findIndex(
+        (user) => user.m_sender_id === message.sender.id
+      );
+      if (userIndex !== -1) {
+        const updatedUsers =
+          prevUser?.users.map((user, index) => {
+            if (index === userIndex) {
+              return {
+                ...user,
+                eachUserMsgCount: (
+                  parseInt(user.eachUserMsgCount, 10) + 1
+                ).toString(),
+              };
+            }
+            return user;
+          }) || [];
+
+        return {
+          totalUsersCount: updatedUsers.length,
+          users: updatedUsers,
+        };
+      } else {
+        const updatedUsers = [
+          ...(prevUser?.users || []),
+          {
+            m_sender_id: message.sender.id,
+            eachUserMsgCount: "1",
+          },
+        ];
+        return {
+          totalUsersCount: updatedUsers.length,
+          users: updatedUsers,
+        };
+      }
+    });
   };
 
   const userTyping = (data: IUserTypingMessage) => {

@@ -7,10 +7,13 @@ import {
   MESSAGE_SENT_STATUS,
   STATUS_CODES,
 } from "@/util/constanst";
-import { Avatar, Box, Typography } from "@mui/material";
+import { Avatar, Badge, Box, Typography } from "@mui/material";
 import { IApiError } from "@/models/common.interface";
 import { toast } from "@/util/reactToastify";
-import { getAllMsgUsers } from "@/services/message-services.service";
+import {
+  getAllMsgUsers,
+  getUnReadMsgUsers,
+} from "@/services/message-services.service";
 import SearchField from "@/components/common/SearchField/searchField";
 import UserListSkeleton from "@/components/common/Skeleton/userListSkeleton";
 import { debounce } from "lodash";
@@ -25,10 +28,11 @@ const ChatApp = () => {
   const [userLoading, setUserLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const router = useRouter();
-  const { allUsers, setAllUsers, typingUser } = useChatMessagesHook({
-    currentUserId: currentUser?.id,
-    selectedUserId: null,
-  });
+  const { allUsers, setAllUsers, typingUser, unreadCount, setUnreadCount } =
+    useChatMessagesHook({
+      currentUserId: currentUser?.id,
+      selectedUserId: null,
+    });
 
   const loadMessageUsers = async (searchValue: string) => {
     if (userLoading) return;
@@ -109,6 +113,18 @@ const ChatApp = () => {
     debouncedSearch("");
   };
 
+  const unreadMessageUserCount = async () => {
+    try {
+      const response = await getUnReadMsgUsers();
+      if (response?.data && response.statusCode === STATUS_CODES.success) {
+        setUnreadCount(response.data);
+      }
+    } catch (error) {
+      const err = error as IApiError;
+      toast.error(err?.message);
+    }
+  };
+
   useEffect(() => {
     const storedSearchQuery = sessionStorage.getItem("searchMessagesUsers");
     if (storedSearchQuery) {
@@ -118,6 +134,7 @@ const ChatApp = () => {
       loadMessageUsers("");
       setSearchQuery("");
     }
+    unreadMessageUserCount();
     return () => {
       debouncedSearch.cancel();
     };
@@ -142,81 +159,102 @@ const ChatApp = () => {
           />
         </Box>
         <div className="user-list scrollbar">
-          {allUsers.map((user) => (
-            <Box
-              className="user-item"
-              key={user.id}
-              onClick={() => handleUserClick(user.user_name)}
-            >
-              <Avatar
-                src={
-                  user.photo_url
-                    ? `${commonFilePath}${user.photo_url}`
-                    : undefined
-                }
-                className="user-avatar"
-              />
-              <Box className="user-details">
-                <Box display={"flex"} flexDirection={"column"}>
-                  <Typography className="user-username" component="h3">
-                    {user?.user_name}
-                  </Typography>
-                  {typingUser &&
-                  typingUser?.is_typing &&
-                  typingUser?.type_user_id === user.id ? (
-                    <Box className="user-last-message-main-div">
-                      <p className="typing-indicator">
-                        <span className="dot" />
-                        <span className="dot" />
-                        <span className="dot" />
-                      </p>
-                    </Box>
-                  ) : (
-                    user?.message.last_message && (
-                      <Box className="user-last-message-main-div">
-                        {user?.message?.sender_id === currentUser?.id ? (
-                          user?.message?.is_read &&
-                          user?.message?.status === MESSAGE_SENT_STATUS.SEEN ? (
-                            <DoneAllIcon className="seen-msg-icon  " />
-                          ) : (
-                            <DoneIcon className="sent-msg-icon" />
-                          )
-                        ) : (
-                          <></>
-                        )}
-                        <Typography
-                          className={`user-last-message ${
-                            (user?.message?.is_read &&
-                              user?.message?.status ===
-                                MESSAGE_SENT_STATUS.SEEN) ||
-                            user?.message?.sender_id === currentUser?.id
-                              ? ""
-                              : "bold"
-                          }`}
-                          variant="body1"
-                        >
-                          {user.message?.last_message}
-                        </Typography>
-                      </Box>
-                    )
-                  )}
-                </Box>
-              </Box>
-            </Box>
-          ))}
-          {userLoading && (
+          {userLoading ? (
             <UserListSkeleton
               count={3}
               showBio={false}
               showFollowButton={false}
             />
-          )}
-
-          {/* Empty State when search query has no results */}
-          {!userLoading && allUsers.length === 0 && (
+          ) : allUsers.length === 0 ? (
             <Typography variant="h6" className="message-empty-title">
               No Users Found
             </Typography>
+          ) : (
+            allUsers.map((user) => {
+              const unreadUser = unreadCount.users.find(
+                (unreadMsgUser) => unreadMsgUser.m_sender_id === user.id
+              );
+              const isTyping =
+                typingUser?.is_typing && typingUser.type_user_id === user.id;
+
+              return (
+                <Box
+                  className="user-item"
+                  key={user.id}
+                  onClick={() => handleUserClick(user.user_name)}
+                >
+                  <Avatar
+                    src={
+                      user.photo_url
+                        ? `${commonFilePath}${user.photo_url}`
+                        : undefined
+                    }
+                    className="user-avatar"
+                  />
+                  <Box className="user-details">
+                    <Box display={"flex"} flexDirection={"column"}>
+                      <Typography className="user-username" component="h3">
+                        {user.user_name}
+                      </Typography>
+
+                      {/* Last Message Display */}
+                      {user.message && (
+                        <Box className="user-last-message-main-div">
+                          {user.message.sender_id === currentUser?.id && (
+                            <>
+                              {user.message.is_read &&
+                              user.message.status ===
+                                MESSAGE_SENT_STATUS.SEEN ? (
+                                <DoneAllIcon className="seen-msg-icon" />
+                              ) : (
+                                <DoneIcon className="sent-msg-icon" />
+                              )}
+                            </>
+                          )}
+                          <Box className="user-send-recieve-message">
+                            {/* Typing Indicator */}
+                            {isTyping ? (
+                              <p className="typing-indicator">
+                                <span className="dot" />
+                                <span className="dot" />
+                                <span className="dot" />
+                              </p>
+                            ) : user.message?.last_message ? (
+                              <Typography
+                                className={`user-last-message ${
+                                  (user.message.is_read &&
+                                    user.message.status ===
+                                      MESSAGE_SENT_STATUS.SEEN) ||
+                                  user.message.sender_id === currentUser?.id
+                                    ? ""
+                                    : "bold"
+                                }`}
+                                variant="body1"
+                              >
+                                {user.message.last_message}
+                              </Typography>
+                            ) : (
+                              <></>
+                            )}
+
+                            {unreadUser && !!unreadUser.eachUserMsgCount && (
+                              <Box className={`user-unread-count`}>
+                                <Typography
+                                  component={"p"}
+                                  className="unread-number"
+                                >
+                                  {unreadUser.eachUserMsgCount}
+                                </Typography>
+                              </Box>
+                            )}
+                          </Box>
+                        </Box>
+                      )}
+                    </Box>
+                  </Box>
+                </Box>
+              );
+            })
           )}
         </div>
       </div>
